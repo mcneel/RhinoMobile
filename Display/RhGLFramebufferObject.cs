@@ -128,7 +128,6 @@ namespace RhinoMobile.Display
       m_width = nWidth;
       m_height = nHeight;
       m_owned = true;
-			Console.WriteLine ("SamplesUsed = " + SamplesUsed.ToString ());
     }
 
 		/// <summary>

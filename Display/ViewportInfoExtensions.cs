@@ -20,6 +20,7 @@ namespace RhinoMobile.Display
 {
 	public static class ViewportInfoExtensions
 	{
+
 		/// <summary>
 		/// LateralPan of a viewport between two points
 		/// </summary>
@@ -117,7 +118,7 @@ namespace RhinoMobile.Display
 					viewport.SetFrustum (frustumLeft, frustumRight, frustumBottom, frustumTop, frustumNear, frustumFar);
 				}
 
-				if (!fixedScreenPoint.IsEmpty && d != Double.Epsilon) {
+				if (!fixedScreenPoint.IsEmpty && Math.Abs(d) > Double.Epsilon) {
 					// lateral dolly to keep fixed_screen_point in same location on screen
 					Rhino.Geometry.Vector3d scale = new Rhino.Geometry.Vector3d (1.0, 1.0, 1.0);
 					scale.X = viewport.ViewScale.Width;
@@ -212,7 +213,7 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public static void SetTarget (this ViewportInfo viewport, Rhino.Geometry.Point3d targetLocation, Rhino.Geometry.Point3d cameraLocation, Rhino.Geometry.Vector3d cameraUp)
 		{
-			Rhino.Geometry.Vector3d cameraDirection = viewport.CameraDirection;
+			Rhino.Geometry.Vector3d cameraDirection = targetLocation - cameraLocation;
 			cameraDirection.Unitize ();
 
 			if (! viewport.CameraDirection.IsTiny ()) {
@@ -253,6 +254,47 @@ namespace RhinoMobile.Display
 				}
 			}
 		}
-	
+
+		/// <summary>
+		/// Spherical linear interpolator
+		/// </summary>
+		public static Rhino.Geometry.Vector3d Slerp (Rhino.Geometry.Vector3d v0, Rhino.Geometry.Vector3d v1, double n)
+		{
+			if (n <= 0.0)
+				return v0;
+
+			if (v0 == v1 || n >= 1.0)
+				return v1;
+
+			Rhino.Geometry.Vector3d u0 = new Rhino.Geometry.Vector3d (v0);
+			Rhino.Geometry.Vector3d u1 = new Rhino.Geometry.Vector3d (v1);
+
+			u0.Unitize ();
+			u1.Unitize ();
+
+			double dot = Rhino.Geometry.Vector3d.Multiply (u0, u1);
+			dot = ((dot) < (-1.0) ? (-1.0) : ((dot) > (1.0) ? (1.0) : (dot)));
+			double theta = Math.Acos (dot);
+			if (Math.Abs(theta) < Double.Epsilon)
+				return v1;
+
+			double st = Math.Sin(theta);
+			return ( (v0 * ((Math.Sin ((1.0 - n) * theta)) / st)) + (v1 * ((Math.Sin (n * theta) / st))) );
+		}
+
+		/// <summary>
+		/// Cosine interpolator
+		/// </summary>
+		public static double CosInterp( double a, double b, double n )
+		{
+			if (n <= 0) return a;
+			// Analysis disable once CompareOfFloatsByEqualityOperator
+			if (n >= 1 || a == b) return b;
+			double n2 = ( 1.0 - Math.Cos(n * Math.PI) ) / 2;
+			return ( a * (1.0 - n2) + b * n2 );
+		}
+			
 	}
+
+
 }
