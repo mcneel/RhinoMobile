@@ -325,7 +325,7 @@ namespace RhinoMobile.Model
 
 						//FOR DEBUGGING ONLY...
 						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
-					
+
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -335,7 +335,7 @@ namespace RhinoMobile.Model
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
 							return;
 						}
-
+				
 					}
 				}
 			}
@@ -530,6 +530,7 @@ namespace RhinoMobile.Model
 
 				// If there were no perspective views, make one...
 				if (!initialized) {
+					DefaultView = ModelFile.Views [0];
 					GetDefaultView (BBox, ref m_defaultView);
 				}
 
