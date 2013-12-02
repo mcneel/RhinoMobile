@@ -38,14 +38,14 @@ namespace RhinoMobile.Model
 	public class RMModel
 	{
 		#region Members
-		private string m_modelID;
-		private int m_layersWithGeometryCount;
-		private string m_modelPath;
-		private BoundingBox m_visibleLayersBoundingBox;
-		private ViewInfo m_defaultView;
-		private BoundingBox m_bBox;
+		protected string m_modelID;
+		protected int m_layersWithGeometryCount;
+		protected string m_modelPath;
+		protected BoundingBox m_visibleLayersBoundingBox;
+		protected ViewInfo m_defaultView;
+		protected BoundingBox m_bBox;
 
-		private CancellationTokenSource m_cancellation_token_source;
+		protected CancellationTokenSource m_cancellation_token_source;
 		public event MeshPreparationHandler MeshPrep;
 		#endregion
 
@@ -57,7 +57,7 @@ namespace RhinoMobile.Model
 		public string Title { get; set; }
 
 		/// <remarks>
-		/// CAUTION: Getter returns a new copy of the private field m_modelID.
+		/// CAUTION: Getter returns a new copy of the protected field m_modelID.
 		/// Setting the modelID invalidates any cached data. If the modelID has changed, 
 		/// the user likely modified a file in the Documents folder.
 		/// </remarks>
@@ -114,25 +114,25 @@ namespace RhinoMobile.Model
 				return m_modelPath;
 			}
 
-			private set {
+			protected set {
 				m_modelPath = value;
 			}
 		}
 
 		/// <value> List of ModelObjects.  These are used in the creation of DisplayObjects, then disposed of. </value> 
-		private List<ModelObject> ModelObjects { get; set; }
+		protected List<ModelObject> ModelObjects { get; set; }
 
 		/// <value> DisplayObjects is a list of all the objects to be displayed. </value>
-		public List<DisplayObject> DisplayObjects { get; private set; }
+		public List<DisplayObject> DisplayObjects { get; protected set; }
 
 		/// <value> TransparentObjects is a list of all DisplayObjects that are not opaque. </value>
-		public List<DisplayObject> TransparentObjects { get; private set; }
+		public List<DisplayObject> TransparentObjects { get; protected set; }
 
 		/// <value> Dictionary of ModelObjects, with Guid keys. </value>
-		private Dictionary<Guid, ModelObject> ModelObjectsDictionary { get; set; }
+		protected Dictionary<Guid, ModelObject> ModelObjectsDictionary { get; set; }
 
 		/// <value> All the meshes that were found or derived from the 3dm file. </value>
-		public RhinoList<Mesh> AllMeshes { get; private set; }
+		public RhinoList<Mesh> AllMeshes { get; protected set; }
 
 		/// <value> Returns a BoundingBox for all geometry on visible layers. </value>
 		public BoundingBox VisibleLayersBBox
@@ -165,7 +165,7 @@ namespace RhinoMobile.Model
 				return BoundingBox.Empty;
 			}
 
-			private set {
+			protected set {
 				m_bBox = value;
 			}
 		}
@@ -174,7 +174,7 @@ namespace RhinoMobile.Model
 		protected RhinoList<BoundingBox> LayerBBoxes { get; private set; }
 
 		/// <value> The name of the model, without the file extension. </value>
-		private string BaseName
+		protected string BaseName
 		{
 			get {
 				return Title;
@@ -203,19 +203,19 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> The total count of all displayable geometry. </value>
-		public long GeometryCount { get; private set; }
+		public long GeometryCount { get; protected set; }
 
 		/// <value> The total count of the BRep objects in the 3dm file. </value>
-		public long BRepCount { get; private set; }
+		public long BRepCount { get; protected set; }
 
 		/// <value> The total count of the BReps that have a mesh attached to them. </value>
-		public long BRepWithMeshCount { get; private set; }
+		public long BRepWithMeshCount { get; protected set; }
 
 		/// <value> The total count of the Extrusion Objects in the model. </value>
-		public long ExtrusionCount { get; private set; }
+		public long ExtrusionCount { get; protected set; }
 
 		/// <value> Returns the total number of layers in the Model, for convenience only.  </value>
-		public int LayerCount { get; private set; }
+		public int LayerCount { get; protected set; }
 	
 		/// <value> The count of the layers that contain geometry that can be displayed. </value>
 		public int LayersWithGeometryCount 
@@ -232,22 +232,22 @@ namespace RhinoMobile.Model
 				return m_layersWithGeometryCount;
 			}
 
-			private set {
+			protected set {
 				m_layersWithGeometryCount = value;
 			}
 		}
 
 		/// <value> True if the 3dm file was read successfully; false if there was an error reading the 3dm file. </value>
-		public bool ReadSuccessfully { get; private set; }
+		public bool ReadSuccessfully { get; protected set; }
 
 		/// <value> True if the model is ready to be rendered to the screen. </value>
-		public bool IsReadyForRendering { get; private set; }
+		public bool IsReadyForRendering { get; protected set; }
 
 		/// <value> Set to true if there was an error in mesh preparation. </value>
 		public bool InitializationFailed { get; set; }
 
 		/// <value> True if the mesh initialization was cancelled. </value>
-		public bool PreparationCancelled { get; private set; }
+		public bool PreparationCancelled { get; protected set; }
 
 		/// <value> Set to true if there was a memory warning (iOS). </value>
 		public bool OutOfMemoryWarning { get; set; }
@@ -267,7 +267,7 @@ namespace RhinoMobile.Model
 				return m_defaultView;
 			}
 
-			private set {
+			protected set {
 				m_defaultView = value;
 			}
 		}
@@ -349,7 +349,7 @@ namespace RhinoMobile.Model
 		/// the file contents, we should be able to detect this because the constructed modelID
 		/// string will also change.
 		/// </summary>
-		private string InspectRevisionHistory (string path)
+		protected string InspectRevisionHistory (string path)
 		{
 			string identifier = string.Empty;
 
@@ -385,7 +385,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepares the Layers in the ModelFile
 		/// </summary>
-		private void PrepareLayers ()
+		protected void PrepareLayers ()
 		{
 			if (ModelFile != null) {
 				// Count the layers
@@ -470,7 +470,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepare the Bounding Boxes in the ModelFile
 		/// </summary>
-		private void PrepareBoundingBoxes()
+		protected void PrepareBoundingBoxes()
 		{
 			if (ModelFile != null) {
 				// Prepare BBoxes
@@ -496,7 +496,7 @@ namespace RhinoMobile.Model
 		/// Unions the entire ObjectTable BBox with the geo BBox and, if layerIndex is less than the count of layerBBox, 
 		/// unions the LayerBBoxes list at the layerIndex provided with the geo BBox.
 		/// </summary>
-		private void AddObjectBoundingBox (GeometryBase geo, int layerIndex) 
+		protected void AddObjectBoundingBox (GeometryBase geo, int layerIndex) 
 		{
 			ModelFile.Objects.GetBoundingBox().Union (geo.GetBoundingBox (false));
 
@@ -509,7 +509,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepare the Viewports in the ModelFile
 		/// </summary>
-		private void PrepareViewports()
+		protected void PrepareViewports()
 		{
 			if (ModelFile != null) {
 				// Initialize DefaultView from model
@@ -725,7 +725,7 @@ namespace RhinoMobile.Model
 		/// from the render mesh.  For any Extrusion objects, we create a DisplayMesh from the RenderMesh.  For
 		/// InstanceReference objects, _____
 		/// </summary>
-		private void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
+		protected void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
 		{		
 			while (LayerBBoxes.Count () < ModelFile.Layers.Count ()) {
 				BoundingBox invalidBBox = BoundingBox.Empty;
