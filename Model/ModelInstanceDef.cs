@@ -52,9 +52,15 @@ namespace RhinoMobile.Model
 				Guid guid = InstanceDefinition.GetObjectIds () [i];
 				ModelObject modelObject = currentModel.ModelObjectWithGUID (guid);
 				if (modelObject != null) {
-					(modelObject as ModelMesh).LayerIndex = LayerIndex;
-					(modelObject as ModelMesh).ExplodeIntoArray (array, xform);
+					try {
+						(modelObject as ModelMesh).LayerIndex = LayerIndex;
+						(modelObject as ModelMesh).ExplodeIntoArray (array, xform);
+					} catch (SystemException ex) {
+						Console.WriteLine ("Caught Exception: " + ex.Message);
+						Console.WriteLine ("This is caused by a null Mesh on an InstanceRef");
+					}
 				}
+
 			}
 		}
 		#endregion
