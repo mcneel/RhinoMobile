@@ -51,17 +51,17 @@ namespace RhinoMobile.Model
 
 		#region Properties
 		/// <value> The ID can be used in a database for model lookup in a table. </value> 
-		public int Id { get; set; }
+		public virtual int Id { get; set; }
 
 		/// <value> Model title (as displayed to the user, without the .3dm extension). </value>
-		public string Title { get; set; }
+		public virtual string Title { get; set; }
 
 		/// <remarks>
 		/// CAUTION: Getter returns a new copy of the protected field m_modelID.
 		/// Setting the modelID invalidates any cached data. If the modelID has changed, 
 		/// the user likely modified a file in the Documents folder.
 		/// </remarks>
-		public string ModelID { 
+		public virtual string ModelID { 
 			get {
 				if (m_modelID != null)
 					return String.Copy (m_modelID);
@@ -78,23 +78,23 @@ namespace RhinoMobile.Model
 		/// <para>Android: all mesh and thumbnail data is stored in this directory: data/data/[AppName]/files/appsupport.</para>
 		/// <para>iOS: all mesh and thumbnail data is stored in this directory: ~/Library/Application Support/. </para> 
 		/// </value>
-		public string SupportDirectoryName { get; set; }
+		public virtual string SupportDirectoryName { get; set; }
 
 		/// <value>
 		/// <para>iOS Notes: Downloaded model contents are stored in this file in our Documents directory.  
 		/// The Documents directory is visible in the File Sharing section of iTunes, so it is possible for the user to delete this file.
 		/// The Documents directory is also automagically backed up by iCloud as of iOS 5.1 </para>
 		/// </value>
-		public string DocumentsFilename { get; set; }
+		public virtual string DocumentsFilename { get; set; }
 
 		/// <value> True if model file exists in Documents path. </value>
-		public bool Downloaded { get; set; }
+		public virtual bool Downloaded { get; set; }
 
 		/// <value> iOS: resource name if the model is available in the application bundle (used for sample files) </value>
-		public string BundleName { get; set; }
+		public virtual string BundleName { get; set; }
 
 		/// <value> The 3dm file on disk associated with this instance. </value>
-		public File3dm ModelFile { get; set; }
+		public virtual File3dm ModelFile { get; set; }
 
 		/// <value>
 		/// Returns the full pathname of 3dm file associated with this model.  
@@ -103,7 +103,7 @@ namespace RhinoMobile.Model
 		/// iOS: ./Documents/filename.3dm
 		/// See also: DocumentsFilename
 		/// </value>
-		public string ModelPath { 
+		public virtual string ModelPath { 
 			get {
 				if (DocumentsFilename != null) {
 					var documentsPath = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
@@ -120,22 +120,22 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> List of ModelObjects.  These are used in the creation of DisplayObjects, then disposed of. </value> 
-		protected List<ModelObject> ModelObjects { get; set; }
+		protected virtual List<ModelObject> ModelObjects { get; set; }
 
 		/// <value> DisplayObjects is a list of all the objects to be displayed. </value>
-		public List<DisplayObject> DisplayObjects { get; protected set; }
+		public virtual List<DisplayObject> DisplayObjects { get; protected set; }
 
 		/// <value> TransparentObjects is a list of all DisplayObjects that are not opaque. </value>
-		public List<DisplayObject> TransparentObjects { get; protected set; }
+		public virtual List<DisplayObject> TransparentObjects { get; protected set; }
 
 		/// <value> Dictionary of ModelObjects, with Guid keys. </value>
-		protected Dictionary<Guid, ModelObject> ModelObjectsDictionary { get; set; }
+		protected virtual Dictionary<Guid, ModelObject> ModelObjectsDictionary { get; set; }
 
 		/// <value> All the meshes that were found or derived from the 3dm file. </value>
-		public RhinoList<Mesh> AllMeshes { get; protected set; }
+		public virtual RhinoList<Mesh> AllMeshes { get; protected set; }
 
 		/// <value> Returns a BoundingBox for all geometry on visible layers. </value>
-		public BoundingBox VisibleLayersBBox
+		public virtual BoundingBox VisibleLayersBBox
 		{
 			get {
 				if (ModelFile != null) {
@@ -157,7 +157,7 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> The Bounding Box surrounding the model.  Returns an empty bounding box if the model is empty. </value>
-		public BoundingBox BBox
+		public virtual BoundingBox BBox
 		{
 			get {
 				if (m_bBox.IsValid)
@@ -171,10 +171,10 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> Contains the bounding box for all objects in each layer. </value>
-		protected RhinoList<BoundingBox> LayerBBoxes { get; private set; }
+		protected virtual RhinoList<BoundingBox> LayerBBoxes { get; set; }
 
 		/// <value> The name of the model, without the file extension. </value>
-		protected string BaseName
+		protected virtual string BaseName
 		{
 			get {
 				return Title;
@@ -182,13 +182,13 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> Sum of the DisplayObjects and the TransparentObjects; i.e.: the total number of valid meshes. </value>
-		public long MeshCount 
+		public virtual long MeshCount 
 		{ 
 			get { return DisplayObjects.Count + TransparentObjects.Count; }
 		}
 
 		/// <value> The polygon count of all the displayed and transparent objects in the entire model. </value>
-		public long PolygonCount 
+		public virtual long PolygonCount 
 		{ 
 			get {
 				long triangles = 0;
@@ -203,22 +203,22 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> The total count of all displayable geometry. </value>
-		public long GeometryCount { get; protected set; }
+		public virtual long GeometryCount { get; protected set; }
 
 		/// <value> The total count of the BRep objects in the 3dm file. </value>
-		public long BRepCount { get; protected set; }
+		public virtual long BRepCount { get; protected set; }
 
 		/// <value> The total count of the BReps that have a mesh attached to them. </value>
-		public long BRepWithMeshCount { get; protected set; }
+		public virtual long BRepWithMeshCount { get; protected set; }
 
 		/// <value> The total count of the Extrusion Objects in the model. </value>
-		public long ExtrusionCount { get; protected set; }
+		public virtual long ExtrusionCount { get; protected set; }
 
 		/// <value> Returns the total number of layers in the Model, for convenience only.  </value>
-		public int LayerCount { get; protected set; }
+		public virtual int LayerCount { get; protected set; }
 	
 		/// <value> The count of the layers that contain geometry that can be displayed. </value>
-		public int LayersWithGeometryCount 
+		public virtual int LayersWithGeometryCount 
 		{ 
 			get {
 				if (m_layersWithGeometryCount < 0) {
@@ -238,22 +238,22 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> True if the 3dm file was read successfully; false if there was an error reading the 3dm file. </value>
-		public bool ReadSuccessfully { get; protected set; }
+		public virtual bool ReadSuccessfully { get; protected set; }
 
 		/// <value> True if the model is ready to be rendered to the screen. </value>
-		public bool IsReadyForRendering { get; protected set; }
+		public virtual bool IsReadyForRendering { get; protected set; }
 
 		/// <value> Set to true if there was an error in mesh preparation. </value>
-		public bool InitializationFailed { get; set; }
+		public virtual bool InitializationFailed { get; set; }
 
 		/// <value> True if the mesh initialization was cancelled. </value>
-		public bool PreparationCancelled { get; protected set; }
+		public virtual bool PreparationCancelled { get; protected set; }
 
 		/// <value> Set to true if there was a memory warning (iOS). </value>
-		public bool OutOfMemoryWarning { get; set; }
+		public virtual bool OutOfMemoryWarning { get; set; }
 
 		/// <value> True if there are DisplayObjects and TransparentObjects OR the Initialized did not fail </value>
-		public bool MeshesInitialized 
+		public virtual bool MeshesInitialized 
 		{
 			get { return (DisplayObjects != null && TransparentObjects != null) || !InitializationFailed; }
 		}
@@ -261,7 +261,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// The default view to be returned to on a zoom-extensions action
 		/// </summary>
-		public ViewInfo DefaultView 
+		public virtual ViewInfo DefaultView 
 		{ 
 			get {
 				return m_defaultView;
@@ -286,7 +286,7 @@ namespace RhinoMobile.Model
 		/// drawing to the screen.  When this process is completed successfully,
 		/// IsReadyForRendering is set to true.
 		/// </summary>
-		public async void Prepare ()
+		public virtual async void Prepare ()
 		{
 			if (Downloaded) {
 				// Check the revision history of the file and set the modelID
@@ -324,8 +324,8 @@ namespace RhinoMobile.Model
 						m_cancellation_token_source = new CancellationTokenSource();
 
 						//FOR DEBUGGING ONLY...
-						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
-		
+						PrepareMeshesSync (progress, m_cancellation_token_source.Token);
+						/*
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -335,6 +335,7 @@ namespace RhinoMobile.Model
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
 							return;
 						}
+						*/
 					}
 				}
 			}
@@ -348,7 +349,7 @@ namespace RhinoMobile.Model
 		/// the file contents, we should be able to detect this because the constructed modelID
 		/// string will also change.
 		/// </summary>
-		protected string InspectRevisionHistory (string path)
+		protected virtual string InspectRevisionHistory (string path)
 		{
 			string identifier = string.Empty;
 
@@ -372,7 +373,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Cancels the model preparation
 		/// </summary>
-		public void CancelModelPreparation () 
+		public virtual void CancelModelPreparation () 
 		{
 			PreparationCancelled = true;
 			if (m_cancellation_token_source != null)
@@ -384,7 +385,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepares the Layers in the ModelFile
 		/// </summary>
-		protected void PrepareLayers ()
+		protected virtual void PrepareLayers ()
 		{
 			if (ModelFile != null) {
 				// Count the layers
@@ -395,7 +396,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Returns the layer at the index provided, provided the layer exists, else returns null
 		/// </summary>
-		public Layer LayerAtIndex(int layerIndex) 
+		public virtual Layer LayerAtIndex(int layerIndex) 
 		{
 			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count) {
 				if (ModelFile != null)
@@ -408,7 +409,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Returns the layer containing geometry at the index provided.
 		/// </summary>
-		public Layer LayerWithGeometryAtIndex(int layerIndex) 
+		public virtual Layer LayerWithGeometryAtIndex(int layerIndex) 
 		{
 			for (int i = 0; i < ModelFile.Layers.Count; i++) {
 				if (LayerHasGeometryAtIndex(i)) {
@@ -424,7 +425,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// True if the layer at the index provided is visible.
 		/// </summary>
-		public bool LayerIsVisibleAtIndex(int layerIndex) 
+		public virtual bool LayerIsVisibleAtIndex(int layerIndex) 
 		{
 			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count()) {
 				Layer layer = ModelFile.Layers[layerIndex];
@@ -437,7 +438,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// True if layer at the index provided contains geometry.
 		/// </summary>
-		public bool LayerHasGeometryAtIndex(int layerIndex) 
+		public virtual bool LayerHasGeometryAtIndex(int layerIndex) 
 		{
 			if (layerIndex >= 0 && layerIndex < LayerCount) {
 				BoundingBox bb = BoundingBoxForLayer (layerIndex);
@@ -450,7 +451,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Returns the bounding box for all geometry on a layer.
 		/// </summary>
-		protected BoundingBox BoundingBoxForLayer(int layerIndex)
+		protected virtual BoundingBox BoundingBoxForLayer(int layerIndex)
 		{
 			BoundingBox boundingBoxForLayer = BoundingBox.Empty;
 
@@ -469,7 +470,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepare the Bounding Boxes in the ModelFile
 		/// </summary>
-		protected void PrepareBoundingBoxes()
+		protected virtual void PrepareBoundingBoxes()
 		{
 			if (ModelFile != null) {
 				// Prepare BBoxes
@@ -495,7 +496,7 @@ namespace RhinoMobile.Model
 		/// Unions the entire ObjectTable BBox with the geo BBox and, if layerIndex is less than the count of layerBBox, 
 		/// unions the LayerBBoxes list at the layerIndex provided with the geo BBox.
 		/// </summary>
-		protected void AddObjectBoundingBox (GeometryBase geo, int layerIndex) 
+		protected virtual void AddObjectBoundingBox (GeometryBase geo, int layerIndex) 
 		{
 			ModelFile.Objects.GetBoundingBox().Union (geo.GetBoundingBox (false));
 
@@ -508,7 +509,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Prepare the Viewports in the ModelFile
 		/// </summary>
-		protected void PrepareViewports()
+		protected virtual void PrepareViewports()
 		{
 			if (ModelFile != null) {
 				// Initialize DefaultView from model
@@ -547,7 +548,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Sets the DefaultView given the boundingBox and the viewInfo
 		/// </summary>
-		public void GetDefaultView (BoundingBox bbox, ref ViewInfo view) {
+		public virtual void GetDefaultView (BoundingBox bbox, ref ViewInfo view) {
 			// simple parallel projection of bounding box;
 			const double window_height = 1.0;
 			const double window_width = 1.0;
@@ -594,7 +595,7 @@ namespace RhinoMobile.Model
 		/// </summary>
 		/// <param name="progress">Optional class to report progress. Pass null if you don't care to receive progress.</param>
 		/// <param name="cancellationToken">Optional CancellationToken. Pass CancellationToken.None if you don't care to cancel.</param>
-		protected Task<Int64> PrepareMeshesAsync (IProgress<Int64> progress, CancellationToken cancellationToken)
+		protected virtual Task<Int64> PrepareMeshesAsync (IProgress<Int64> progress, CancellationToken cancellationToken)
 		{
 			return Task.Run(
 				() => PrepareMeshes(progress, cancellationToken)
@@ -604,7 +605,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// FOR DEBUGGING ONLY...the synchronous version of PrepareMeshes
 		/// </summary>
-		protected void PrepareMeshesSync (IProgress<Int64> progress, CancellationToken cancellationToken)
+		protected virtual void PrepareMeshesSync (IProgress<Int64> progress, CancellationToken cancellationToken)
 		{
 			PrepareMeshes (progress, cancellationToken);
 		}
@@ -612,7 +613,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// The PrepareMeshes task...
 		/// </summary>
-		protected Int64 PrepareMeshes (IProgress<Int64> progress, CancellationToken cancellationToken)
+		protected virtual Int64 PrepareMeshes (IProgress<Int64> progress, CancellationToken cancellationToken)
 		{
 			Int64 tally = 0;
 
@@ -724,7 +725,7 @@ namespace RhinoMobile.Model
 		/// from the render mesh.  For any Extrusion objects, we create a DisplayMesh from the RenderMesh.  For
 		/// InstanceReference objects, _____
 		/// </summary>
-		protected void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
+		protected virtual void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
 		{		
 			while (LayerBBoxes.Count () < ModelFile.Layers.Count ()) {
 				BoundingBox invalidBBox = BoundingBox.Empty;
@@ -829,7 +830,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Adds a ModelObject to the ModelObjects List
 		/// </summary>
-		protected void AddModelObject (ModelObject obj, ObjectAttributes attr)
+		protected virtual void AddModelObject (ModelObject obj, ObjectAttributes attr)
 		{
 			if (obj != null) {
 				Material material = new Material ();
@@ -871,7 +872,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Adds a Mesh to the ModelObjects List
 		/// </summary>
-		protected void AddModelMesh (Mesh mesh, ObjectAttributes attr)
+		protected virtual void AddModelMesh (Mesh mesh, ObjectAttributes attr)
 		{
 			//Add this to the list of all the meshes
 			if (AllMeshes == null)
@@ -920,7 +921,7 @@ namespace RhinoMobile.Model
 		/// We save the raw VBO data of a mesh in an archive after a mesh has been partitioned
 		/// and use that archive to create the VBOs next time we display the model.
 		/// </summary>
-		protected bool LoadMeshCaches(Mesh mesh, ObjectAttributes attr, Material material)
+		protected virtual bool LoadMeshCaches(Mesh mesh, ObjectAttributes attr, Material material)
 		{
 			string meshGUIDString = attr.ObjectId.ToString ();
 			string meshCachePath = SupportPathForName (meshGUIDString + ".meshes");
@@ -952,7 +953,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Writes the displayMeshes to disk.
 		/// </summary>
-		public void SaveDisplayMeshes (List<DisplayMesh> meshesToSave, Mesh mesh, ObjectAttributes attr, Material material) 
+		public virtual void SaveDisplayMeshes (List<DisplayMesh> meshesToSave, Mesh mesh, ObjectAttributes attr, Material material) 
 		{
 			string meshGUIDString = attr.ObjectId.ToString ();
 			string meshCachePath = SupportPathForName (meshGUIDString + ".meshes");
@@ -972,7 +973,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Triggers a MeshPrep event and passes a measure of progress to any subscribers
 		/// </summary>
-		public void MeshPreparationProgress (float progress) 
+		public virtual void MeshPreparationProgress (float progress) 
 		{
 			if (MeshPrep != null) {
 				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
@@ -985,7 +986,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Triggers a MeshPrep event and tells any subscribers that mesh prep has succeeded
 		/// </summary>
-		public void MeshPreparationDidSucceed ()
+		public virtual void MeshPreparationDidSucceed ()
 		{ 
 			if (MeshPrep != null) {
 				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
@@ -997,7 +998,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Triggers a MeshPrep event and tells any subscribers that mesh prep as failed
 		/// </summary>
-		public void MeshPreparationDidFailWithException (Exception exception)
+		public virtual void MeshPreparationDidFailWithException (Exception exception)
 		{
 			if (MeshPrep != null) {
 				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
@@ -1012,7 +1013,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Platform-specific error handling for MeshExceptions is handled by this method
 		/// </summary>
-		public Exception MeshException (string errorString)
+		public virtual Exception MeshException (string errorString)
 		{
 			Exception meshException = new Exception (errorString);
 			return meshException;
@@ -1024,7 +1025,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Moves any model included in the default sample models from the Application bundle into the Documents folder.
 		/// </summary>
-		public void LoadFromBundle ()
+		public virtual void LoadFromBundle ()
 		{
 			if (BundleName != null) {
 				DocumentsFilename = Title + ".3dm";
@@ -1056,7 +1057,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Moves any model included in the default sample models from the Application bundle into the Documents folder.
 		/// </summary>
-		public void LoadFromBundle(Android.Content.Context context)
+		public virtual void LoadFromBundle(Android.Content.Context context)
 		{
 			if (BundleName != null) {
 				DocumentsFilename = Title + ".3dm";
@@ -1099,7 +1100,7 @@ namespace RhinoMobile.Model
 		/// If documentsFilename is defined, return the full path to the filename.
 		/// Create unique file name for model, save in documentsFilename, return full path.  
 		/// </summary>
-		public string CreateModelPath() 
+		public virtual string CreateModelPath() 
 		{		
 			var documentsPath = System.Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
 			if (DocumentsFilename != string.Empty)
@@ -1129,7 +1130,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Returns the Model Object with the GUID provided
 		/// </summary>
-		public ModelObject ModelObjectWithGUID(Guid guid)
+		public virtual ModelObject ModelObjectWithGUID(Guid guid)
 		{
 			ModelObject objectToRetreive;
 			ModelObjectsDictionary.TryGetValue (guid, out objectToRetreive);
@@ -1139,7 +1140,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Checks to see if the name of the file provided is equal to the DocumentsFilename in this RMModel
 		/// </summary>
-		public bool HasDocumentsName (string aName) 
+		public virtual bool HasDocumentsName (string aName) 
 		{
 			if (aName != string.Empty && DocumentsFilename != string.Empty)
 				return string.Equals (aName, DocumentsFilename, StringComparison.CurrentCultureIgnoreCase);
@@ -1167,7 +1168,7 @@ namespace RhinoMobile.Model
 		/// backed up when first launched...RhinoLogo.3dm is/was an example.  Making sure that
 		/// the file's attributes are excluded from backup is important.</para>
 		/// </summary>
-		protected void ExcludeFromBackup (NSUrl filePathURL)
+		protected virtual void ExcludeFromBackup (NSUrl filePathURL)
 		{
 			filePathURL.SetResource(NSUrl.IsExcludedFromBackupKey, (NSNumber.FromBoolean(true)));
 		}
@@ -1179,7 +1180,7 @@ namespace RhinoMobile.Model
 		/// <para>iOS: Helper method for creating a full path from a file name that is in the 
 		/// ~/Library/Application Support directory</para>
 		/// </summary>
-		protected string SupportPathFromDirectory(string directory, string filename)
+		protected virtual string SupportPathFromDirectory(string directory, string filename)
 		{
 			string documentsPath = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
 
@@ -1215,7 +1216,7 @@ namespace RhinoMobile.Model
 		/// <para>iOS: Helper method for creating a full path for one of our files that is in the 
 		/// ~/Library/Application Support subdirectory</para>
 		/// </summary>
-		public string SupportPathForName(string fileOrDirectoryName) 
+		public virtual string SupportPathForName(string fileOrDirectoryName) 
 		{
 			if (SupportDirectoryName == null) {
 				string directoryName = string.Empty;
@@ -1238,7 +1239,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Emptys all Model and Display Object lists, frees memory.
 		/// </summary>
-		protected void CleanUp()
+		protected virtual void CleanUp()
 		{
 			ModelFile.Dispose ();
 			ModelFile = null;
@@ -1251,7 +1252,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Delete everything, including our containing directory
 		/// </summary>
-		public void DeleteAll() 
+		public virtual void DeleteAll() 
 		{
 			DeleteCaches ();
 
@@ -1265,7 +1266,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Revert to undownloaded status
 		/// </summary>
-		public void UnDownload() 
+		public virtual void UnDownload() 
 		{
 			DeleteAll ();
 			Downloaded = false;
@@ -1275,7 +1276,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Delete all cached data but not the model
 		/// </summary>
-		public void DeleteCaches() 
+		public virtual void DeleteCaches() 
 		{
 			if (SupportDirectoryName != string.Empty) {
 				if (Directory.Exists (SupportPathForName (string.Empty)))  
