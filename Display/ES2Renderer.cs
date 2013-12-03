@@ -82,6 +82,11 @@ namespace RhinoMobile.Display
 
 		/// <value> The ViewportInfo that is currently being rendered. </value>
 		public ViewportInfo Viewport { get; set; }
+
+		#if __ANDROID__
+		/// <value> This is the application context from Android which is necessary in order to retreive items from the bundle. </value>
+		public Android.Content.Context AndroidContext { get; set; }
+		#endif 
 		#endregion
 
 		#region Shaders
@@ -97,9 +102,10 @@ namespace RhinoMobile.Display
 					return shader;
 				}
 			}
+		
 			String vertex_shader = GetResourceAsString (baseName, "vsh");
 			String fragment_shader = GetResourceAsString (baseName, "fsh");
-
+		
 			var new_shader = RhGLShaderProgram.BuildProgram (baseName, vertex_shader, fragment_shader);
 			if (new_shader != null)
 				m_shaders.Add (new_shader);
@@ -113,7 +119,7 @@ namespace RhinoMobile.Display
 		/// <para>Android: returns the shader as a string from assets.</para>
 		/// <para>iOS: returns the shader as a string from the app bundle.</para>
 		/// </summary>
-		static string GetResourceAsString(string name, string extension)
+		private string GetResourceAsString(string name, string extension)
 		{
 			string resource = string.Empty;
 			string contents = string.Empty;
@@ -122,7 +128,7 @@ namespace RhinoMobile.Display
 			resource = name + "." + extension;
 			string shaderPath = Path.Combine ("Shaders", resource);
 
-			var context = App.Manager.ApplicationContext;
+			var context = AndroidContext;
 			System.IO.StreamReader sr = new System.IO.StreamReader (context.Assets.Open (shaderPath));
 			contents = sr.ReadToEnd ();
 			sr.Close();

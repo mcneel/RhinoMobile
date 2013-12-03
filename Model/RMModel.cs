@@ -325,7 +325,7 @@ namespace RhinoMobile.Model
 
 						//FOR DEBUGGING ONLY...
 						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
-
+		
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -335,7 +335,6 @@ namespace RhinoMobile.Model
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
 							return;
 						}
-				
 					}
 				}
 			}
@@ -649,10 +648,10 @@ namespace RhinoMobile.Model
 
 					// Sort by object type: ModelMesh, ModelInstanceRef
 					foreach (ModelMesh modelObject in ModelObjects.OfType<ModelMesh>())
-						modelObject.ExplodeIntoArray(explodedObjects, identity);
+						modelObject.ExplodeIntoArray (this, explodedObjects, identity);
 
 					foreach (ModelInstanceRef modelObject in ModelObjects.OfType<ModelInstanceRef>())
-						(modelObject as ModelInstanceRef).ExplodeIntoArray(explodedObjects, identity);
+						(modelObject as ModelInstanceRef).ExplodeIntoArray (this, explodedObjects, identity);
 
 					// split explodedObjects into displayObjects and transparentObjects
 					foreach (DisplayObject obj in explodedObjects) {
@@ -1021,47 +1020,12 @@ namespace RhinoMobile.Model
 		#endregion
 
 		#region Load Model From Bundle
+		#if __IOS__
 		/// <summary>
 		/// Moves any model included in the default sample models from the Application bundle into the Documents folder.
 		/// </summary>
 		public void LoadFromBundle ()
 		{
-			#if __ANDROID__
-			if (BundleName != null) {
-				DocumentsFilename = Title + ".3dm";
-				string sampleModelFilePath = Path.Combine ("Models", DocumentsFilename);
-				System.IO.Stream sampleModelStream;
-
-				try {
-					sampleModelStream = App.Manager.ApplicationContext.Assets.Open (sampleModelFilePath);
-				} catch (Java.IO.FileNotFoundException ex) {
-					Console.WriteLine ("WARNING: Could not find the file: {0}", ex.Message);
-					return;
-				} 
-
-				string toPath = ModelPath;
-
-				if (!File.Exists(toPath)) {
-					System.IO.FileStream outputModelStream = new System.IO.FileStream (ModelPath, FileMode.OpenOrCreate);
-
-					byte[] buffer = new byte[8 * 1024];
-					int len;
-					while ( (len = sampleModelStream.Read(buffer, 0, buffer.Length)) > 0)
-					{
-						outputModelStream.Write(buffer, 0, len);
-					}    
-
-					outputModelStream.Flush ();
-					outputModelStream.Close ();
-
-					sampleModelStream.Close ();
-				}
-			
-				Downloaded = true;
-			}
-			#endif
-
-			#if __IOS__
 			if (BundleName != null) {
 				DocumentsFilename = Title + ".3dm";
 
@@ -1085,8 +1049,49 @@ namespace RhinoMobile.Model
 
 				Downloaded = true;
 			}
-			#endif
 		}
+		#endif
+
+		#if __ANDROID__
+		/// <summary>
+		/// Moves any model included in the default sample models from the Application bundle into the Documents folder.
+		/// </summary>
+		public void LoadFromBundle(Android.Content.Context context)
+		{
+			if (BundleName != null) {
+				DocumentsFilename = Title + ".3dm";
+				string sampleModelFilePath = Path.Combine ("Models", DocumentsFilename);
+				System.IO.Stream sampleModelStream;
+
+				try {
+					sampleModelStream = context.Assets.Open (sampleModelFilePath);
+				} catch (Java.IO.FileNotFoundException ex) {
+					Console.WriteLine ("WARNING: Could not find the file: {0}", ex.Message);
+					return;
+				} 
+
+				string toPath = ModelPath;
+
+				if (!File.Exists(toPath)) {
+					System.IO.FileStream outputModelStream = new System.IO.FileStream (ModelPath, FileMode.OpenOrCreate);
+
+					byte[] buffer = new byte[8 * 1024];
+					int len;
+					while ( (len = sampleModelStream.Read(buffer, 0, buffer.Length)) > 0)
+					{
+						outputModelStream.Write(buffer, 0, len);
+					}    
+
+					outputModelStream.Flush ();
+					outputModelStream.Close ();
+
+					sampleModelStream.Close ();
+				}
+
+				Downloaded = true;
+			}
+		}
+		#endif
 		#endregion
 
 		#region Utilities

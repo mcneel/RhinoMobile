@@ -44,13 +44,13 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Calls into this reference's ModelInstanceDef ExplodeIntoArray method
 		/// </summary>
-		public new void ExplodeIntoArray (List<DisplayObject> array, Transform initialXform)
+		public new void ExplodeIntoArray (RMModel model, List<DisplayObject> array, Transform initialXform)
 		{
 			Transform newXform = initialXform * m_xform;
-			RMModel currentModel = App.Manager.CurrentModel;
+			RMModel currentModel = model;
 			ModelObject modelObject = currentModel.ModelObjectWithGUID (m_definitionGUID);
 			(modelObject as ModelInstanceDef).LayerIndex = this.LayerIndex;
-			(modelObject as ModelInstanceDef).ExplodeIntoArray (array, newXform);	
+			(modelObject as ModelInstanceDef).ExplodeIntoArray (model, array, newXform);	
 		}
 		#endregion
 

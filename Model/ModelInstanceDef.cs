@@ -42,9 +42,9 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Explodes each object in the instance definition into a list of display objects
 		/// </summary>
-		public new void ExplodeIntoArray(List<DisplayObject> array, Transform xform)
+		public new void ExplodeIntoArray(RMModel model, List<DisplayObject> array, Transform xform)
 		{
-			RMModel currentModel = App.Manager.CurrentModel;
+			RMModel currentModel = model;
 
 			int instanceCount = InstanceDefinition.GetObjectIds ().GetLength (0);
 
@@ -54,7 +54,7 @@ namespace RhinoMobile.Model
 				if (modelObject != null) {
 					try {
 						(modelObject as ModelMesh).LayerIndex = LayerIndex;
-						(modelObject as ModelMesh).ExplodeIntoArray (array, xform);
+						(modelObject as ModelMesh).ExplodeIntoArray (model, array, xform);
 					} catch (SystemException ex) {
 						Console.WriteLine ("Caught Exception: " + ex.Message);
 						Console.WriteLine ("This is caused by a null Mesh on an InstanceRef");

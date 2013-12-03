@@ -64,7 +64,7 @@ namespace RhinoMobile.Model
 		/// For Debugging purposes only.  If this method is being called, then some object
 		/// has not been properly cast into a ModelMesh, a ModelInstanceDef, or a ModelInstanceRef.
 		/// </remarks>
-		public void ExplodeIntoArray(List<DisplayObject> array, Transform xForm)
+		public void ExplodeIntoArray(RMModel model, List<DisplayObject> array, Transform xForm)
 		{
 			#if DEBUG
 			Console.WriteLine("Missing implementation or implementation should happen in derived class");

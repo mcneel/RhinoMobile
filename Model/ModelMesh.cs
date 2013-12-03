@@ -44,7 +44,7 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Explodes a list of DisplayObjects into DisplayMeshes
 		/// </summary>
-		public new void ExplodeIntoArray(List<DisplayObject> array, Transform xform)
+		public new void ExplodeIntoArray(RMModel model, List<DisplayObject> array, Transform xform)
 		{
 			bool isIdentityXform = xform.Equals (Transform.Identity);
 			foreach (DisplayMesh mesh in DisplayMeshes) {
