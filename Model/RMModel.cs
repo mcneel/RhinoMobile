@@ -324,8 +324,8 @@ namespace RhinoMobile.Model
 						m_cancellation_token_source = new CancellationTokenSource();
 
 						//FOR DEBUGGING ONLY...
-						PrepareMeshesSync (progress, m_cancellation_token_source.Token);
-						/*
+						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
+
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -335,7 +335,7 @@ namespace RhinoMobile.Model
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
 							return;
 						}
-						*/
+
 					}
 				}
 			}
