@@ -36,16 +36,16 @@ namespace RhinoMobile.Display
 		public int LayerIndex {get; set;}
 
 		/// <value> True if the object is opaque. </value>
-		public bool IsOpaque {  get { return true; } }
+		public virtual bool IsOpaque {  get { return true; } }
 
 		/// <value> Always return 0, must be overridden. </value>
-		public uint TriangleCount { get { return 0; } }
+		public virtual uint TriangleCount { get { return 0; } protected set { } }
 
 		/// <value> The DisplayMesh associated with this object. </value>
-		public DisplayMesh Mesh { get; protected set; }
+		public virtual DisplayMesh Mesh { get; protected set; }
 
 		/// <value> The transform of the object. </value>
-		public Transform XForm { get; protected set; }
+		public virtual Transform XForm { get; protected set; }
 		#endregion
 
 		#region constructors

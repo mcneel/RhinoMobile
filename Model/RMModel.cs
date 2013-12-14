@@ -188,10 +188,10 @@ namespace RhinoMobile.Model
 		}
 
 		/// <value> The polygon count of all the displayed and transparent objects in the entire model. </value>
-		public virtual long PolygonCount 
+		public virtual uint PolygonCount 
 		{ 
 			get {
-				long triangles = 0;
+				uint triangles = 0;
 			
 				foreach (DisplayObject me in DisplayObjects)
 					triangles += me.TriangleCount;

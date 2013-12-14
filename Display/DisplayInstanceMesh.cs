@@ -23,16 +23,16 @@ namespace RhinoMobile.Display
 
 		#region properties
 		/// <value> The original DisplayMesh. </value>
-		public new DisplayMesh Mesh { get; set; }
+		public override DisplayMesh Mesh { get; protected set; }
 
 		/// <value> The count of triangles in the original mesh. </value>
-		public new uint TriangleCount { get { return Mesh.TriangleCount; } }
+		public override uint TriangleCount { get { return Mesh.TriangleCount; } }
 
 		/// <value> True if the mesh is opaque. </value>
-		public new bool IsOpaque { get { return Mesh.IsOpaque; } }
+		public override bool IsOpaque { get { return Mesh.IsOpaque; } }
 
 		/// <value> The transform of this instance of the mesh, not the original transform. </value>
-		public new Transform XForm { get { return m_xform; } }
+		public override Transform XForm { get { return m_xform; } }
 		#endregion
 
 		#region constructors

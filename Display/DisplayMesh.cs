@@ -181,10 +181,10 @@ namespace RhinoMobile.Display
 		public int Stride { get; private set; }
 
 		/// <value> The number of triangles in this mesh. </value>
-		public new uint TriangleCount { get; private set; }
+		public override uint TriangleCount { get; protected set; }
 
 		/// <value> True if the material associated with this display mesh is not transparent. </value>
-		public new bool IsOpaque 
+		public override bool IsOpaque 
 		{ 
 			get { 
 				if (Material.Transparency > 0.0) {
@@ -340,6 +340,8 @@ namespace RhinoMobile.Display
 
 			Vertices = mesh.Vertices.ToFloatArray ();
 
+			TriangleCount += (uint)mesh.Faces.Count;
+
 			if (Vertices.Length > 0)
 				return true;
 			else 
@@ -377,6 +379,8 @@ namespace RhinoMobile.Display
 				VerticesNormals = verticesNormals;
 			}
 
+			TriangleCount += (uint)mesh.Faces.Count;
+
 			if (VerticesNormals.Length > 0)
 				return true;
 			else 
@@ -399,6 +403,8 @@ namespace RhinoMobile.Display
 			}
 
 			VerticesColors = verticesColors;
+
+			TriangleCount += (uint)mesh.Faces.Count;
 
 			if (VerticesColors.Length > 0)
 				return true;
@@ -423,6 +429,8 @@ namespace RhinoMobile.Display
 			}
 
 			VerticesNormalsColors = verticesNormalsColors;
+
+			TriangleCount += (uint)mesh.Faces.Count;
 
 			if (VerticesNormalsColors.Length > 0)
 				return true;
