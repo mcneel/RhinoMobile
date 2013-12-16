@@ -1247,6 +1247,7 @@ namespace RhinoMobile.Model
 			TransparentObjects.Clear ();
 			ModelObjectsDictionary.Clear ();
 			ModelObjects.Clear ();
+			IsReadyForRendering = false;
 		}
 
 		/// <summary>
