@@ -333,6 +333,7 @@ namespace RhinoMobile.Model
 						catch (OperationCanceledException)
 						{
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
+							CleanUp ();
 							return;
 						}
 
