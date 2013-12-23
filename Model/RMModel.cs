@@ -141,7 +141,6 @@ namespace RhinoMobile.Model
 				if (ModelFile != null) {
 					for (int layerIndex = 0; layerIndex < LayerCount; layerIndex++) {
 						if (LayerIsVisibleAtIndex (layerIndex)) {
-							//TODO: possible leak here...use with caution
 							File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer(LayerAtIndex (layerIndex).Name);
 
 							foreach (File3dmObject obj in objsByLayer)
