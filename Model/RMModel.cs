@@ -213,6 +213,9 @@ namespace RhinoMobile.Model
 		/// <value> The total count of the Extrusion Objects in the model. </value>
 		public virtual long ExtrusionCount { get; protected set; }
 
+		/// <value> The layers in this model. </value>
+		public virtual List<Layer> Layers { get; protected set; }
+
 		/// <value> Returns the total number of layers in the Model, for convenience only.  </value>
 		public virtual int LayerCount { get; protected set; }
 	
@@ -390,6 +393,12 @@ namespace RhinoMobile.Model
 			if (ModelFile != null) {
 				// Count the layers
 				LayerCount = ModelFile.Layers.Count;
+
+				// Set the Layers property on this model
+				List<Layer> layers = new List<Layer> ();
+				foreach (Layer layer in ModelFile.Layers)
+					layers.Add (layer);
+				Layers = layers;
 			}
 		}
 
