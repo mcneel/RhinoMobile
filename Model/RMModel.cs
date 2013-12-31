@@ -39,7 +39,6 @@ namespace RhinoMobile.Model
 	{
 		#region Members
 		protected string m_modelID;
-		protected int m_layersWithGeometryCount;
 		protected string m_modelPath;
 		protected BoundingBox m_visibleLayersBoundingBox;
 		protected ViewInfo m_defaultView;
@@ -220,24 +219,7 @@ namespace RhinoMobile.Model
 		public virtual int LayerCount { get; protected set; }
 	
 		/// <value> The count of the layers that contain geometry that can be displayed. </value>
-		public virtual int LayersWithGeometryCount 
-		{ 
-			get {
-				if (m_layersWithGeometryCount < 0) {
-					m_layersWithGeometryCount = 0;
-					for  (int i = 0; i < LayerCount; i++) {
-						if (LayerHasGeometryAtIndex (i))
-							m_layersWithGeometryCount++;
-					}
-				}
-
-				return m_layersWithGeometryCount;
-			}
-
-			protected set {
-				m_layersWithGeometryCount = value;
-			}
-		}
+		public virtual int LayersWithGeometryCount { get; protected set; }
 
 		/// <value> True if the 3dm file was read successfully; false if there was an error reading the 3dm file. </value>
 		public virtual bool ReadSuccessfully { get; protected set; }
@@ -278,7 +260,7 @@ namespace RhinoMobile.Model
 		#region Constructors
 		public RMModel ()
 		{
-			LayersWithGeometryCount = -1;
+
 		}
 		#endregion
 
@@ -393,6 +375,14 @@ namespace RhinoMobile.Model
 			if (ModelFile != null) {
 				// Count the layers
 				LayerCount = ModelFile.Layers.Count;
+
+				// Count the Layers with Geometry...
+				int layersWithGeometryCount = 0;
+				for  (int i = 0; i < LayerCount; i++) {
+					if (LayerHasGeometryAtIndex (i))
+						layersWithGeometryCount++;
+				}
+				LayersWithGeometryCount = layersWithGeometryCount;
 
 				// Set the Layers property on this model
 				List<Layer> layers = new List<Layer> ();
