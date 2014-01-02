@@ -35,7 +35,7 @@ using Android;
 
 namespace RhinoMobile.Model
 {
-	public class RMModel
+	public class RMModel : IDisposable
 	{
 		#region Members
 		protected string m_modelID;
@@ -46,6 +46,7 @@ namespace RhinoMobile.Model
 
 		protected CancellationTokenSource m_cancellation_token_source;
 		public event MeshPreparationHandler MeshPrep;
+		protected MeshPreparationProgress m_meshPrepProgress;
 		#endregion
 
 		#region Properties
@@ -317,7 +318,7 @@ namespace RhinoMobile.Model
 						catch (OperationCanceledException)
 						{
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
-							CleanUp ();
+							Dispose ();
 							return;
 						}
 
@@ -618,7 +619,7 @@ namespace RhinoMobile.Model
 
 			Exception prepareMeshesException = MeshException (string.Empty);
 			// Show we have started reading the meshes
-			MeshPreparationProgress (tally);
+			MeshPreparationProgressEvent (tally);
 
 			if (Downloaded) {
 				bool rc = true;
@@ -629,7 +630,7 @@ namespace RhinoMobile.Model
 
 						tally++;
 						if (progress != null)
-							MeshPreparationProgress ((float)i / (float)ModelFile.Objects.Count);
+							MeshPreparationProgressEvent ((float)i / (float)ModelFile.Objects.Count);
 						if (cancellationToken.IsCancellationRequested)
 							throw new OperationCanceledException();
 					}
@@ -972,13 +973,15 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Triggers a MeshPrep event and passes a measure of progress to any subscribers
 		/// </summary>
-		public virtual void MeshPreparationProgress (float progress) 
+		public virtual void MeshPreparationProgressEvent (float progress) 
 		{
+			if (m_meshPrepProgress == null)
+				m_meshPrepProgress = new MeshPreparationProgress ();
+
 			if (MeshPrep != null) {
-				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
-				prepProgress.MeshProgress = progress;
-				prepProgress.PreparationDidSucceed = false;
-				MeshPrep (this, prepProgress);
+				m_meshPrepProgress.MeshProgress = progress;
+				m_meshPrepProgress.PreparationDidSucceed = false;
+				MeshPrep (this, m_meshPrepProgress);
 			}
 		}
 
@@ -987,10 +990,12 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual void MeshPreparationDidSucceed ()
 		{ 
+			if (m_meshPrepProgress == null)
+				m_meshPrepProgress = new MeshPreparationProgress ();
+
 			if (MeshPrep != null) {
-				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
-				prepProgress.PreparationDidSucceed = true;
-				MeshPrep (this, prepProgress);
+				m_meshPrepProgress.PreparationDidSucceed = true;
+				MeshPrep (this, m_meshPrepProgress);
 			}
 		}
 
@@ -1000,10 +1005,9 @@ namespace RhinoMobile.Model
 		public virtual void MeshPreparationDidFailWithException (Exception exception)
 		{
 			if (MeshPrep != null) {
-				MeshPreparationProgress prepProgress = new MeshPreparationProgress();
-				prepProgress.PreparationDidSucceed = false;
-				prepProgress.FailException = exception;
-				MeshPrep (this, prepProgress);
+				m_meshPrepProgress.PreparationDidSucceed = false;
+				m_meshPrepProgress.FailException = exception;
+				MeshPrep (this, m_meshPrepProgress);
 			}
 
 			InitializationFailed = true;
@@ -1235,18 +1239,52 @@ namespace RhinoMobile.Model
 		#endregion
 
 		#region Clean Up and Disposal
-		/// <summary>
-		/// Emptys all Model and Display Object lists, frees memory.
-		/// </summary>
-		protected virtual void CleanUp()
+		~RMModel()
 		{
-			ModelFile.Dispose ();
-			ModelFile = null;
-			DisplayObjects.Clear ();
-			TransparentObjects.Clear ();
-			ModelObjectsDictionary.Clear ();
-			ModelObjects.Clear ();
-			IsReadyForRendering = false;
+			Dispose (false);
+			GC.SuppressFinalize (this);
+		}
+
+		public void Dispose()
+		{
+			Dispose (true);
+		}
+
+		private void Dispose(bool safeToFreeManagedObjects)
+		{
+			// Free unmanaged resources...
+
+			// Free managed resources...but only if call from Dispose
+			// (If called from Finalize then the objects might not exist anymore)
+			if (safeToFreeManagedObjects) {
+
+				if (ModelFile != null) {
+					ModelFile.Dispose ();
+					ModelFile = null;
+				}
+
+				if (DisplayObjects != null) {
+					DisplayObjects.Clear ();
+					DisplayObjects = null;
+				}
+
+				if (TransparentObjects != null) {
+					TransparentObjects.Clear ();
+					TransparentObjects = null;
+				}
+
+				if (ModelObjectsDictionary != null) {
+					ModelObjectsDictionary.Clear ();
+					ModelObjectsDictionary = null;
+				}
+
+				if (ModelObjects != null) {
+					ModelObjects.Clear ();
+					ModelObjects = null;
+				}
+
+				IsReadyForRendering = false;
+			}
 		}
 
 		/// <summary>
@@ -1270,7 +1308,7 @@ namespace RhinoMobile.Model
 		{
 			DeleteAll ();
 			Downloaded = false;
-			CleanUp ();
+			Dispose ();
 		}
 
 		/// <summary>
