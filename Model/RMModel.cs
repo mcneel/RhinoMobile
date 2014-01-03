@@ -1283,6 +1283,25 @@ namespace RhinoMobile.Model
 					ModelObjects = null;
 				}
 
+				if (m_defaultView != null) {
+					m_defaultView.Dispose ();
+					m_defaultView = null;
+				}
+
+				if (AllMeshes != null) {
+					AllMeshes.Clear ();
+					AllMeshes = null;
+				}
+
+				if (Layers != null) {
+					Layers.Clear ();
+					Layers = null;
+				}
+
+				m_visibleLayersBoundingBox = BoundingBox.Empty;
+				m_bBox = BoundingBox.Empty;
+				m_meshPrepProgress = null;
+
 				IsReadyForRendering = false;
 			}
 		}
