@@ -11,8 +11,10 @@
 // ALL IMPLIED WARRANTIES OF FITNESS FOR ANY PARTICULAR PURPOSE AND OF
 // MERCHANTABILITY ARE HEREBY DISCLAIMED.
 //
+using System;
 using RhinoMobile.Model;
 using Rhino.DocObjects;
+
 
 namespace RhinoMobile.Display
 {
@@ -26,7 +28,7 @@ namespace RhinoMobile.Display
 	/// <summary>
 	/// Defines the rendering interface for all renderer classes.
 	/// </summary>
-	public interface IRenderer
+	public interface IRenderer : IDisposable
 	{
 		bool RenderModel (RMModel model, ViewportInfo viewport);
 		bool Resize();

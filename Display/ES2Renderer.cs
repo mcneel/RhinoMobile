@@ -12,7 +12,6 @@
 // MERCHANTABILITY ARE HEREBY DISCLAIMED.
 //
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -24,9 +23,7 @@ using RhinoMobile.Model;
 using RhinoMobile.Display;
 
 #if __IOS__
-using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using MonoTouch.OpenGLES;
 #endif
 
 #region OpenTK-1.0 API diffs
@@ -65,28 +62,94 @@ namespace RhinoMobile.Display
 			AgmMagentaGreen
 		}
 
-		#region members
-		RMModel m_model;
-		Material m_currentMaterial;
-
-		// shaders are created on demand and stored in a list
-		List<RhGLShaderProgram> m_shaders = new List<RhGLShaderProgram>();
-
-		// Active shader reference used to "track" the current shader object...
-		RhGLShaderProgram m_activeShader;
-		#endregion
-
 		#region properties
+		/// <value> The RMModel to be rendered. </value>
+		public RMModel Model { get; private set; }
+
 		/// <value> Frame should be passed in by the parent view. </value>
 		public System.Drawing.RectangleF Frame { get; set; }
 
 		/// <value> The ViewportInfo that is currently being rendered. </value>
 		public ViewportInfo Viewport { get; set; }
 
+		/// <value> The current material being rendered. </value>
+		public Material CurrentMaterial { get; private set; }
+
+		/// <value> Active shader reference used to "track" the current shader object. </value>
+		public RhGLShaderProgram ActiveShader { get; private set; }
+
+		/// <value> Shaders are created on demand and stored in a list. </value>
+		public List<RhGLShaderProgram> Shaders { get; private set; }
+
 		#if __ANDROID__
 		/// <value> This is the application context from Android which is necessary in order to retreive items from the bundle. </value>
 		public Android.Content.Context AndroidContext { get; set; }
 		#endif 
+		#endregion
+
+		#region constructors and disposal
+		public ES2Renderer ()
+		{
+			Shaders = new List<RhGLShaderProgram> ();
+		}
+
+		/// <summary>
+		/// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+		/// </summary>
+		~ ES2Renderer () { Dispose (false); }
+
+		/// <summary>
+		/// Actively reclaims unmanaged resources that this instance uses.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose (true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// For derived class implementers.
+		/// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+		/// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+		/// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+		/// <para>Also, you must call the base virtual method within your overriding method.</para>
+		/// </summary>
+		/// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			// Free unmanaged resources...
+
+			// Free managed resources...but only if called from Dispose
+			// (If called from Finalize then the objects might not exist anymore)
+			if (disposing) {
+				if (Model != null) {
+					Model.Dispose ();
+					Model = null;
+				}
+
+				Frame = System.Drawing.RectangleF.Empty;
+
+				if (Viewport != null) {
+					Viewport.Dispose ();
+					Viewport = null;
+				}
+
+				if (CurrentMaterial != null) {
+					CurrentMaterial.Dispose ();
+					CurrentMaterial = null;
+				}
+
+				if (ActiveShader != null) {
+					ActiveShader.Disable ();
+					ActiveShader = null;
+				}
+
+				if (Shaders != null) {
+					Shaders.Clear ();
+					Shaders = null;
+				}
+			}	
+		}
 		#endregion
 
 		#region Shaders
@@ -95,10 +158,10 @@ namespace RhinoMobile.Display
 		/// </summary>
 		private RhGLShaderProgram GetShader (string baseName)
 		{
-			for (int i = 0; i<m_shaders.Count; i++) {
-				var shader = m_shaders [i];
+			for (int i = 0; i<Shaders.Count; i++) {
+				var shader = Shaders [i];
 				if (shader.Name.Equals (baseName, StringComparison.InvariantCultureIgnoreCase)) {
-					SetupShader (shader, m_model, Viewport);
+					SetupShader (shader, Model, Viewport);
 					return shader;
 				}
 			}
@@ -108,9 +171,9 @@ namespace RhinoMobile.Display
 		
 			var new_shader = RhGLShaderProgram.BuildProgram (baseName, vertex_shader, fragment_shader);
 			if (new_shader != null)
-				m_shaders.Add (new_shader);
+				Shaders.Add (new_shader);
 
-			SetupShader (new_shader, m_model, Viewport);
+			SetupShader (new_shader, Model, Viewport);
 			return new_shader;
 		}
 
@@ -184,7 +247,7 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public bool RenderModel (RMModel model, Rhino.DocObjects.ViewportInfo viewport)
 		{
-			m_model = model;
+			Model = model;
 
       ClearView ();
       if ((model == null) || !model.IsReadyForRendering)
@@ -197,7 +260,7 @@ namespace RhinoMobile.Display
 			GL.Disable (EnableCap.Blend);
 
 			// Get the shader...
-			m_activeShader = GetShader ("PerPixelLighting");
+			ActiveShader = GetShader ("PerPixelLighting");
 
 			// Render calls...
 			if (model != null) {
@@ -213,7 +276,7 @@ namespace RhinoMobile.Display
 			}
 
 			// Disable the shader
-			m_activeShader.Disable ();
+			ActiveShader.Disable ();
 
 			return true;
 		}
@@ -228,7 +291,7 @@ namespace RhinoMobile.Display
 				return;
 
 			// If the layer that the object is on is turned off, return.
-			if (!m_model.LayerIsVisibleAtIndex (obj.LayerIndex))
+			if (!Model.LayerIsVisibleAtIndex (obj.LayerIndex))
 				return;
 
 			DisplayMesh displayMesh;
@@ -276,7 +339,7 @@ namespace RhinoMobile.Display
 				// Bind Vertices
 				// ORDER MATTERS...if you don't do things in this order, you will get very frusterated.
 				// First, enable the VertexAttribArray for positions
-				int rglVertex = m_activeShader.RglVertexIndex;
+				int rglVertex = ActiveShader.RglVertexIndex;
 				GL.EnableVertexAttribArray (rglVertex);
 				// Second, Bind the ArrayBuffer
 				GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
@@ -285,7 +348,7 @@ namespace RhinoMobile.Display
 
 				// Bind Normals
 				if (displayMesh.HasVertexNormals) {
-					int rglNormal = m_activeShader.RglNormalIndex;
+					int rglNormal = ActiveShader.RglNormalIndex;
 					GL.EnableVertexAttribArray (rglNormal);
 					GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 					GL.VertexAttribPointer (rglNormal, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Geometry.Point3f))));
@@ -293,7 +356,7 @@ namespace RhinoMobile.Display
 
 				// Bind Colors
 				if (displayMesh.HasVertexColors) {
-					int rglColor = m_activeShader.RglColorIndex;
+					int rglColor = ActiveShader.RglColorIndex;
 					GL.EnableVertexAttribArray (rglColor);
 					GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
@@ -301,7 +364,7 @@ namespace RhinoMobile.Display
 
 				// Push transforms from instances onto the uniform stack
 				if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
-					m_activeShader.PushModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
+					ActiveShader.PushModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
 				}
 
 				// Bind Indices
@@ -318,7 +381,7 @@ namespace RhinoMobile.Display
 			
 				// Pop transforms from instances off of the uniform stack
 				if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
-					m_activeShader.PopModelViewMatrix ();
+					ActiveShader.PopModelViewMatrix ();
 				}
 
 				GL.DisableVertexAttribArray (rglVertex);
@@ -435,10 +498,10 @@ namespace RhinoMobile.Display
 		/// </summary>
 		private void SetMaterial (Material material)
 		{
-			if (m_activeShader != null) {
-				if (!material.Equals (m_currentMaterial)) {
-					m_activeShader.SetupMaterial (material);
-					m_currentMaterial = material;
+			if (ActiveShader != null) {
+				if (!material.Equals (CurrentMaterial)) {
+					ActiveShader.SetupMaterial (material);
+					CurrentMaterial = material;
 				}
 			}
 		}
