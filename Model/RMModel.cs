@@ -258,10 +258,88 @@ namespace RhinoMobile.Model
 		}
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposal
 		public RMModel ()
 		{
 
+		}
+
+		/// <summary>
+		/// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+		/// </summary>
+		~RMModel() { Dispose (false); }
+
+		/// <summary>
+		/// Actively reclaims unmanaged resources that this instance uses.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		/// <summary>
+		/// For derived class implementers.
+		/// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+		/// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+		/// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+		/// <para>Also, you must call the base virtual method within your overriding method.</para>
+		/// </summary>
+		/// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			// Free unmanaged resources...
+
+			// Free managed resources...but only if call from Dispose
+			// (If called from Finalize then the objects might not exist anymore)
+			if (disposing) {
+
+				if (ModelFile != null) {
+					ModelFile.Dispose ();
+					ModelFile = null;
+				}
+
+				if (DisplayObjects != null) {
+					DisplayObjects.Clear ();
+					DisplayObjects = null;
+				}
+
+				if (TransparentObjects != null) {
+					TransparentObjects.Clear ();
+					TransparentObjects = null;
+				}
+
+				if (ModelObjectsDictionary != null) {
+					ModelObjectsDictionary.Clear ();
+					ModelObjectsDictionary = null;
+				}
+
+				if (ModelObjects != null) {
+					ModelObjects.Clear ();
+					ModelObjects = null;
+				}
+
+				if (m_defaultView != null) {
+					m_defaultView.Dispose ();
+					m_defaultView = null;
+				}
+
+				if (AllMeshes != null) {
+					AllMeshes.Clear ();
+					AllMeshes = null;
+				}
+
+				if (Layers != null) {
+					Layers.Clear ();
+					Layers = null;
+				}
+
+				m_visibleLayersBoundingBox = BoundingBox.Empty;
+				m_bBox = BoundingBox.Empty;
+				m_meshPrepProgress = null;
+
+				IsReadyForRendering = false;
+			}
 		}
 		#endregion
 
@@ -1238,73 +1316,8 @@ namespace RhinoMobile.Model
 		}
 		#endregion
 
-		#region Clean Up and Disposal
-		~RMModel()
-		{
-			Dispose (false);
-			GC.SuppressFinalize (this);
-		}
+		#region Cleanup
 
-		public void Dispose()
-		{
-			Dispose (true);
-		}
-
-		private void Dispose(bool safeToFreeManagedObjects)
-		{
-			// Free unmanaged resources...
-
-			// Free managed resources...but only if call from Dispose
-			// (If called from Finalize then the objects might not exist anymore)
-			if (safeToFreeManagedObjects) {
-
-				if (ModelFile != null) {
-					ModelFile.Dispose ();
-					ModelFile = null;
-				}
-
-				if (DisplayObjects != null) {
-					DisplayObjects.Clear ();
-					DisplayObjects = null;
-				}
-
-				if (TransparentObjects != null) {
-					TransparentObjects.Clear ();
-					TransparentObjects = null;
-				}
-
-				if (ModelObjectsDictionary != null) {
-					ModelObjectsDictionary.Clear ();
-					ModelObjectsDictionary = null;
-				}
-
-				if (ModelObjects != null) {
-					ModelObjects.Clear ();
-					ModelObjects = null;
-				}
-
-				if (m_defaultView != null) {
-					m_defaultView.Dispose ();
-					m_defaultView = null;
-				}
-
-				if (AllMeshes != null) {
-					AllMeshes.Clear ();
-					AllMeshes = null;
-				}
-
-				if (Layers != null) {
-					Layers.Clear ();
-					Layers = null;
-				}
-
-				m_visibleLayersBoundingBox = BoundingBox.Empty;
-				m_bBox = BoundingBox.Empty;
-				m_meshPrepProgress = null;
-
-				IsReadyForRendering = false;
-			}
-		}
 
 		/// <summary>
 		/// Delete everything, including our containing directory
