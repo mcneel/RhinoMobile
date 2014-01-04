@@ -1243,15 +1243,17 @@ namespace RhinoMobile.Model
 
 		#if __IOS__
 		/// <summary>
-		/// iOS ONLY
-		/// Makes sure that the no archive attribute is set for this url in Documents.
-		/// <para>History: iRhino 3D app was rejected for creating files that needed to be 
-		/// backed up when first launched...RhinoLogo.3dm is/was an example.  Making sure that
-		/// the file's attributes are excluded from backup is important.</para>
+		/// iOS ONLY - To Comply with iOS iCloud backup restrictions
+		/// <para>Makes sure that the no archive attribute is set for this url in Documents.</para>
 		/// </summary>
 		protected virtual void ExcludeFromBackup (NSUrl filePathURL)
 		{
 			filePathURL.SetResource(NSUrl.IsExcludedFromBackupKey, (NSNumber.FromBoolean(true)));
+		}
+
+		protected virtual void ShouldExcludeFromBackup (string filePath, bool exclude)
+		{
+			NSFileManager.SetSkipBackupAttribute (filePath, exclude); // backup will be skipped for this file
 		}
 		#endif
 
