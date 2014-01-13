@@ -731,6 +731,7 @@
     <Compile Include="Model\MeshPreparationEvents.cs" />
     <Compile Include="Display\RhGLFramebufferObject.cs" />
     <Compile Include="Display\ClippingPlanes.cs" />
+    <Compile Include="Display\ColorExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\README.md" />
