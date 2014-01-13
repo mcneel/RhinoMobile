@@ -732,6 +732,9 @@
     <Compile Include="Display\RhGLFramebufferObject.cs" />
     <Compile Include="Display\ClippingPlanes.cs" />
     <Compile Include="Display\ColorExtensions.cs" />
+    <Compile Include="..\rhinocommon\dotnet\UnsafeNativeMethods.cs">
+      <Link>Libraries\rhinocommon\dotnet\UnsafeNativeMethods.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\README.md" />
