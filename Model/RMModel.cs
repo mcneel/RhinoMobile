@@ -427,7 +427,7 @@ namespace RhinoMobile.Model
 				File3dm.ReadRevisionHistory(path, out createdBy, out lastEditedBy, out revision, out createdOn, out lastEditedOn);
 				identifier = createdBy + lastEditedBy + revision.ToString () + createdOn.ToString() + lastEditedOn.ToString ();
 			} catch (FileNotFoundException fileException) {
-				Console.WriteLine ("The file at the path provided was not found: " + fileException.Message);
+				System.Diagnostics.Debug.WriteLine ("The file at the path provided was not found: " + fileException.Message);
 				return identifier;
 			}
 
@@ -480,7 +480,7 @@ namespace RhinoMobile.Model
 				if (ModelFile != null)
 					return ModelFile.Layers.ElementAt (layerIndex);
 			}
-			Console.WriteLine ("Bad layer index: %", layerIndex);
+			System.Diagnostics.Debug.WriteLine ("Bad layer index: %", layerIndex);
 			return null; 
 		}
 
@@ -509,7 +509,7 @@ namespace RhinoMobile.Model
 				Layer layer = ModelFile.Layers[layerIndex];
 				return layer.IsVisible;
 			}
-			Console.WriteLine ("Bad Layer Index: {0}", layerIndex);
+			System.Diagnostics.Debug.WriteLine ("Bad Layer Index: {0}", layerIndex);
 			return false; //punt
 		}
 
@@ -522,7 +522,7 @@ namespace RhinoMobile.Model
 				BoundingBox bb = BoundingBoxForLayer (layerIndex);
 				return bb.IsValid;
 			}
-			Console.WriteLine ("Bad Layer Index: {0}", layerIndex);
+			System.Diagnostics.Debug.WriteLine ("Bad Layer Index: {0}", layerIndex);
 			return false; // punt
 		}
 
@@ -787,7 +787,7 @@ namespace RhinoMobile.Model
 				}
 
 				if (prepareMeshesException.Message != string.Empty) {
-					Console.WriteLine (prepareMeshesException.Message);
+					System.Diagnostics.Debug.WriteLine (prepareMeshesException.Message);
 					MeshPreparationDidFailWithException (prepareMeshesException);
 				} else {
 					MeshPreparationDidSucceed ();
@@ -1011,7 +1011,7 @@ namespace RhinoMobile.Model
 					displayMeshes = (List<DisplayObject>)bin.Deserialize (meshFile);
 				}
 			} catch (IOException ex) {
-				Console.WriteLine ("Could not Deserialize the DisplayMeshes with exception: {0}", ex.Message);
+				System.Diagnostics.Debug.WriteLine ("Could not Deserialize the DisplayMeshes with exception: {0}", ex.Message);
 			}
 
 			if (displayMeshes == null)
@@ -1042,7 +1042,7 @@ namespace RhinoMobile.Model
 					bin.Serialize(meshFile, meshesToSave);
 				}
 			} catch (IOException ex) {
-				Console.WriteLine ("Could not Serialize the DisplayMeshes with exception: {0}", ex.Message);
+				System.Diagnostics.Debug.WriteLine ("Could not Serialize the DisplayMeshes with exception: {0}", ex.Message);
 			}
 		}
 		#endregion
@@ -1117,7 +1117,7 @@ namespace RhinoMobile.Model
 				string fromPath = NSBundle.MainBundle.PathForResource(sampleModelFilePath, "3dm");
 				string toPath = ModelPath;
 				if (!(File.Exists(fromPath)))  
-					Console.WriteLine("WARNING: Could not find the file: {0}", DocumentsFilename);
+					System.Diagnostics.Debug.WriteLine("WARNING: Could not find the file: {0}", DocumentsFilename);
 
 				if ((File.Exists (fromPath)) && (!File.Exists (toPath))) {
 					File.Copy (fromPath, toPath, true);
@@ -1148,7 +1148,7 @@ namespace RhinoMobile.Model
 				try {
 					sampleModelStream = context.Assets.Open (sampleModelFilePath);
 				} catch (Java.IO.FileNotFoundException ex) {
-					Console.WriteLine ("WARNING: Could not find the file: {0}", ex.Message);
+					System.Diagnostics.Debug.WriteLine ("WARNING: Could not find the file: {0}", ex.Message);
 					return;
 				} 
 

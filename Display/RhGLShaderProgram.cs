@@ -141,7 +141,7 @@ namespace RhinoMobile.Display
 				GL.GetProgram (program_handle, ProgramParameter.InfoLogLength, out logLength);
 				if (logLength > 0) {
 					string log = GL.GetProgramInfoLog (program_handle);
-					Console.WriteLine (log);
+					System.Diagnostics.Debug.WriteLine (log);
 				}
 				#endif
 
@@ -474,7 +474,7 @@ namespace RhinoMobile.Display
 				GL.GetShader (hShader, ShaderParameter.InfoLogLength, out logLength);
 				if (logLength > 0) {
 					string log = GL.GetShaderInfoLog ((int)hShader);
-					Console.WriteLine (log);
+					System.Diagnostics.Debug.WriteLine (log);
 				}
 				#endif
 

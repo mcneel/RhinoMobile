@@ -12,6 +12,7 @@
 // MERCHANTABILITY ARE HEREBY DISCLAIMED.
 //
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Rhino.Geometry;
@@ -66,9 +67,7 @@ namespace RhinoMobile.Model
 		/// </remarks>
 		public void ExplodeIntoArray(RMModel model, List<DisplayObject> array, Transform xForm)
 		{
-			#if DEBUG
-			Console.WriteLine("Missing implementation or implementation should happen in derived class");
-			#endif
+			Debug.WriteLine("Missing implementation or implementation should happen in derived class");
 		}
 		#endregion
 

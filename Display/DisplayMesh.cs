@@ -267,9 +267,7 @@ namespace RhinoMobile.Display
 			List<DisplayMesh> displayMeshes = new List<DisplayMesh> ();
 			displayMeshes.Capacity = mesh.PartitionCount;
 
-			#if DEBUG
-			//Console.WriteLine("Mesh {0} VertexCount: {1},  FaceCount: {2}, Partition has {3} parts.", attr.ObjectId.ToString(), mesh.Vertices.Count, mesh.Faces.Count, mesh.PartitionCount);
-			#endif
+			//System.Diagnostics.Debug.WriteLine("Mesh {0} VertexCount: {1},  FaceCount: {2}, Partition has {3} parts.", attr.ObjectId.ToString(), mesh.Vertices.Count, mesh.Faces.Count, mesh.PartitionCount);
 
 			for (int i = 0; i < mesh.PartitionCount; i++) {
 				//shouldCaptureVBO spot
@@ -483,7 +481,7 @@ namespace RhinoMobile.Display
 					binaryFormatter.Serialize(memoryStream, obj);
 					return memoryStream.ToArray();
 				} catch (System.Runtime.Serialization.SerializationException ex) {
-					Console.WriteLine ("WARNING: Could not serialize the object with exception: {0}", ex.Message);
+					System.Diagnostics.Debug.WriteLine ("WARNING: Could not serialize the object with exception: {0}", ex.Message);
 					memoryStream.Close ();
 					return null;
 				}

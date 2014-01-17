@@ -520,7 +520,7 @@ namespace RhinoMobile.Display
 			var err = GL.GetError ();
 			do {
 				if (err != ErrorCode.NoError)
-					Console.WriteLine ("GL Error: {0}", err.ToString ());
+					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
 				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
 			#endif
@@ -535,14 +535,14 @@ namespace RhinoMobile.Display
 		{
 			#if DEBUG 
 			Dictionary<GraphicsMode, GraphicsMode> modes = new Dictionary<GraphicsMode, GraphicsMode>();
-			Console.WriteLine("Cl (RGBA): Color format (total bits and bits per channel).");
-			Console.WriteLine("Dp       : Depth buffer bits.");
-			Console.WriteLine("St       : Stencil buffer bits.");
-			Console.WriteLine("AA       : Sample count for anti-aliasing.");
-			Console.WriteLine("Stereo   : Stereoscoping rendering supported.");
-			Console.WriteLine("");
-			Console.WriteLine("Cl (RGBA), Dp, St, AA, Stereo");
-			Console.WriteLine("-----------------------------");
+			System.Diagnostics.Debug.WriteLine("Cl (RGBA): Color format (total bits and bits per channel).");
+			System.Diagnostics.Debug.WriteLine("Dp       : Depth buffer bits.");
+			System.Diagnostics.Debug.WriteLine("St       : Stencil buffer bits.");
+			System.Diagnostics.Debug.WriteLine("AA       : Sample count for anti-aliasing.");
+			System.Diagnostics.Debug.WriteLine("Stereo   : Stereoscoping rendering supported.");
+			System.Diagnostics.Debug.WriteLine("");
+			System.Diagnostics.Debug.WriteLine("Cl (RGBA), Dp, St, AA, Stereo");
+			System.Diagnostics.Debug.WriteLine("-----------------------------");
 			foreach (ColorFormat color in new ColorFormat[] { 32, 24, 16, 8 })
 				foreach (int depth in new int[] { 24, 16 })
 					foreach (int stencil in new int[] { 8, 0 })
@@ -560,7 +560,7 @@ namespace RhinoMobile.Display
 						}
 
 			foreach (GraphicsMode mode in modes.Keys)
-				Console.WriteLine(String.Format("{0}, {1:00}, {2:00}, {3:00}, {4}", mode.ColorFormat, mode.Depth, mode.Stencil, mode.Samples, mode.Stereo));
+				System.Diagnostics.Debug.WriteLine(String.Format("{0}, {1:00}, {2:00}, {3:00}, {4}", mode.ColorFormat, mode.Depth, mode.Stencil, mode.Samples, mode.Stereo));
 			#endif
 		}
 		#endregion

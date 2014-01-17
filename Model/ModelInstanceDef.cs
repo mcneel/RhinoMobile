@@ -56,8 +56,8 @@ namespace RhinoMobile.Model
 						(modelObject as ModelMesh).LayerIndex = LayerIndex;
 						(modelObject as ModelMesh).ExplodeIntoArray (model, array, xform);
 					} catch (SystemException ex) {
-						Console.WriteLine ("Caught Exception: " + ex.Message);
-						Console.WriteLine ("This is caused by a null Mesh on an InstanceRef");
+						System.Diagnostics.Debug.WriteLine ("Caught Exception: " + ex.Message);
+						System.Diagnostics.Debug.WriteLine ("This is caused by a null Mesh on an InstanceRef");
 					}
 				}
 

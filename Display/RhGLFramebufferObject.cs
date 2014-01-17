@@ -200,7 +200,7 @@ namespace RhinoMobile.Display
 			var err = GL.GetError ();
 			do {
 				if (err != ErrorCode.NoError)
-					Console.WriteLine ("GL Error: {0}", err.ToString ());
+					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
 				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
 			#endif
@@ -521,7 +521,7 @@ namespace RhinoMobile.Display
 			var err = GL.GetError ();
 			do {
 				if (err != ErrorCode.NoError)
-					Console.WriteLine ("GL Error: {0}", err.ToString ());
+					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
 				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
 			#endif
