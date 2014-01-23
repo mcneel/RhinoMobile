@@ -426,8 +426,8 @@ namespace RhinoMobile.Model
 				DateTime lastEditedOn = new DateTime();
 				File3dm.ReadRevisionHistory(path, out createdBy, out lastEditedBy, out revision, out createdOn, out lastEditedOn);
 				identifier = createdBy + lastEditedBy + revision.ToString () + createdOn.ToString() + lastEditedOn.ToString ();
-			} catch (FileNotFoundException fileException) {
-				System.Diagnostics.Debug.WriteLine ("The file at the path provided was not found: " + fileException.Message);
+			} catch (Exception e) {
+				System.Diagnostics.Debug.WriteLine (e.Message);
 				return identifier;
 			}
 
@@ -1120,7 +1120,11 @@ namespace RhinoMobile.Model
 					System.Diagnostics.Debug.WriteLine("WARNING: Could not find the file: {0}", DocumentsFilename);
 
 				if ((File.Exists (fromPath)) && (!File.Exists (toPath))) {
-					File.Copy (fromPath, toPath, true);
+					try {
+						File.Copy (fromPath, toPath, true);
+					} catch (Exception e) {
+						System.Diagnostics.Debug.WriteLine (e.Message);
+					}
 				}
 
 				// Since this file is created at initial launch, make sure that the no archive attribute
@@ -1221,10 +1225,10 @@ namespace RhinoMobile.Model
 		/// <summary>
 		/// Checks to see if the name of the file provided is equal to the DocumentsFilename in this RMModel
 		/// </summary>
-		public virtual bool HasDocumentsName (string aName) 
+		public virtual bool HasDocumentsName (string documentsName) 
 		{
-			if (aName != string.Empty && DocumentsFilename != string.Empty)
-				return string.Equals (aName, DocumentsFilename, StringComparison.CurrentCultureIgnoreCase);
+			if (!String.IsNullOrEmpty(documentsName) && !String.IsNullOrEmpty(DocumentsFilename))
+				return string.Equals (documentsName, DocumentsFilename, StringComparison.CurrentCultureIgnoreCase);
 			return false;	
 		}
 
