@@ -57,15 +57,12 @@ namespace RhinoMobile.Model
 		public virtual string Title { get; set; }
 
 		/// <remarks>
-		/// CAUTION: Getter returns a new copy of the protected field m_modelID.
 		/// Setting the modelID invalidates any cached data. If the modelID has changed, 
 		/// the user likely modified a file in the Documents folder.
 		/// </remarks>
 		public virtual string ModelID { 
 			get {
-				if (m_modelID != null)
-					return String.Copy (m_modelID);
-				return string.Empty; 
+				return m_modelID;
 			}
 
 			set {
