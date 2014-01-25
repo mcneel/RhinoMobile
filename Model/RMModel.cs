@@ -139,6 +139,8 @@ namespace RhinoMobile.Model
 		{
 			get {
 				if (ModelFile != null) {
+					m_visibleLayersBoundingBox = BoundingBox.Empty;
+
 					for (int layerIndex = 0; layerIndex < LayerCount; layerIndex++) {
 						if (LayerIsVisibleAtIndex (layerIndex)) {
 							File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer(LayerAtIndex (layerIndex).Name);
