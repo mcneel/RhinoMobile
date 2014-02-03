@@ -370,12 +370,12 @@ namespace RhinoMobile.Model
 					ModelFile = File3dm.ReadWithLog (ModelPath, out errorLog);
 					
 					// Check to make sure the 3dm was read correctly and there were no errors...
-					bool rc = false;
+					bool didPrepare = false;
 					if ((ModelFile != null) && (errorLog == string.Empty))
-						rc = true;
+						didPrepare = true;
 
 					// Preparation Dispatch...
-					if (rc) {
+					if (didPrepare) {
 						PrepareLayers ();
 						PrepareBoundingBoxes ();
 						PrepareViewports ();
@@ -699,8 +699,8 @@ namespace RhinoMobile.Model
 			MeshPreparationProgressEvent (tally);
 
 			if (Downloaded) {
-				bool rc = true;
-				if (rc) {
+				bool successfulPreparation = true;
+				if (successfulPreparation) {
 					// Prepare each object in the 3dm file...
 					for (Int64 i = 0; i < ModelFile.Objects.Count; i++) {
 						PrepareObject (ModelFile.Objects [(int)i].Geometry, ModelFile.Objects [(int)i].Attributes);
@@ -764,11 +764,11 @@ namespace RhinoMobile.Model
 						} else {
 							prepareMeshesException = MeshException ("This model is empty.");
 
-							rc = false;
+							successfulPreparation = false;
 						}
 					}
 
-					if (!rc) {
+					if (!successfulPreparation) {
 						DisplayObjects.Clear ();
 						TransparentObjects.Clear ();
 						ModelFile.Dispose ();
@@ -782,7 +782,7 @@ namespace RhinoMobile.Model
 						}
 					}
 
-					ReadSuccessfully = rc;
+					ReadSuccessfully = successfulPreparation;
 				}
 
 				if (prepareMeshesException.Message != string.Empty) {
@@ -1322,8 +1322,6 @@ namespace RhinoMobile.Model
 		#endregion
 
 		#region Cleanup
-
-
 		/// <summary>
 		/// Delete everything, including our containing directory
 		/// </summary>

@@ -224,32 +224,32 @@ namespace RhinoMobile.Display
 				viewport.SetCameraLocation (cameraLocation);
 				viewport.SetCameraDirection (cameraDirection);
 
-				bool rc = false;
-				rc = viewport.SetCameraUp (cameraUp);
+				bool didSetTarget = false;
+				didSetTarget = viewport.SetCameraUp (cameraUp);
 
-				if (!rc) {
-					rc = viewport.SetCameraUp (cameraY);
+				if (!didSetTarget) {
+					didSetTarget = viewport.SetCameraUp (cameraY);
 					cameraUp = cameraY;
 				}
 
-				if (!rc) {
+				if (!didSetTarget) {
 					Rhino.Geometry.Vector3d rotationAxis = Rhino.Geometry.Vector3d.CrossProduct (cameraDirection0, cameraDirection);
 					double sinAngle = rotationAxis.Length;
 					double cosAngle = cameraDirection0 * cameraDirection;
 					Rhino.Geometry.Transform rot = Rhino.Geometry.Transform.Rotation (sinAngle, cosAngle, rotationAxis, Rhino.Geometry.Point3d.Origin);
 					cameraUp = rot * cameraY;
-					rc = viewport.SetCameraUp (cameraUp);
+					didSetTarget = viewport.SetCameraUp (cameraUp);
 				}
 
-				if (rc) {
+				if (didSetTarget) {
 					// Apply tilt angle to new camera and target location
 					if (Math.Abs (tiltAngle) > 1.0e-6) {
 						Rhino.Geometry.Transform rot = Rhino.Geometry.Transform.Rotation (tiltAngle, -cameraDirection0, cameraLocation);
 						cameraUp = rot * cameraUp;
-						rc = viewport.SetCameraUp (cameraUp);
+						didSetTarget = viewport.SetCameraUp (cameraUp);
 					}
 
-					if (rc)
+					if (didSetTarget)
 						viewport.TargetPoint = targetLocation;
 				}
 			}

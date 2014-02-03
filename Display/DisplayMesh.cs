@@ -309,24 +309,24 @@ namespace RhinoMobile.Display
 		/// </summary>
 		protected void LoadDataForVBOs (Mesh mesh)
 		{
-			bool rc = true;
+			bool didLoadData = true;
 
 			if (HasVertexColors) {
 				if (HasVertexNormals) {
-					rc = rc && LoadVertexNormalColorData (mesh, m_partitionIndex);
+					didLoadData = didLoadData && LoadVertexNormalColorData (mesh, m_partitionIndex);
 				} else {
-					rc = rc && LoadVertexColorData (mesh, m_partitionIndex);
+					didLoadData = didLoadData && LoadVertexColorData (mesh, m_partitionIndex);
 				}
 			} else if (HasVertexNormals) {
-				rc = rc && LoadVertexNormalData (mesh, m_partitionIndex);
+				didLoadData = didLoadData && LoadVertexNormalData (mesh, m_partitionIndex);
 			} else {
-				rc = rc && LoadVertexData (mesh, m_partitionIndex);
+				didLoadData = didLoadData && LoadVertexData (mesh, m_partitionIndex);
 			}
 
 			// Every mesh gets an index...
-			rc = rc && LoadIndexData (mesh, m_partitionIndex);
+			didLoadData = didLoadData && LoadIndexData (mesh, m_partitionIndex);
 
-			m_initializationFailed = !rc;
+			m_initializationFailed = !didLoadData;
 		}
 
 		/// <summary>
