@@ -220,9 +220,10 @@ namespace RhinoMobile.Display
     private uint m_handle = Globals.UNSET_HANDLE;
     private bool m_owned = true;
     private bool m_isvalid = false;
+		private bool m_isEnabled = false;
 
     private RhGLRenderBuffer    m_colorBuffer;
-    private RhGLRenderBuffer    m_depthBuffer;
+   	private RhGLRenderBuffer    m_depthBuffer;
     #endregion
     
     #region constructors
@@ -398,6 +399,10 @@ namespace RhinoMobile.Display
       get { return m_isvalid; }
     }
 
+		public bool IsEnabled
+		{
+			get { return m_isEnabled; }
+		}
     #endregion
 
     #region methods
@@ -414,6 +419,8 @@ namespace RhinoMobile.Display
         GL.BindFramebuffer (FramebufferTarget.Framebuffer, m_handle);
       else
         m_saved_handle = Globals.UNSET_HANDLE;
+
+			m_isEnabled = true;
       return true;
     }
 
@@ -424,6 +431,8 @@ namespace RhinoMobile.Display
       else
         GL.BindFramebuffer (FramebufferTarget.Framebuffer, 0);
       m_saved_handle = Globals.UNSET_HANDLE;
+
+			m_isEnabled = false;
     }
 
     private void Validate()
