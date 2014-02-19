@@ -82,6 +82,9 @@ namespace RhinoMobile.Display
 		/// <value> Shaders are created on demand and stored in a list. </value>
 		public List<RhGLShaderProgram> Shaders { get; private set; }
 
+		/// <value> Set to true to use a fast shader on each draw call. </value>
+		public bool FastDrawing { get; set; }
+
 		#if __ANDROID__
 		/// <value> This is the application context from Android which is necessary in order to retreive items from the bundle. </value>
 		public Android.Content.Context AndroidContext { get; set; }
@@ -141,6 +144,7 @@ namespace RhinoMobile.Display
 				}
 
 				if (ActiveShader != null) {
+					GL.DeleteProgram (ActiveShader.Handle);
 					ActiveShader.Disable ();
 					ActiveShader = null;
 				}
@@ -261,7 +265,7 @@ namespace RhinoMobile.Display
 			GL.Disable (EnableCap.Blend);
 
 			// Get the shader...
-			ActiveShader = GetShader ("PerPixelLighting");
+			ActiveShader = FastDrawing ? GetShader ("PerVertexLighting") : GetShader ("PerPixelLighting");
 
 			// Render calls...
 			if (model != null) {

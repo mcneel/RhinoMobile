@@ -35,7 +35,7 @@ namespace RhinoMobile.Display
 			deltaX = 0.5 * (clipPoint1.X - clipPoint0.X);
 			deltaY = 0.5 * (clipPoint1.Y - clipPoint0.Y);
 			deltaX *= (viewport.FrustumRight - viewport.FrustumLeft);
-			deltaY *= (viewport.FrustumTop - viewport.FrustumBottom);
+			deltaY *= (viewport.FrustumBottom - viewport.FrustumTop);
 			if (viewport.IsPerspectiveProjection) {
 				s = viewport.TargetPoint.DistanceTo (viewport.CameraLocation) / viewport.FrustumNear;
 				deltaX *= s;
