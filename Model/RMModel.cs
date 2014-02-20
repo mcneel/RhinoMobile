@@ -41,8 +41,8 @@ namespace RhinoMobile.Model
 		protected string m_modelID;
 		protected string m_modelPath;
 		protected BoundingBox m_visibleLayersBoundingBox;
-		protected ViewInfo m_defaultView;
 		protected BoundingBox m_bBox;
+		protected ViewInfo m_defaultView;
 
 		protected CancellationTokenSource m_cancellation_token_source;
 		public event MeshPreparationHandler MeshPrep;
@@ -138,7 +138,7 @@ namespace RhinoMobile.Model
 				if (ModelFile != null) {
 					m_visibleLayersBoundingBox = BoundingBox.Empty;
 
-					for (int layerIndex = 0; layerIndex < LayerCount; layerIndex++) {
+					for (int layerIndex = 0; layerIndex < Layers.Count; layerIndex++) {
 						if (LayerIsVisibleAtIndex (layerIndex)) {
 							File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer(LayerAtIndex (layerIndex).Name);
 
@@ -215,11 +215,8 @@ namespace RhinoMobile.Model
 		/// <value> The layers in this model. </value>
 		public virtual List<Layer> Layers { get; protected set; }
 
-		/// <value> Returns the total number of layers in the Model, for convenience only.  </value>
-		public virtual int LayerCount { get; protected set; }
-	
-		/// <value> The count of the layers that contain geometry that can be displayed. </value>
-		public virtual int LayersWithGeometryCount { get; protected set; }
+		/// <value> The layers in this model that contain geometry. </value>
+		public virtual List<Layer> LayersWithGeometry { get; protected set; }
 
 		/// <value> True if the 3dm file was read successfully; false if there was an error reading the 3dm file. </value>
 		public virtual bool ReadSuccessfully { get; protected set; }
@@ -243,17 +240,13 @@ namespace RhinoMobile.Model
 		}
 
 		/// <summary>
-		/// The default view to be returned to on a zoom-extensions action
+		/// The default view to be returned to on a zoom-extensions action.
 		/// </summary>
 		public virtual ViewInfo DefaultView 
 		{ 
-			get {
-				return m_defaultView;
-			}
-
-			protected set {
-				m_defaultView = value;
-			}
+			// NOTE: Not an auto property because we are calling ref on the backing m_defaultView member variable
+			get { return m_defaultView; }
+			protected set { m_defaultView = value; }
 		}
 		#endregion
 
@@ -318,9 +311,9 @@ namespace RhinoMobile.Model
 					ModelObjects = null;
 				}
 
-				if (m_defaultView != null) {
-					m_defaultView.Dispose ();
-					m_defaultView = null;
+				if (DefaultView != null) {
+					DefaultView.Dispose ();
+					DefaultView = null;
 				}
 
 				if (AllMeshes != null) {
@@ -451,22 +444,19 @@ namespace RhinoMobile.Model
 		protected virtual void PrepareLayers ()
 		{
 			if (ModelFile != null) {
-				// Count the layers
-				LayerCount = ModelFile.Layers.Count;
-
-				// Count the Layers with Geometry...
-				int layersWithGeometryCount = 0;
-				for  (int i = 0; i < LayerCount; i++) {
-					if (LayerHasGeometryAtIndex (i))
-						layersWithGeometryCount++;
-				}
-				LayersWithGeometryCount = layersWithGeometryCount;
-
+			
 				// Set the Layers property on this model
-				List<Layer> layers = new List<Layer> ();
+				Layers = new List<Layer> ();
 				foreach (Layer layer in ModelFile.Layers)
-					layers.Add (layer);
-				Layers = layers;
+					Layers.Add (layer);
+	
+				// Find the Layers with Geometry and add them to LayersWithGeometry property
+				LayersWithGeometry = new List<Layer> ();
+				for  (int i = 0; i < Layers.Count; i++) {
+					if (LayerHasGeometryAtIndex (i))
+						LayersWithGeometry.Add (Layers [i]);
+				}
+
 			}
 		}
 
@@ -477,7 +467,7 @@ namespace RhinoMobile.Model
 		{
 			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count) {
 				if (ModelFile != null)
-					return ModelFile.Layers.ElementAt (layerIndex);
+					return ModelFile.Layers [layerIndex];
 			}
 			System.Diagnostics.Debug.WriteLine ("Bad layer index: %", layerIndex);
 			return null; 
@@ -491,7 +481,7 @@ namespace RhinoMobile.Model
 			for (int i = 0; i < ModelFile.Layers.Count; i++) {
 				if (LayerHasGeometryAtIndex(i)) {
 					if (layerIndex == 0)
-						return ModelFile.Layers.ElementAt(i);
+						return ModelFile.Layers [i];
 					layerIndex--;
 				}
 			}
@@ -504,7 +494,7 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual bool LayerIsVisibleAtIndex(int layerIndex) 
 		{
-			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count()) {
+			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count) {
 				Layer layer = ModelFile.Layers[layerIndex];
 				return layer.IsVisible;
 			}
@@ -517,7 +507,7 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual bool LayerHasGeometryAtIndex(int layerIndex) 
 		{
-			if (layerIndex >= 0 && layerIndex < LayerCount) {
+			if (layerIndex >= 0 && layerIndex < Layers.Count) {
 				BoundingBox bb = BoundingBoxForLayer (layerIndex);
 				return bb.IsValid;
 			}
@@ -556,7 +546,7 @@ namespace RhinoMobile.Model
 
 				// Calculate the layerBBoxes
 				LayerBBoxes = new RhinoList<Rhino.Geometry.BoundingBox> ();
-				for (int layerIndex = 0; layerIndex < LayerCount; layerIndex++) {
+				for (int layerIndex = 0; layerIndex < Layers.Count; layerIndex++) {
 					File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer (LayerAtIndex (layerIndex).Name);
 					BoundingBox bbox = new BoundingBox ();
 
