@@ -358,10 +358,18 @@ namespace RhinoMobile.Model
 					// Get the file size
 					int fileSize = Convert.ToInt32 (GetFileSize ());
 				
-					// Read the 3dm file
+					// Read the 3dm file with an ObjectTypeFilter...
 					string errorLog;
-					ModelFile = File3dm.ReadWithLog (ModelPath, out errorLog);
-					
+					const File3dm.TableTypeFilter tableFilter = new File3dm.TableTypeFilter ();
+					const File3dm.ObjectTypeFilter objectTypeFilter = (File3dm.ObjectTypeFilter)(
+						ObjectType.Brep | 
+						ObjectType.Extrusion | 
+						ObjectType.InstanceDefinition | 
+						ObjectType.InstanceReference | 
+						ObjectType.Mesh
+					);
+					ModelFile = File3dm.ReadWithLog (ModelPath, tableFilter, objectTypeFilter, out errorLog);
+
 					// Check to make sure the 3dm was read correctly and there were no errors...
 					bool didPrepare = false;
 					if ((ModelFile != null) && (errorLog == string.Empty))
