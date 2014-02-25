@@ -254,7 +254,8 @@ namespace RhinoMobile.Display
 		{
 			Model = model;
 
-      ClearView ();
+			//ClearView ();
+
       if ((model == null) || !model.IsReadyForRendering)
         return false;
 
@@ -492,7 +493,6 @@ namespace RhinoMobile.Display
 			// Clear color and depth buffers
 			GL.ClearColor (0.9f, 0.9f, 0.9f, 1f);
 			GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
 			return true;
 		}
 		#endregion
