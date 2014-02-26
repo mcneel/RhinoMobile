@@ -389,8 +389,13 @@ namespace RhinoMobile.Display
 				if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
 					ActiveShader.PopModelViewMatrix ();
 				}
-
-				GL.DisableVertexAttribArray (rglVertex);
+					
+				// Disable any and all arrays and buffers we might have used...
+				GL.DisableVertexAttribArray (ActiveShader.RglColorIndex);
+				GL.DisableVertexAttribArray (ActiveShader.RglNormalIndex);
+				GL.DisableVertexAttribArray (ActiveShader.RglVertexIndex);
+				GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0);
+				GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
 			}
 
 		}
