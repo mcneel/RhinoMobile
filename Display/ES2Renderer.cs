@@ -496,7 +496,7 @@ namespace RhinoMobile.Display
 		public bool ClearView()
 		{
 			// Clear color and depth buffers
-			GL.ClearColor (0.9f, 0.9f, 0.9f, 1f);
+			GL.ClearColor (1.0f, 1.0f, 1.0f, 0.0f);
 			GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 			return true;
 		}
