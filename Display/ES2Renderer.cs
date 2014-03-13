@@ -282,6 +282,11 @@ namespace RhinoMobile.Display
 			// Disable the shader
 			ActiveShader.Disable ();
 
+			#if __IOS__
+			// Discard Framebuffer attachments...
+			GL.Ext.DiscardFramebuffer (All.Framebuffer, 2, new All[]{All.DepthAttachment, All.ColorAttachment0} );
+			#endif
+
 			return true;
 		}
 
@@ -394,11 +399,6 @@ namespace RhinoMobile.Display
 				GL.DisableVertexAttribArray (ActiveShader.RglVertexIndex);
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0);
 				GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
-
-				#if __IOS__
-				// Discard Framebuffer attachments...
-				GL.Ext.DiscardFramebuffer (All.Framebuffer, 2, new All[]{All.DepthAttachment, All.ColorAttachment0} );
-				#endif
 			}
 
 		}
