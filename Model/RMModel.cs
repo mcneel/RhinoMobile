@@ -360,15 +360,7 @@ namespace RhinoMobile.Model
 				
 					// Read the 3dm file with an ObjectTypeFilter...
 					string errorLog;
-					const File3dm.TableTypeFilter tableFilter = new File3dm.TableTypeFilter ();
-					const File3dm.ObjectTypeFilter objectTypeFilter = (File3dm.ObjectTypeFilter)(
-						ObjectType.Brep | 
-						ObjectType.Extrusion | 
-						ObjectType.InstanceDefinition | 
-						ObjectType.InstanceReference | 
-						ObjectType.Mesh
-					);
-					ModelFile = File3dm.ReadWithLog (ModelPath, tableFilter, objectTypeFilter, out errorLog);
+					ModelFile = File3dm.ReadWithLog (ModelPath, out errorLog);
 
 					// Check to make sure the 3dm was read correctly and there were no errors...
 					bool didPrepare = false;

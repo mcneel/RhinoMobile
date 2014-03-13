@@ -254,8 +254,6 @@ namespace RhinoMobile.Display
 		{
 			Model = model;
 
-			//ClearView ();
-
       if ((model == null) || !model.IsReadyForRendering)
         return false;
 

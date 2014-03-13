@@ -58,6 +58,11 @@
     <Compile Include="Model\ModelObject.cs" />
     <Compile Include="Display\IRenderer.cs" />
     <Compile Include="Display\ViewportInfoExtensions.cs" />
+    <Compile Include="Model\RMModel.cs" />
+    <Compile Include="Model\MeshPreparationEvents.cs" />
+    <Compile Include="Display\RhGLFramebufferObject.cs" />
+    <Compile Include="Display\ClippingPlanes.cs" />
+    <Compile Include="Display\ColorExtensions.cs" />
     <Compile Include="..\rhinocommon\dotnet\AutoNativeMethods.cs">
       <Link>Libraries\rhinocommon\dotnet\AutoNativeMethods.cs</Link>
     </Compile>
@@ -72,6 +77,9 @@
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\NameSpaceDoc.cs">
       <Link>Libraries\rhinocommon\dotnet\NameSpaceDoc.cs</Link>
+    </Compile>
+    <Compile Include="..\rhinocommon\dotnet\UnsafeNativeMethods.cs">
+      <Link>Libraries\rhinocommon\dotnet\UnsafeNativeMethods.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\hostutils.cs">
       <Link>Libraries\rhinocommon\dotnet\hostutils.cs</Link>
@@ -726,14 +734,6 @@
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkviewport.cs">
       <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkviewport.cs</Link>
-    </Compile>
-    <Compile Include="Model\RMModel.cs" />
-    <Compile Include="Model\MeshPreparationEvents.cs" />
-    <Compile Include="Display\RhGLFramebufferObject.cs" />
-    <Compile Include="Display\ClippingPlanes.cs" />
-    <Compile Include="Display\ColorExtensions.cs" />
-    <Compile Include="..\rhinocommon\dotnet\UnsafeNativeMethods.cs">
-      <Link>Libraries\rhinocommon\dotnet\UnsafeNativeMethods.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
