@@ -220,16 +220,6 @@ namespace RhinoMobile.Display
 			 
 			// Check to make sure we actually have an active shader...
 			if (shader != null) {
-				Rhino.Geometry.Light light = new Rhino.Geometry.Light ();
-
-				Rhino.Geometry.Point3f lightLocation = new Rhino.Geometry.Point3f  (10, 10, 10);
-				light.Location = new Rhino.Geometry.Point3d (lightLocation);
-				light.Specular = System.Drawing.Color.FromArgb(255, 90, 90, 90);
-
-				// unfortunately ON assumes right-handedness...so flip
-				Rhino.Geometry.Vector3d lightDir = light.Direction;
-				Rhino.Geometry.Vector3d lightDirFlippedZ = new Rhino.Geometry.Vector3d (lightDir.X, lightDir.Y, -lightDir.Z);
-				light.Direction = lightDirFlippedZ;
 
 				// Enable...
 				shader.Enable ();
@@ -239,6 +229,7 @@ namespace RhinoMobile.Display
 				viewport.GetScreenPort (out near, out far);
 				viewport.SetScreenPort ((int)Frame.Left, (int)Frame.Right, (int)Frame.Bottom, (int)Frame.Top, near, far); 
 				shader.SetupViewport (viewport);
+				Rhino.Geometry.Light light = CreateDefaultLight ();
 				shader.SetupLight (light);
 				light.Dispose ();
 			}
@@ -517,6 +508,34 @@ namespace RhinoMobile.Display
 					CurrentMaterial = material;
 				}
 			}
+		}
+		#endregion
+
+		#region Lighting
+		/// <summary>
+		/// Creates a light that matches the style of the default openNURBS light.
+		/// </summary>
+		public Rhino.Geometry.Light CreateDefaultLight ()
+		{
+			Rhino.Geometry.Light light = new Rhino.Geometry.Light ();
+			light.IsEnabled = true;
+			light.Intensity = 1;
+			light.PowerWatts = 0;
+			light.LightStyle = Rhino.Geometry.LightStyle.CameraDirectional;
+			light.Ambient  = System.Drawing.Color.FromArgb(0,0,0);
+			light.Diffuse  = System.Drawing.Color.FromArgb(255, 255, 255);
+			light.Specular = System.Drawing.Color.FromArgb(255, 255, 255);
+			light.Direction = new Rhino.Geometry.Vector3d(0.0, 0.0, 1.0);
+			light.Location = new Rhino.Geometry.Point3d(0.0, 0.0, 0.0);
+			light.Length = new Rhino.Geometry.Vector3d(0.0, 0.0, 0.0);
+			light.Width = new Rhino.Geometry.Vector3d(0.0, 0.0, 0.0);
+			light.SpotAngleRadians = 180.0;
+			light.SpotExponent = 0.0;
+			light.HotSpot = 1.0;
+			light.AttenuationVector = new Rhino.Geometry.Vector3d(1.0, 0.0, 0.0);
+			light.SpotLightShadowIntensity = 1.0;
+
+			return light;
 		}
 		#endregion
 
