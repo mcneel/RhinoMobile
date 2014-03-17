@@ -152,6 +152,10 @@ namespace RhinoMobile.Model
 
 				return m_visibleLayersBoundingBox;
 			}
+
+			set {
+				m_visibleLayersBoundingBox = value;
+			}
 		}
 
 		/// <value> The Bounding Box surrounding the model.  Returns an empty bounding box if the model is empty. </value>
@@ -285,53 +289,70 @@ namespace RhinoMobile.Model
 			// Free managed resources...but only if call from Dispose
 			// (If called from Finalize then the objects might not exist anymore)
 			if (disposing) {
-
-				if (ModelFile != null) {
-					ModelFile.Dispose ();
-					ModelFile = null;
-				}
-
-				if (DisplayObjects != null) {
-					DisplayObjects.Clear ();
-					DisplayObjects = null;
-				}
-
-				if (TransparentObjects != null) {
-					TransparentObjects.Clear ();
-					TransparentObjects = null;
-				}
-
-				if (ModelObjectsDictionary != null) {
-					ModelObjectsDictionary.Clear ();
-					ModelObjectsDictionary = null;
-				}
-
-				if (ModelObjects != null) {
-					ModelObjects.Clear ();
-					ModelObjects = null;
-				}
-
-				if (DefaultView != null) {
-					DefaultView.Dispose ();
-					DefaultView = null;
-				}
-
-				if (AllMeshes != null) {
-					AllMeshes.Clear ();
-					AllMeshes = null;
-				}
-
-				if (Layers != null) {
-					Layers.Clear ();
-					Layers = null;
-				}
-
-				m_visibleLayersBoundingBox = BoundingBox.Empty;
-				m_bBox = BoundingBox.Empty;
-				m_meshPrepProgress = null;
-
-				IsReadyForRendering = false;
+				DisposeOfModelData ();
 			}
+		}
+
+		public void DisposeOfModelData ()
+		{
+			if (ModelFile != null) {
+				ModelFile.Dispose ();
+				ModelFile = null;
+			}
+
+			if (DisplayObjects != null) {
+				DisplayObjects.Clear ();
+				DisplayObjects = null;
+			}
+
+			if (TransparentObjects != null) {
+				TransparentObjects.Clear ();
+				TransparentObjects = null;
+			}
+
+			if (ModelObjectsDictionary != null) {
+				ModelObjectsDictionary.Clear ();
+				ModelObjectsDictionary = null;
+			}
+
+			if (ModelObjects != null) {
+				ModelObjects.Clear ();
+				ModelObjects = null;
+			}
+
+			if (DefaultView != null) {
+				DefaultView.Dispose ();
+				DefaultView = null;
+			}
+
+			if (AllMeshes != null) {
+				AllMeshes.Clear ();
+				AllMeshes = null;
+			}
+
+			if (Layers != null) {
+				Layers.Clear ();
+				Layers = null;
+			}
+
+			if (LayersWithGeometry != null) {
+				LayersWithGeometry.Clear ();
+				LayersWithGeometry = null;
+			}
+
+			if (LayerBBoxes != null) {
+				LayerBBoxes.Clear ();
+				LayerBBoxes = null;
+			}
+
+			VisibleLayersBBox = BoundingBox.Empty;
+			BBox = BoundingBox.Empty;
+
+			m_visibleLayersBoundingBox = BoundingBox.Empty;
+			m_bBox = BoundingBox.Empty;
+			m_meshPrepProgress = null;
+
+			IsReadyForRendering = false;
 		}
 		#endregion
 
