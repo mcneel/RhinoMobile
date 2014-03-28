@@ -482,6 +482,7 @@ namespace RhinoMobile.Display
 					return memoryStream.ToArray();
 				} catch (System.Runtime.Serialization.SerializationException ex) {
 					System.Diagnostics.Debug.WriteLine ("WARNING: Could not serialize the object with exception: {0}", ex.Message);
+					Rhino.Runtime.HostUtils.ExceptionReport (ex);
 					memoryStream.Close ();
 					return null;
 				}

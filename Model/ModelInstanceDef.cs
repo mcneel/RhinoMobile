@@ -58,6 +58,7 @@ namespace RhinoMobile.Model
 					} catch (SystemException ex) {
 						System.Diagnostics.Debug.WriteLine ("Caught Exception: " + ex.Message);
 						System.Diagnostics.Debug.WriteLine ("This is caused by a null Mesh on an InstanceRef");
+						Rhino.Runtime.HostUtils.ExceptionReport (ex);
 					}
 				}
 

@@ -406,9 +406,10 @@ namespace RhinoMobile.Model
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
 						}
-						catch (OperationCanceledException)
+						catch (OperationCanceledException ex)
 						{
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
+							Rhino.Runtime.HostUtils.ExceptionReport (ex);
 							Dispose ();
 							return;
 						}
@@ -439,8 +440,9 @@ namespace RhinoMobile.Model
 				DateTime lastEditedOn = new DateTime();
 				File3dm.ReadRevisionHistory(path, out createdBy, out lastEditedBy, out revision, out createdOn, out lastEditedOn);
 				identifier = createdBy + lastEditedBy + revision.ToString () + createdOn.ToString() + lastEditedOn.ToString ();
-			} catch (Exception e) {
-				System.Diagnostics.Debug.WriteLine (e.Message);
+			} catch (Exception ex) {
+				System.Diagnostics.Debug.WriteLine (ex.Message);
+				Rhino.Runtime.HostUtils.ExceptionReport (ex);
 				return identifier;
 			}
 
@@ -1022,6 +1024,7 @@ namespace RhinoMobile.Model
 				}
 			} catch (IOException ex) {
 				System.Diagnostics.Debug.WriteLine ("Could not Deserialize the DisplayMeshes with exception: {0}", ex.Message);
+				Rhino.Runtime.HostUtils.ExceptionReport (ex);
 			}
 
 			if (displayMeshes == null)
@@ -1052,6 +1055,7 @@ namespace RhinoMobile.Model
 					bin.Serialize(meshFile, meshesToSave);
 				}
 			} catch (IOException ex) {
+				Rhino.Runtime.HostUtils.ExceptionReport (ex);
 				System.Diagnostics.Debug.WriteLine ("Could not Serialize the DisplayMeshes with exception: {0}", ex.Message);
 			}
 		}
@@ -1132,8 +1136,9 @@ namespace RhinoMobile.Model
 				if ((File.Exists (fromPath)) && (!File.Exists (toPath))) {
 					try {
 						File.Copy (fromPath, toPath, true);
-					} catch (Exception e) {
-						System.Diagnostics.Debug.WriteLine (e.Message);
+					} catch (Exception ex) {
+						System.Diagnostics.Debug.WriteLine (ex.Message);
+						Rhino.Runtime.HostUtils.ExceptionReport (ex);
 					}
 				}
 
@@ -1163,6 +1168,7 @@ namespace RhinoMobile.Model
 					sampleModelStream = context.Assets.Open (sampleModelFilePath);
 				} catch (Java.IO.FileNotFoundException ex) {
 					System.Diagnostics.Debug.WriteLine ("WARNING: Could not find the file: {0}", ex.Message);
+					Rhino.Runtime.HostUtils.ExceptionReport (ex);
 					return;
 				} 
 
