@@ -801,9 +801,11 @@ namespace RhinoMobile.Model
 				if (prepareMeshesException.Message != string.Empty) {
 					System.Diagnostics.Debug.WriteLine (prepareMeshesException.Message);
 					MeshPreparationDidFailWithException (prepareMeshesException);
-				} else {
-					MeshPreparationDidSucceed ();
 				}
+
+				IsReadyForRendering |= ReadSuccessfully;
+				if (IsReadyForRendering)
+					MeshPreparationDidSucceed ();
 			}
 
 			return tally;
