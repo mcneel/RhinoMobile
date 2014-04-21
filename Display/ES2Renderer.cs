@@ -33,6 +33,7 @@ using MonoTouch.Foundation;
 // on the OpenTK-1.0 front.  Once things stabilize, this can be removed. 
 // See this thread for details:
 // http://forums.xamarin.com/discussion/1939/renderbuffertarget-in-opentk
+// TODO: Possible fix in http://docs.xamarin.com/releases/android/xamarin.android_4/xamarin.android_4.12/#Xamarin.Android_4.12.3
 #if __ANDROID__
 using BufferTarget = OpenTK.Graphics.ES20.All;
 using BufferUsage = OpenTK.Graphics.ES20.All;

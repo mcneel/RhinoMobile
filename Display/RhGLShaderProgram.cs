@@ -242,13 +242,12 @@ namespace RhinoMobile.Display
 		public void SetupViewport (ViewportInfo viewport) 
 		{
 			Transform mv = new Transform ();
-			bool bHaveModelView = false;
 
 			if (m_Uniforms.rglModelViewProjectionMatrix >= 0) {
 	  		Transform mvp = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Clip);
 
 				m_MVPXform = mvp;
-			
+
 				float[] modelViewProjection = mvp.ToFloatArray(false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
 			}
@@ -257,7 +256,6 @@ namespace RhinoMobile.Display
 				mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
 
 				m_MVXform = mv;
-				bHaveModelView = true;
 
 				float[] modelView = mv.ToFloatArray(false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix, 1, false, modelView);
@@ -273,14 +271,10 @@ namespace RhinoMobile.Display
 
 				float[] normalMatrix = new float[9];
 
-				if (!bHaveModelView) {
-					mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
+				mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
 
-					m_MVXform = mv;
-
-					mv = mv.Transpose ();
-					bHaveModelView = true;
-				} 
+				m_MVXform = mv;
+				mv = mv.Transpose ();
 
 				Matrix4Dto3F (mv, ref normalMatrix);
 				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
@@ -302,10 +296,12 @@ namespace RhinoMobile.Display
 				float[] diff = ConvertColorToFloatArrayOpaque (light.Diffuse);
 				GL.Uniform4 (m_Uniforms.rglLightDiffuse, 1, diff);
 			}
+
 			if (m_Uniforms.rglLightSpecular >= 0) {
 				float[] spec = ConvertColorToFloatArrayOpaque (light.Specular);
 				GL.Uniform4 (m_Uniforms.rglLightSpecular, 1, spec);
 			}
+
 			if (m_Uniforms.rglLightPosition >= 0) {
 				float[] pos = {
 					(float)light.Direction.X,
