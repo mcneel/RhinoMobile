@@ -22,9 +22,12 @@ using Rhino.DocObjects;
 using RhinoMobile.Model;
 using RhinoMobile.Display;
 using System.IO;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 #if __IOS__
 using MonoTouch.Foundation;
+using MonoTouch.OpenGLES;
 #endif
 
 #region OpenTK-1.0 API diffs
@@ -246,10 +249,10 @@ namespace RhinoMobile.Display
 		{
 			Model = model;
 
-      if ((model == null) || !model.IsReadyForRendering)
-        return false;
+			if ((model == null) || !model.IsReadyForRendering)
+				return false;
 
-      viewport.SetFrustumNearFar (model.BBox);
+			viewport.SetFrustumNearFar (model.BBox);
 
 			// Disable Blending and set the depth function
 			GL.DepthFunc (DepthFunction.Gequal);
@@ -309,7 +312,6 @@ namespace RhinoMobile.Display
 				SetMaterial (displayMesh.Material);
 
 				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
-
 					// Generate the VertexBuffer
 					uint vertex_buffer;
 					GL.GenBuffers (1, out vertex_buffer);
@@ -337,7 +339,7 @@ namespace RhinoMobile.Display
 					displayMesh.IndexBufferHandle = index_buffer;
 				}
 
-				// Bind Vertices
+				// Vertices
 				// ORDER MATTERS...if you don't do things in this order, you will get very frusterated.
 				// First, enable the VertexAttribArray for positions
 				int rglVertex = ActiveShader.RglVertexIndex;
@@ -347,19 +349,17 @@ namespace RhinoMobile.Display
 				// Third, tell GL where to look for the data...
 				GL.VertexAttribPointer (rglVertex, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, IntPtr.Zero);
 
-				// Bind Normals
+				// Normals
 				if (displayMesh.HasVertexNormals) {
 					int rglNormal = ActiveShader.RglNormalIndex;
 					GL.EnableVertexAttribArray (rglNormal);
-					GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 					GL.VertexAttribPointer (rglNormal, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Geometry.Point3f))));
 				}
 
-				// Bind Colors
+				// Colors
 				if (displayMesh.HasVertexColors) {
 					int rglColor = ActiveShader.RglColorIndex;
 					GL.EnableVertexAttribArray (rglColor);
-					GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
 				}
 
@@ -386,11 +386,15 @@ namespace RhinoMobile.Display
 				}
 					
 				// Disable any and all arrays and buffers we might have used...
+				GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 				GL.DisableVertexAttribArray (ActiveShader.RglColorIndex);
 				GL.DisableVertexAttribArray (ActiveShader.RglNormalIndex);
 				GL.DisableVertexAttribArray (ActiveShader.RglVertexIndex);
-				GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0);
+
+				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
 				GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
+				GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0);
+
 			}
 
 		}
