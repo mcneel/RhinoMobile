@@ -102,7 +102,7 @@ namespace RhinoMobile.Model
 		/// </value>
 		public virtual string ModelPath { 
 			get {
-				if (DocumentsFilename != null) {
+				if (!string.IsNullOrEmpty(DocumentsFilename)) {
 					var documentsPath = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
 					var fullPath = Path.Combine (documentsPath, DocumentsFilename);
 					m_modelPath = fullPath;
@@ -1254,7 +1254,7 @@ namespace RhinoMobile.Model
 		/// Gets size of the 3dm file - Model - (in bytes). Returns 0 if the file is null or cannot be found.
 		/// </summary>
 		public long GetFileSize () { 
-			if (ModelPath != string.Empty) {
+			if (!string.IsNullOrEmpty(ModelPath)) {
 				if (File.Exists (ModelPath)) {
 					FileInfo fileInfo = new FileInfo(ModelPath);
 					return fileInfo.Length;
@@ -1370,9 +1370,14 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual void DeleteCaches() 
 		{
-			if (SupportDirectoryName != string.Empty) {
-				if (Directory.Exists (SupportPathForName (string.Empty)))  
-					Directory.Delete (SupportPathForName (string.Empty));
+			if (!string.IsNullOrEmpty(SupportDirectoryName)) {
+				if (Directory.Exists (SupportPathForName (string.Empty))) { 
+					try {
+						Directory.Delete (SupportPathForName (string.Empty));
+					} catch (Exception ex) {
+						System.Diagnostics.Debug.WriteLine (ex.Message);
+					}
+				}
 			}
 				
 			SupportDirectoryName = string.Empty;
