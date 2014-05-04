@@ -384,12 +384,12 @@ namespace RhinoMobile.Model
 					ModelFile = File3dm.ReadWithLog (ModelPath, out errorLog);
 
 					// Check to make sure the 3dm was read correctly and there were no errors...
-					bool didPrepare = false;
+					bool didOpenFile = false;
 					if ((ModelFile != null) && (errorLog == string.Empty))
-						didPrepare = true;
+						didOpenFile = true;
 
 					// Preparation Dispatch...
-					if (didPrepare) {
+					if (didOpenFile) {
 						PrepareLayers ();
 						PrepareBoundingBoxes ();
 						PrepareViewports ();
