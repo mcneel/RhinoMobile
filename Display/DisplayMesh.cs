@@ -257,9 +257,7 @@ namespace RhinoMobile.Display
 			}
 
 			// The size of the mesh partitions here are determined by the limitations of OpenGL ES.
-			// The minus 3 here is the Paranoid (TM) Constant...
-			// Since we don't know how well CreatePartition deals with edge cases, we give the routine a slightly smaller parameter than the absolutely largest possible
-			mesh.CreatePartitions(ushort.MaxValue-3, int.MaxValue-3);
+			mesh.CreatePartitions(int.MaxValue, int.MaxValue);
 
 			if (mesh.PartitionCount == 0)
 				return null; //invalid mesh, ignore
@@ -270,8 +268,7 @@ namespace RhinoMobile.Display
 			//System.Diagnostics.Debug.WriteLine("Mesh {0} VertexCount: {1},  FaceCount: {2}, Partition has {3} parts.", attr.ObjectId.ToString(), mesh.Vertices.Count, mesh.Faces.Count, mesh.PartitionCount);
 
 			for (int i = 0; i < mesh.PartitionCount; i++) {
-				//shouldCaptureVBO spot
-				DisplayMesh newMesh = new DisplayMesh (mesh, i, material, mesh.PartitionCount > 1);
+				var newMesh = new DisplayMesh (mesh, i, material, mesh.PartitionCount > 1);
 				if (newMesh != null) {
 					newMesh.GUID = attr.ObjectId;
 					newMesh.IsVisible = attr.Visible;
@@ -442,13 +439,10 @@ namespace RhinoMobile.Display
 		protected bool LoadIndexData (Mesh mesh, int partitionIndex)
 		{
 			Indices = mesh.Faces.ToIntArray (true);
-	
+
 			IndexBufferLength = Indices.Length;
 
-			if (IndexBufferLength > 0)
-				return true;
-			else
-				return false;
+			return IndexBufferLength > 0;
 		}
 		#endregion
 

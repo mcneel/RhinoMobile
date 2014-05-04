@@ -400,8 +400,9 @@ namespace RhinoMobile.Model
 						m_cancellation_token_source = new CancellationTokenSource();
 
 						//FOR DEBUGGING ONLY...
-						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
+						PrepareMeshesSync (progress, m_cancellation_token_source.Token);
 
+						/*
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -413,7 +414,7 @@ namespace RhinoMobile.Model
 							Dispose ();
 							return;
 						}
-
+						*/
 					}
 				}
 			}
@@ -819,7 +820,7 @@ namespace RhinoMobile.Model
 		/// </summary>
 		protected virtual void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
 		{		
-			while (LayerBBoxes.Count () < ModelFile.Layers.Count ()) {
+			while (LayerBBoxes.Count < ModelFile.Layers.Count) {
 				BoundingBox invalidBBox = BoundingBox.Empty;
 				LayerBBoxes.Add (invalidBBox);
 			}
