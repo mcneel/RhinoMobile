@@ -400,9 +400,8 @@ namespace RhinoMobile.Model
 						m_cancellation_token_source = new CancellationTokenSource();
 
 						//FOR DEBUGGING ONLY...
-						PrepareMeshesSync (progress, m_cancellation_token_source.Token);
+						//PrepareMeshesSync (progress, m_cancellation_token_source.Token);
 
-						/*
 						try
 						{
 							result = await PrepareMeshesAsync (progress, m_cancellation_token_source.Token);
@@ -414,7 +413,6 @@ namespace RhinoMobile.Model
 							Dispose ();
 							return;
 						}
-						*/
 					}
 				}
 			}
@@ -775,9 +773,9 @@ namespace RhinoMobile.Model
 							prepareMeshesException = MeshException ("This model is only wireframes and cannot be displayed.  Save the model in shaded mode and download again.");
 						} else if ((GeometryCount > 0) && (BRepWithMeshCount == 0)) {
 							prepareMeshesException = MeshException ("This model has no renderable geometry.");
-						} else {
+						} else if (GeometryCount == 0 && BRepWithMeshCount == 0) {
 							prepareMeshesException = MeshException ("This model is empty.");
-
+						} else {
 							successfulPreparation = false;
 						}
 					}
@@ -859,8 +857,11 @@ namespace RhinoMobile.Model
 				//Loop through each BrepFace in the BRep and GetMesh, adding it to meshes
 				int count = 0;
 				foreach (BrepFace face in (pObject as Brep).Faces) {
-					meshes.Add (face.GetMesh (MeshType.Render));
-					count++;
+					var renderMesh = face.GetMesh (MeshType.Render);
+					if (renderMesh != null) {
+						meshes.Add (face.GetMesh (MeshType.Render));
+						count++;
+					}
 				}
 
 				if (count > 0)
