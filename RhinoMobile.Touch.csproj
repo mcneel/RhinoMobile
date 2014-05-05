@@ -61,9 +61,6 @@
     <Compile Include="..\rhinocommon\dotnet\AutoNativeMethods.cs">
       <Link>Libraries\rhinocommon\dotnet\AutoNativeMethods.cs</Link>
     </Compile>
-    <Compile Include="..\rhinocommon\dotnet\AutoNativeMethodsRdk.cs">
-      <Link>Libraries\rhinocommon\dotnet\AutoNativeMethodsRdk.cs</Link>
-    </Compile>
     <Compile Include="..\rhinocommon\dotnet\Import.cs">
       <Link>Libraries\rhinocommon\dotnet\Import.cs</Link>
     </Compile>

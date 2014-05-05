@@ -53,6 +53,9 @@ namespace RhinoMobile.Model
 		/// <value> The ID can be used in a database for model lookup in a table. </value> 
 		public virtual int Id { get; set; }
 
+		/// <value> The SortOrder can be used to save position in a sort in a database. </value>
+		public virtual int SortOrder { get; set; }
+
 		/// <value> Model title (as displayed to the user, without the .3dm extension). </value>
 		public virtual string Title { get; set; }
 
