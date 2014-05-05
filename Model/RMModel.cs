@@ -1350,7 +1350,7 @@ namespace RhinoMobile.Model
 		{
 			DeleteCaches ();
 
-			if (DocumentsFilename != string.Empty)
+			if (DocumentsFilename != string.Empty && File.Exists(ModelPath))
 				System.IO.File.Delete(ModelPath);
 
 			DocumentsFilename = string.Empty;
