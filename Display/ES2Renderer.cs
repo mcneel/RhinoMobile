@@ -503,15 +503,13 @@ namespace RhinoMobile.Display
 
 		#region Materials
 		/// <summary>
-		/// Sets the current material if not already set to that material
+		/// Sets the current material on the shader
 		/// </summary>
 		private void SetMaterial (Material material)
 		{
 			if (ActiveShader != null) {
-				if (!material.Equals (CurrentMaterial)) {
-					ActiveShader.SetupMaterial (material);
-					CurrentMaterial = material;
-				}
+				ActiveShader.SetupMaterial (material);
+				CurrentMaterial = material;
 			}
 		}
 		#endregion
@@ -520,7 +518,7 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// Creates a light that matches the style of the default openNURBS light.
 		/// </summary>
-		public Rhino.Geometry.Light CreateDefaultLight ()
+		private Rhino.Geometry.Light CreateDefaultLight ()
 		{
 			Rhino.Geometry.Light light = new Rhino.Geometry.Light ();
 			light.IsEnabled = true;
