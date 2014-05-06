@@ -221,10 +221,9 @@ namespace RhinoMobile.Display
 		/// </summary>
 		private void SetupShader (RhGLShaderProgram shader, RMModel model, ViewportInfo viewport)
 		{
-			 
 			// Check to make sure we actually have an active shader...
 			if (shader != null) {
-
+	
 				// Enable...
 				shader.Enable ();
 
@@ -309,7 +308,9 @@ namespace RhinoMobile.Display
 
 			if (displayMesh != null) {
 
-				SetMaterial (displayMesh.Material);
+				//We want to ignore the ambient color...
+				displayMesh.Material.AmbientColor = System.Drawing.Color.Black;
+				ActiveShader.SetupMaterial (displayMesh.Material);
 
 				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
 					// Generate the VertexBuffer
@@ -498,19 +499,6 @@ namespace RhinoMobile.Display
 			GL.ClearColor (1.0f, 1.0f, 1.0f, 0.0f);
 			GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 			return true;
-		}
-		#endregion
-
-		#region Materials
-		/// <summary>
-		/// Sets the current material on the shader
-		/// </summary>
-		private void SetMaterial (Material material)
-		{
-			if (ActiveShader != null) {
-				ActiveShader.SetupMaterial (material);
-				CurrentMaterial = material;
-			}
 		}
 		#endregion
 
