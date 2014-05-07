@@ -1,15 +1,17 @@
 Notes on RhinoMobile libraries
 ==============================
-This project depends on RhinoCommon to make calls into openNURBS with p/invoke.  The linked rhinocommon folder in 
-Libraries points to the publically available version of RhinoCommon: https://github.com/mcneel/rhinocommon
-which, in turn, depends on the publically available openNURBS: http://www.opennurbs.org.
+This project depends on RhinoCommon to make calls into openNURBS with p/invoke.  The linked rhinocommon folder points
+to the publically available version of RhinoCommon: https://github.com/mcneel/rhinocommon
+which, in turn, depends on the publically available openNURBS: http://www.rhino3d.com/opennurbs (C++ SDK)
 
 To get RhinoMobile (RhinoMobile.Droid, RhinoMobile.Touch) to build against rhinocommon, 
-rhinocommon must be placed in a folder parallel to RVCrossPlatform.  For example:
+rhinocommon must be placed in a folder parallel to RhinoMobile.  For example:
 
-<pre><code>SomeFolder
+<pre><code>Repositories
     |
     |______ rhinocommon
+    |
+    |______ RhinoMobile
     |
     |______ YourProject
 </code></pre>
@@ -19,10 +21,10 @@ to a location of your choice by editing the vcproj files.
 
 openNURBS - The copy of opennurbs used is in the rhinocommon/c/opennurbs folder.
 
-A build script for Mac OS X (build_mobile.sh) has been included in the rhinocommon/c folder.
+A build script for Mac OS X (build-mobile.py) has been included in the rhinocommon/c folder.
 
-_QUICK OPENNURBS REBUILD (Both platforms):_
-Run the build_mobile.sh (in Terminal, prefix it with a ./) to rebuild openNURBS for the target platforms.
+_QUICK OPENNURBS REBUILD (Either platform):_
+- In Xamarin Studio, open the RhinoMobile project and select Project > Build libopennurbs from the drop-down menu.
 
 iOS Build Instructions
 --------------------
@@ -36,8 +38,9 @@ MUST have the Build Action set to EmbeddedResource and the Resource ID set to th
 example, libopennurbs.a's Build Action would be set to EmbeddedResource and the Resource ID to libopennurbs.a (not
 namespace.namespace.libopennurbs.a - which is the default when you switch the Build Action).
 
-As an alternative to using the LinkWith attribute, extra mtouch arguments to add to the RV.Touch project are:
-<pre><code>-cxx -gcc_flags "-L${SolutionDir}/HelloRhino.Touch/libs/ -lopennurbs -force_load ${SolutionDir}/HelloRhino.Touch/libs/libopennurbs.a" </code></pre>
+As an alternative to using the LinkWith attribute, extra mtouch arguments can be added to the YourProject.Touch:
+<pre><code>-cxx -gcc_flags "-L${SolutionDir}/YourProject.Touch/libs/ -lopennurbs -force_load ${SolutionDir}/YourProject.Touch/libs/libopennurbs.a" </code></pre>
+As of Xamarin.iOS 7.2.1, this is NOT the recommended method, but it is still an option.
 
 Android Build Instructions
 --------------------

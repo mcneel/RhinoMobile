@@ -18,13 +18,19 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG; OPENNURBS_SDK; MONO_BUILD; __ANDROID__; MOBILE_BUILD</DefineConstants>
+    <DefineConstants>DEBUG;OPENNURBS_SDK;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
     <ConsolePause>false</ConsolePause>
     <additionalargs>-unsafe</additionalargs>
-    <NoWarn>0618 0219 0414</NoWarn>
+    <NoWarn>0618;0219;0414</NoWarn>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../rhinocommon/c/build_mobile.py -p android -v" workingdir="../rhinocommon/c/" />
+        <Command type="Custom" name="Build libopennurbs.so" command="../rhinocommon/c/build_mobile.py -p android -v -o" workingdir="../rhinocommon/c/" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -33,8 +39,14 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>OPENNURBS_SDK; MONO_BUILD; __ANDROID__; MOBILE_BUILD</DefineConstants>
+    <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
     <additionalargs>-unsafe</additionalargs>
+    <NoWarn>0618;0219;0414</NoWarn>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../rhinocommon/c/build_mobile.py -p android -v" workingdir="../rhinocommon/c/" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,680 +74,674 @@
     <Compile Include="Display\ClippingPlanes.cs" />
     <Compile Include="Display\ColorExtensions.cs" />
     <Compile Include="..\rhinocommon\dotnet\AutoNativeMethods.cs">
-      <Link>Libraries\rhinocommon\dotnet\AutoNativeMethods.cs</Link>
-    </Compile>
-    <Compile Include="..\rhinocommon\dotnet\AutoNativeMethodsRdk.cs">
-      <Link>Libraries\rhinocommon\dotnet\AutoNativeMethodsRdk.cs</Link>
+      <Link>rhinocommon\dotnet\AutoNativeMethods.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\Import.cs">
-      <Link>Libraries\rhinocommon\dotnet\Import.cs</Link>
+      <Link>rhinocommon\dotnet\Import.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\MonoHost.cs">
-      <Link>Libraries\rhinocommon\dotnet\MonoHost.cs</Link>
+      <Link>rhinocommon\dotnet\MonoHost.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\NameSpaceDoc.cs">
-      <Link>Libraries\rhinocommon\dotnet\NameSpaceDoc.cs</Link>
+      <Link>rhinocommon\dotnet\NameSpaceDoc.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\UnsafeNativeMethods.cs">
-      <Link>Libraries\rhinocommon\dotnet\UnsafeNativeMethods.cs</Link>
+      <Link>rhinocommon\dotnet\UnsafeNativeMethods.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\hostutils.cs">
-      <Link>Libraries\rhinocommon\dotnet\hostutils.cs</Link>
+      <Link>rhinocommon\dotnet\hostutils.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\interop.cs">
-      <Link>Libraries\rhinocommon\dotnet\interop.cs</Link>
+      <Link>rhinocommon\dotnet\interop.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\resolver.cs">
-      <Link>Libraries\rhinocommon\dotnet\resolver.cs</Link>
+      <Link>rhinocommon\dotnet\resolver.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\Properties\AssemblyInfo.cs">
-      <Link>Libraries\rhinocommon\dotnet\Properties\AssemblyInfo.cs</Link>
+      <Link>rhinocommon\dotnet\Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\groundplane.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\groundplane.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\groundplane.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_color.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_color.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_color.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_content.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_content.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_content.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_content_factories.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_content_factories.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_content_factories.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_content_list.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_content_list.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_content_list.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_contentfield.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_contentfield.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_contentfield.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_contentio.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_contentio.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_contentio.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_custom_render_meshes.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_custom_render_meshes.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_custom_render_meshes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_decals.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_decals.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_decals.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_environment.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_environment.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_environment.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_globals.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_globals.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_globals.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_material.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_material.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_material.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_plugin.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_plugin.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_plugin.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_preview_scene.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_preview_scene.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_preview_scene.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_render_plugin_info.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_render_plugin_info.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_render_plugin_info.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_render_window.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_render_window.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_render_window.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_rendermesh_iterator.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_rendermesh_iterator.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_rendermesh_iterator.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_sdkrender.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_sdkrender.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_sdkrender.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_simulated_environment.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_simulated_environment.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_simulated_environment.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_texture.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_texture.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_texture.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_undo.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_undo.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_undo.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\rdk_variant.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\rdk_variant.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\rdk_variant.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\simulatedtexture.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\simulatedtexture.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\simulatedtexture.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\RDK\sun.cs">
-      <Link>Libraries\rhinocommon\dotnet\RDK\sun.cs</Link>
+      <Link>rhinocommon\dotnet\RDK\sun.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\ON_MesherUtility.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\ON_MesherUtility.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\ON_MesherUtility.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_3dm.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_3dm.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_3dm.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_3dm_attributes.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_3dm_attributes.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_3dm_attributes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_3dm_properties.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_3dm_properties.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_3dm_properties.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_3dm_settings.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_3dm_settings.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_3dm_settings.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_annotation.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_annotation.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_annotation.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_annotation2.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_annotation2.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_annotation2.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_arc.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_arc.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_arc.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_arccurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_arccurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_arccurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_archive.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_archive.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_archive.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_array.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_array.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_array.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_base32.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_base32.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_base32.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_base64.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_base64.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_base64.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_beam.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_beam.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_beam.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_bezier.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_bezier.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_bezier.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_bitmap.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_bitmap.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_bitmap.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_bounding_box.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_bounding_box.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_bounding_box.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_box.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_box.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_box.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_brep.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_brep.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_brep.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_circle.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_circle.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_circle.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_color.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_color.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_color.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_cone.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_cone.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_cone.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_crc.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_crc.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_crc.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_curve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_curve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_curve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_curveonsurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_curveonsurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_curveonsurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_curveproxy.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_curveproxy.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_curveproxy.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_cylinder.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_cylinder.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_cylinder.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_defines.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_defines.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_defines.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_detail.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_detail.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_detail.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_dimstyle.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_dimstyle.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_dimstyle.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_ellipse.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_ellipse.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_ellipse.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_error.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_error.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_error.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_evaluate_nurbs.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_evaluate_nurbs.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_evaluate_nurbs.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_extensions.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_extensions.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_extensions.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_font.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_font.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_font.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_fpoint.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_fpoint.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_fpoint.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_geometry.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_geometry.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_geometry.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_gl.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_gl.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_gl.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_group.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_group.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_group.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_hatch.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_hatch.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_hatch.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_iepsiloncomparable.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_iepsiloncomparable.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_iepsiloncomparable.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_instance.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_instance.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_instance.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_intersect.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_intersect.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_intersect.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_intersectionevents.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_intersectionevents.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_intersectionevents.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_knot.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_knot.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_knot.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_layer.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_layer.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_layer.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_light.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_light.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_light.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_line.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_line.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_line.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_linecurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_linecurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_linecurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_linestyle.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_linestyle.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_linestyle.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_linetype.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_linetype.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_linetype.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_list.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_list.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_list.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_lookup.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_lookup.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_lookup.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_mapchan.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_mapchan.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_mapchan.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_massprop.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_massprop.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_massprop.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_material.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_material.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_material.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_math.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_math.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_math.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_matrix.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_matrix.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_matrix.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_memory.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_memory.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_memory.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_mesh.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_mesh.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_mesh.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_mesh_marker.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_mesh_marker.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_mesh_marker.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_nurbscurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_nurbscurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_nurbscurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_nurbssurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_nurbssurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_nurbssurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_object.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_object.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_object.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_objref.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_objref.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_objref.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_offsetsurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_offsetsurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_offsetsurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_oject_history.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_oject_history.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_oject_history.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_optimize.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_optimize.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_optimize.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_plane.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_plane.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_plane.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_planesurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_planesurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_planesurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_pluginlist.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_pluginlist.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_pluginlist.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_plus.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_plus.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_plus.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_plus_registry.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_plus_registry.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_plus_registry.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_point.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_point.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_point.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_pointcloud.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_pointcloud.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_pointcloud.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_pointgeometry.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_pointgeometry.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_pointgeometry.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_pointgrid.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_pointgrid.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_pointgrid.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_polycurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_polycurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_polycurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_polyedgecurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_polyedgecurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_polyedgecurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_polyline.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_polyline.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_polyline.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_polylinecurve.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_polylinecurve.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_polylinecurve.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_quaternion.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_quaternion.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_quaternion.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_rectangle.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_rectangle.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_rectangle.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_rendering.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_rendering.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_rendering.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_revsurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_revsurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_revsurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_rtree.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_rtree.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_rtree.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_sphere.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_sphere.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_sphere.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_string.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_string.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_string.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_sumsurface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_sumsurface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_sumsurface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_surface.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_surface.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_surface.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_surfaceproxy.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_surfaceproxy.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_surfaceproxy.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_system.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_system.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_system.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_textlog.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_textlog.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_textlog.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_texture.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_texture.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_texture.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_texture_mapping.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_texture_mapping.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_texture_mapping.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_torus.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_torus.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_torus.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_userdata.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_userdata.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_userdata.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_uuid.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_uuid.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_uuid.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_version.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_version.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_version.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_viewport.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_viewport.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_viewport.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_workspace.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_workspace.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_workspace.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_x.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_x.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_x.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_xform.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_xform.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_xform.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\opennurbs\opennurbs_zlib.cs">
-      <Link>Libraries\rhinocommon\dotnet\opennurbs\opennurbs_zlib.cs</Link>
+      <Link>rhinocommon\dotnet\opennurbs\opennurbs_zlib.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\Interpolator.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\Interpolator.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\Interpolator.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\RhinoColors.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\RhinoColors.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\RhinoColors.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkanalysismodes.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkanalysismodes.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkanalysismodes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkannotationobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkannotationobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkannotationobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkapp.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkapp.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkapp.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkappsettings.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkappsettings.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkappsettings.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkbitmap.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkbitmap.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkbitmap.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkbrepobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkbrepobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkbrepobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcageobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcageobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcageobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkchannelattributes.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkchannelattributes.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkchannelattributes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkchecks.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkchecks.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkchecks.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkclippingplane.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkclippingplane.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkclippingplane.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcolorbutton.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcolorbutton.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcolorbutton.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcommand.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcommand.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcommand.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcommandoption.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcommandoption.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcommandoption.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcommandoptionname.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcommandoptionname.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcommandoptionname.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcontextmenu.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcontextmenu.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcontextmenu.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcurveobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcurveobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcurveobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkcurveseam.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkcurveseam.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkcurveseam.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdetailobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdetailobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdetailobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdialog.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdialog.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdialog.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdib.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdib.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdib.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdigitizerinfo.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdigitizerinfo.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdigitizerinfo.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdigitizermanager.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdigitizermanager.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdigitizermanager.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdimstyle.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdimstyle.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdimstyle.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdimstylecombobox.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdimstylecombobox.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdimstylecombobox.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdirectorymanager.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdirectorymanager.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdirectorymanager.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplay.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplay.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplay.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplayattrsmgr.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplayattrsmgr.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplayattrsmgr.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplayconduit.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplayconduit.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplayconduit.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplayconduitutility.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplayconduitutility.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplayconduitutility.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplayengine.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplayengine.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplayengine.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplaypipeline.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplaypipeline.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplaypipeline.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplaypipelineattributes.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplaypipelineattributes.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplaypipelineattributes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdisplaypipelinematerial.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdisplaypipelinematerial.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdisplaypipelinematerial.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdoc.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdoc.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdoc.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkdocproperties.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkdocproperties.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkdocproperties.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkeventwatcher.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkeventwatcher.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkeventwatcher.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkextrude.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkextrude.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkextrude.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkextrusion.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkextrusion.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkextrusion.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkfair.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkfair.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkfair.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkfilemenu.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkfilemenu.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkfilemenu.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkfileoptions.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkfileoptions.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkfileoptions.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkfileutilities.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkfileutilities.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkfileutilities.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkfont.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkfont.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkfont.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkget.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkget.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkget.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetfiledialog.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetfiledialog.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetfiledialog.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetline.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetline.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetline.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetplane.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetplane.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetplane.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetpoint.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetpoint.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetpoint.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetstring.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetstring.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetstring.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgetxform.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgetxform.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgetxform.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgrips.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgrips.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgrips.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgroup.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgroup.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgroup.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgroupobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgroupobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgroupobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkgumball.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkgumball.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkgumball.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkhatchobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkhatchobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkhatchobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkhatchpattern.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkhatchpattern.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkhatchpattern.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkhistoryrecordtable.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkhistoryrecordtable.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkhistoryrecordtable.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkinstance.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkinstance.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkinstance.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdklayer.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdklayer.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdklayer.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdklight.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdklight.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdklight.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdklinetype.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdklinetype.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdklinetype.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkloft.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkloft.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkloft.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkmaterial.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkmaterial.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkmaterial.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkmeshobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkmeshobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkmeshobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkmouse.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkmouse.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkmouse.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkobjectattributes.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkobjectattributes.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkobjectattributes.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkobjecthistory.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkobjecthistory.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkobjecthistory.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkobjectpropertiesdialogpage.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkobjectpropertiesdialogpage.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkobjectpropertiesdialogpage.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkoptionsdialogpage.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkoptionsdialogpage.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkoptionsdialogpage.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkpagelayoutview.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkpagelayoutview.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkpagelayoutview.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkpick.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkpick.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkpick.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkplugin.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkplugin.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkplugin.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkpointobject.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkpointobject.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkpointobject.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkpolyedge.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkpolyedge.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkpolyedge.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkprintinfo.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkprintinfo.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkprintinfo.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkstackeddialogpage.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkstackeddialogpage.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkstackeddialogpage.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdksweep.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdksweep.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdksweep.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkuifile.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkuifile.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkuifile.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkuiprofilecontext.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkuiprofilecontext.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkuiprofilecontext.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkunrollsrf.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkunrollsrf.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkunrollsrf.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkview.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkview.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkview.cs</Link>
     </Compile>
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkviewport.cs">
-      <Link>Libraries\rhinocommon\dotnet\rhino\rhinosdkviewport.cs</Link>
+      <Link>rhinocommon\dotnet\rhino\rhinosdkviewport.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Libraries\README.md" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
@@ -743,8 +749,19 @@
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Display\" />
-    <Folder Include="Libraries\" />
     <Folder Include="Model\" />
-    <Folder Include="Libraries\rhinocommon\" />
+    <Folder Include="rhinocommon\" />
+    <Folder Include="libs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedNativeLibrary Include="..\rhinocommon\c\build\Release-android\libs\armeabi\libopennurbs.so">
+      <Link>libs\armeabi\libopennurbs.so</Link>
+    </EmbeddedNativeLibrary>
+    <EmbeddedNativeLibrary Include="..\rhinocommon\c\build\Release-android\libs\armeabi-v7a\libopennurbs.so">
+      <Link>libs\armeabi-v7a\libopennurbs.so</Link>
+    </EmbeddedNativeLibrary>
+    <EmbeddedNativeLibrary Include="..\rhinocommon\c\build\Release-android\libs\x86\libopennurbs.so">
+      <Link>libs\x86\libopennurbs.so</Link>
+    </EmbeddedNativeLibrary>
   </ItemGroup>
 </Project>
