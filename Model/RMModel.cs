@@ -317,9 +317,24 @@ namespace RhinoMobile.Model
 				DisplayObjects = null;
 			}
 
+			if (DisplayMeshes != null) {
+				DisplayMeshes.Clear ();
+				DisplayMeshes = null;
+			}
+
+			if (DisplayInstanceMeshes != null) {
+				DisplayInstanceMeshes.Clear ();
+				DisplayInstanceMeshes = null;
+			}
+
 			if (TransparentObjects != null) {
 				TransparentObjects.Clear ();
 				TransparentObjects = null;
+			}
+
+			if (TransparentInstanceObjects != null) {
+				TransparentInstanceObjects.Clear ();
+				TransparentInstanceObjects = null;
 			}
 
 			if (ModelObjectsDictionary != null) {
