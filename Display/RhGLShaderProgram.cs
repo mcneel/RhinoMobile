@@ -104,7 +104,7 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public static RhGLShaderProgram BuildProgram (string name, string vertexShader, string fragmentShader)
 		{
-			if (string.IsNullOrWhiteSpace (vertexShader) || string.IsNullOrWhiteSpace (fragmentShader))
+			if (String.IsNullOrWhiteSpace (vertexShader) || String.IsNullOrWhiteSpace (fragmentShader))
 				return null;
 
 			int hVsh = BuildShader (vertexShader, ShaderType.VertexShader);
@@ -288,17 +288,17 @@ namespace RhinoMobile.Display
 		public void SetupLight (Light light)
 		{
 			if (m_Uniforms.rglLightAmbient >= 0) {
-				float[] amb = ConvertColorToFloatArrayOpaque (light.Ambient);
+				float[] amb = { light.Ambient.R / 255.0f, light.Ambient.G / 255.0f, light.Ambient.B / 255.0f, 1.0f };
 				GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, amb);
 			}
 
 			if (m_Uniforms.rglLightDiffuse >= 0) {
-				float[] diff = ConvertColorToFloatArrayOpaque (light.Diffuse);
+				float[] diff = { light.Diffuse.R / 255.0f, light.Diffuse.G / 255.0f, light.Diffuse.B / 255.0f, 1.0f };
 				GL.Uniform4 (m_Uniforms.rglLightDiffuse, 1, diff);
 			}
 
 			if (m_Uniforms.rglLightSpecular >= 0) {
-				float[] spec = ConvertColorToFloatArrayOpaque (light.Specular);
+				float[] spec = { light.Specular.R / 255.0f, light.Specular.G / 255.0f, light.Specular.B / 255.0f, 1.0f };
 				GL.Uniform4 (m_Uniforms.rglLightSpecular, 1, spec);
 			}
 
@@ -317,37 +317,39 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public void SetupMaterial (Material material)
 		{
-			Color sColor = material.SpecularColor;
-
 			float alpha = (float)(1.0 - material.Transparency);
 			float shine = (float)(128.0 * (material.Shine / Material.MaxShine));
 			float[] black = { 0.0f, 0.0f, 0.0f, 1.0f };
-			float[] spec = ConvertColorToFloatArray(sColor);
+			float[] spec = { material.SpecularColor.R / 255.0f, 
+											 material.SpecularColor.G / 255.0f, 
+											 material.SpecularColor.B / 255.0f, 
+											 material.SpecularColor.A / 255.0f };
 			float[] pspec = Convert.ToBoolean (shine) ? spec : black;
 
 			if (m_Uniforms.rglLightAmbient >= 0) {
 				if (material.AmbientColor.A > 0) {
-					float[] ambi = ConvertColorToFloatArray(material.AmbientColor);
+					float[] ambi = {
+						material.AmbientColor.R / 255.0f,
+						material.AmbientColor.G / 255.0f,
+						material.AmbientColor.B / 255.0f,
+						material.AmbientColor.A / 255.0f
+					};
 					GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, ambi);
 				} else
 					GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, black);
 			}
 
 			if (m_Uniforms.rglDiffuse >= 0) {
-				Color dColor = material.DiffuseColor;
-				float[] convertedColor = ConvertColorToFloatArray(dColor);
-				float[] diff = { 
-					convertedColor[0],
-					convertedColor[1],
-					convertedColor[2],
-					alpha
-				};
+				float[] diff = { material.DiffuseColor.R / 255.0f, 
+												 material.DiffuseColor.G / 255.0f, 
+												 material.DiffuseColor.B / 255.0f, 
+												 alpha };
 				GL.Uniform4 (m_Uniforms.rglDiffuse, 1, diff);
 			}
 			if (m_Uniforms.rglSpecular >= 0)
 				GL.Uniform4 (m_Uniforms.rglSpecular, 1, pspec);
 			if (m_Uniforms.rglEmission >= 0) {
-				float[] emmi = ConvertColorToFloatArrayOpaque(material.EmissionColor);
+				float[] emmi = { material.EmissionColor.R / 255.0f, material.EmissionColor.G / 255.0f, material.EmissionColor.B / 255.0f, 1.0f };
 				GL.Uniform4 (m_Uniforms.rglEmission, 1, emmi);
 			}
 			if (m_Uniforms.rglShininess >= 0)
@@ -447,7 +449,6 @@ namespace RhinoMobile.Display
 				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
 			}
 		}
-
 		#endregion
 
 		#region Protected Methods
@@ -570,30 +571,6 @@ namespace RhinoMobile.Display
 			f[0] =  (float)d[0,0]; f[1]  = (float)d[0,1]; f[2]  = (float)d[0,2]; 
 			f[3] =  (float)d[1,0]; f[4]  = (float)d[1,1]; f[5]  = (float)d[1,2]; 
 			f[6] =  (float)d[2,0]; f[7]  = (float)d[2,1]; f[8] = (float)d[2,2]; 
-		}
-
-		/// <returns> A float array from a System.Drawing.Color </returns>
-		private static float[] ConvertColorToFloatArray (System.Drawing.Color color) 
-		{
-			float red   = (float)color.R / 255.0f;
-			float green = (float)color.G / 255.0f;
-			float blue  = (float)color.B / 255.0f;
-			float alpha = (float)color.A / 255.0f;
-
-			float[] convertedColor = new float[] { red, green, blue, alpha };
-			return convertedColor;
-		}
-
-		/// <returns> A float array from a System.Drawing.Color that is always opaque </returns>
-		private static float[] ConvertColorToFloatArrayOpaque (System.Drawing.Color color) 
-		{
-			float red   = (float)color.R / 255.0f;
-			float green = (float)color.G / 255.0f;
-			float blue  = (float)color.B / 255.0f;
-			const float alpha = 1.0f;
-
-			float[] convertedColor = new float[] { red, green, blue, alpha };
-			return convertedColor;
 		}
 		#endregion
 

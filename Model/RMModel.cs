@@ -105,11 +105,11 @@ namespace RhinoMobile.Model
 		/// </value>
 		public virtual string ModelPath { 
 			get {
-				if (!string.IsNullOrEmpty(DocumentsFilename)) {
+				if (!String.IsNullOrEmpty(DocumentsFilename)) {
 					var documentsPath = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
 					var fullPath = Path.Combine (documentsPath, DocumentsFilename);
 					m_modelPath = fullPath;
-				} else m_modelPath = string.Empty;
+				} else m_modelPath = String.Empty;
 
 				return m_modelPath;
 			}
@@ -125,8 +125,17 @@ namespace RhinoMobile.Model
 		/// <value> DisplayObjects is a list of all the objects to be displayed. </value>
 		public virtual List<DisplayObject> DisplayObjects { get; protected set; }
 
+		/// <value> DisplayMesh is a list of all the standard DisplayMeshes to be displayed. </value>
+		public virtual List<DisplayMesh> DisplayMeshes { get; protected set; }
+
+		/// <value> DisplayInstanceMeshes is a list of all the instances objects to be displayed </value>
+		public virtual List<DisplayInstanceMesh> DisplayInstanceMeshes { get; protected set; }
+
 		/// <value> TransparentObjects is a list of all DisplayObjects that are not opaque. </value>
-		public virtual List<DisplayObject> TransparentObjects { get; protected set; }
+		public virtual List<DisplayMesh> TransparentObjects { get; protected set; }
+
+		/// <value> TransparentObjects is a list of all DisplayInstanceMeshes that are not opaque. </value>
+		public virtual List<DisplayInstanceMesh> TransparentInstanceObjects { get; protected set; }
 
 		/// <value> Dictionary of ModelObjects, with Guid keys. </value>
 		protected virtual Dictionary<Guid, ModelObject> ModelObjectsDictionary { get; set; }
@@ -373,7 +382,10 @@ namespace RhinoMobile.Model
 
 				if (ModelFile == null) {
 					DisplayObjects = new List<DisplayObject> ();
-					TransparentObjects = new List<DisplayObject> ();
+					DisplayMeshes = new List<DisplayMesh> ();
+					DisplayInstanceMeshes = new List<DisplayInstanceMesh> ();
+					TransparentObjects = new List<DisplayMesh> ();
+					TransparentInstanceObjects = new List<DisplayInstanceMesh> ();
 					ModelObjects = new List<ModelObject> ();
 					ModelObjectsDictionary = new Dictionary<Guid, ModelObject> ();
 					BRepCount = 0;
@@ -388,7 +400,7 @@ namespace RhinoMobile.Model
 
 					// Check to make sure the 3dm was read correctly and there were no errors...
 					bool didOpenFile = false;
-					if ((ModelFile != null) && (errorLog == string.Empty))
+					if ((ModelFile != null) && (errorLog == String.Empty))
 						didOpenFile = true;
 
 					// Preparation Dispatch...
@@ -431,12 +443,12 @@ namespace RhinoMobile.Model
 		/// </summary>
 		protected virtual string InspectRevisionHistory (string path)
 		{
-			string identifier = string.Empty;
+			string identifier = String.Empty;
 
 			try
 			{
-				string createdBy = string.Empty;
-				string lastEditedBy = string.Empty;
+				string createdBy = String.Empty;
+				string lastEditedBy = String.Empty;
 				int revision = 0;
 				DateTime createdOn = new DateTime();
 				DateTime lastEditedOn = new DateTime();
@@ -519,12 +531,12 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual bool LayerIsVisibleAtIndex(int layerIndex) 
 		{
-			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count) {
-				Layer layer = ModelFile.Layers[layerIndex];
-				return layer.IsVisible;
-			}
+			if (layerIndex >= 0 && layerIndex < Layers.Count)
+				return Layers [layerIndex].IsVisible;
+
 			System.Diagnostics.Debug.WriteLine ("Bad Layer Index: {0}", layerIndex);
-			return false; //punt
+
+			return false;
 		}
 
 		/// <summary>
@@ -709,7 +721,7 @@ namespace RhinoMobile.Model
 		{
 			Int64 tally = 0;
 
-			Exception prepareMeshesException = MeshException (string.Empty);
+			Exception prepareMeshesException = MeshException (String.Empty);
 			// Show we have started reading the meshes
 			MeshPreparationProgressEvent (tally);
 
@@ -751,17 +763,17 @@ namespace RhinoMobile.Model
 
 						if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayMesh")) {
 							if ((obj as DisplayMesh).IsOpaque) {
-								DisplayObjects.Add (obj);
+								DisplayMeshes.Add ((DisplayMesh)obj);
 							} else {
-								TransparentObjects.Add (obj);
+								TransparentObjects.Add ((DisplayMesh)obj);
 							}
 						}
 
 						if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
 							if ((obj as DisplayInstanceMesh).IsOpaque) {
-								DisplayObjects.Add (obj);
+								DisplayInstanceMeshes.Add ((DisplayInstanceMesh)obj);
 							} else {
-								TransparentObjects.Add (obj);
+								TransparentInstanceObjects.Add ((DisplayInstanceMesh)obj);
 							}
 						}
 					}
@@ -771,7 +783,7 @@ namespace RhinoMobile.Model
 					ModelObjectsDictionary.Clear ();
 
 					// look for models that cannot be displayed
-					if ((DisplayObjects.Count == 0) && (TransparentObjects.Count == 0)) {
+					if ((DisplayMeshes.Count == 0) && (TransparentObjects.Count == 0)) {
 						if ((BRepCount > 0) && (BRepWithMeshCount == 0)) {
 							prepareMeshesException = MeshException ("This model is only wireframes and cannot be displayed.  Save the model in shaded mode and download again.");
 						} else if ((GeometryCount > 0) && (BRepWithMeshCount == 0)) {
@@ -800,7 +812,7 @@ namespace RhinoMobile.Model
 					ReadSuccessfully = successfulPreparation;
 				}
 
-				if (prepareMeshesException.Message != string.Empty) {
+				if (prepareMeshesException.Message != String.Empty) {
 					System.Diagnostics.Debug.WriteLine (prepareMeshesException.Message);
 					MeshPreparationDidFailWithException (prepareMeshesException);
 				}
@@ -1012,7 +1024,7 @@ namespace RhinoMobile.Model
 		}
 
 		/// <summary>
-		/// NOTE: Not called in currrent implementation.
+		/// NOTE: Not called in current implementation.
 		/// Models with large meshes must partition the meshes before displaying them on the device.
 		/// Partitioning meshes is a lengthy process and can take > 80% of the model loading time.
 		/// We save the raw VBO data of a mesh in an archive after a mesh has been partitioned
@@ -1043,7 +1055,7 @@ namespace RhinoMobile.Model
 			if (material.Transparency == 0)
 				DisplayObjects.AddRange (displayMeshes);
 			else
-				TransparentObjects.AddRange (displayMeshes);
+				TransparentObjects.AddRange ((IEnumerable<DisplayMesh>)displayMeshes);
 
 			return true;
 		}
@@ -1211,13 +1223,13 @@ namespace RhinoMobile.Model
 		public virtual string CreateModelPath() 
 		{		
 			var documentsPath = System.Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
-			if (DocumentsFilename != string.Empty)
+			if (DocumentsFilename != String.Empty)
 				return Path.Combine(documentsPath, DocumentsFilename);
 
 			// Each model is stored in the ~/Documents folder (on iOS) or the ~/files/ folder (on Android), 
 			// and since the user can access this folder through iTunes File Sharing, there may already be a file
 			// with our URL name in this folder, so check for that an increment the filename in the folder if that
-			if (BaseName != string.Empty) {
+			if (BaseName != String.Empty) {
 				string candidateName = BaseName + ".3dm";
 				int index = 2;
 
@@ -1232,7 +1244,7 @@ namespace RhinoMobile.Model
 					index++;
 				}
 			} else 
-				return string.Empty;
+				return String.Empty;
 		}
 
 		/// <summary>
@@ -1251,7 +1263,7 @@ namespace RhinoMobile.Model
 		public virtual bool HasDocumentsName (string documentsName) 
 		{
 			if (!String.IsNullOrEmpty(documentsName) && !String.IsNullOrEmpty(DocumentsFilename))
-				return string.Equals (documentsName, DocumentsFilename, StringComparison.CurrentCultureIgnoreCase);
+				return String.Equals (documentsName, DocumentsFilename, StringComparison.CurrentCultureIgnoreCase);
 			return false;	
 		}
 
@@ -1259,7 +1271,7 @@ namespace RhinoMobile.Model
 		/// Gets size of the 3dm file - Model - (in bytes). Returns 0 if the file is null or cannot be found.
 		/// </summary>
 		public long GetFileSize () { 
-			if (!string.IsNullOrEmpty(ModelPath)) {
+			if (!String.IsNullOrEmpty(ModelPath)) {
 				if (File.Exists (ModelPath)) {
 					FileInfo fileInfo = new FileInfo(ModelPath);
 					return fileInfo.Length;
@@ -1329,12 +1341,12 @@ namespace RhinoMobile.Model
 		public virtual string SupportPathForName(string fileOrDirectoryName) 
 		{
 			if (SupportDirectoryName == null) {
-				string directoryName = string.Empty;
-				string directoryPath = string.Empty;
+				string directoryName = String.Empty;
+				string directoryPath = String.Empty;
 			
 				do {
 					directoryName = System.Guid.NewGuid ().ToString ();
-					directoryPath = SupportPathFromDirectory (directoryName, string.Empty);
+					directoryPath = SupportPathFromDirectory (directoryName, String.Empty);
 				} while (System.IO.Directory.Exists(directoryPath));
 
 				SupportDirectoryName = directoryName;
@@ -1353,10 +1365,10 @@ namespace RhinoMobile.Model
 		{
 			DeleteCaches ();
 
-			if (DocumentsFilename != string.Empty && File.Exists(ModelPath))
+			if (DocumentsFilename != String.Empty && File.Exists(ModelPath))
 				System.IO.File.Delete(ModelPath);
 
-			DocumentsFilename = string.Empty;
+			DocumentsFilename = String.Empty;
 			Downloaded = false;
 		}
 
@@ -1375,17 +1387,17 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual void DeleteCaches() 
 		{
-			if (!string.IsNullOrEmpty(SupportDirectoryName)) {
-				if (Directory.Exists (SupportPathForName (string.Empty))) { 
+			if (!String.IsNullOrEmpty(SupportDirectoryName)) {
+				if (Directory.Exists (SupportPathForName (String.Empty))) { 
 					try {
-						Directory.Delete (SupportPathForName (string.Empty));
+						Directory.Delete (SupportPathForName (String.Empty));
 					} catch (Exception ex) {
 						System.Diagnostics.Debug.WriteLine (ex.Message);
 					}
 				}
 			}
 				
-			SupportDirectoryName = string.Empty;
+			SupportDirectoryName = String.Empty;
 		}
 		#endregion
 	}

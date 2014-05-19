@@ -193,8 +193,8 @@ namespace RhinoMobile.Display
 		/// </summary>
 		private string GetResourceAsString(string name, string extension)
 		{
-			string resource = string.Empty;
-			string contents = string.Empty;
+			string resource = String.Empty;
+			string contents = String.Empty;
 
 			#if __ANDROID__
 			resource = name + "." + extension;
@@ -262,32 +262,33 @@ namespace RhinoMobile.Display
 
 			// Render calls...
 			if (model != null) {
-				// First render all opaque objects...
-				foreach (var obj in model.DisplayObjects) {
-					if (obj != null) {
-						RenderObject (obj, viewport);
-					}
+			
+				// First, render all opaque objects that are not instances
+				foreach (var obj in model.DisplayMeshes) {
+					if (obj != null)
+						RenderObject (obj, viewport, false);
 				}
 
-				// Second render all transparent meshes
+				// Second, render all opaque objects that are instances
+				foreach (var obj in model.DisplayInstanceMeshes) {
+					if (obj != null)
+						RenderObject (obj, viewport, true);
+				}
+					
+				// Third, render all transparent meshes
 				RenderTransparentObjects (model);
 			}
 
 			// Disable the shader
 			ActiveShader.Disable ();
-
-			#if __IOS__
-			// Discard Framebuffer attachments...
-			GL.Ext.DiscardFramebuffer (All.Framebuffer, 2, new All[]{All.DepthAttachment, All.ColorAttachment0} );
-			#endif
-
+		
 			return true;
 		}
 
 		/// <summary>
 		/// Renders the object in a viewport
 		/// </summary>
-		private void RenderObject (DisplayObject obj, Rhino.DocObjects.ViewportInfo viewport)
+		private void RenderObject (DisplayObject obj, Rhino.DocObjects.ViewportInfo viewport, bool isInstance)
 		{
 			// If the object is invisible, return.
 			if (!obj.IsVisible)
@@ -296,16 +297,9 @@ namespace RhinoMobile.Display
 			// If the layer that the object is on is turned off, return.
 			if (!Model.LayerIsVisibleAtIndex (obj.LayerIndex))
 				return;
-
-			DisplayMesh displayMesh;
-			if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayMesh")) {
-				displayMesh = (DisplayMesh)obj;
-			} else if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
-				displayMesh = ((DisplayInstanceMesh)obj).Mesh;
-			} else {
-				displayMesh = obj.Mesh;
-			}
-
+				
+			DisplayMesh displayMesh = isInstance ? ((DisplayInstanceMesh)obj).Mesh : (DisplayMesh)obj;
+				
 			if (displayMesh != null) {
 
 				//We want to ignore the ambient color...
@@ -365,9 +359,8 @@ namespace RhinoMobile.Display
 				}
 
 				// Push transforms from instances onto the uniform stack
-				if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
+				if (isInstance)
 					ActiveShader.PushModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
-				}
 
 				// Bind Indices
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
@@ -382,9 +375,8 @@ namespace RhinoMobile.Display
 				#endif
 			
 				// Pop transforms from instances off of the uniform stack
-				if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
+				if (isInstance)
 					ActiveShader.PopModelViewMatrix ();
-				}
 					
 				// Disable any and all arrays and buffers we might have used...
 				GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
@@ -395,7 +387,6 @@ namespace RhinoMobile.Display
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
 				GL.BindBuffer (BufferTarget.ArrayBuffer, 0);
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, 0);
-
 			}
 
 		}
@@ -420,33 +411,24 @@ namespace RhinoMobile.Display
 
 			// Provided we actually have a model to render...
 			if (model != null) {
-				// ... render all transparent meshes...
-				List<DisplayObject> objects = model.TransparentObjects;
 
-				if (objects.Count > 0) {
+				// ... render all transparent meshes...
+				if (model.TransparentObjects.Count > 0) {
 					//Pass #1
 					GL.DepthMask (false);
 					GL.Enable (EnableCap.CullFace);
 
 					// i. Draw all objects' backfaces
 					GL.CullFace (CullFaceMode.Front);
-					foreach (DisplayObject obj in objects) {
-
-						DisplayMesh mesh;
-						if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayMesh")) {
-							mesh = (DisplayMesh)obj;
-						} else if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
-							mesh = ((DisplayInstanceMesh)obj).Mesh;
-						} else {
-							mesh = obj.Mesh;
-						}
+					foreach (DisplayMesh mesh in model.TransparentObjects) {
 
 						if (mesh != null) {
-							RenderObject (obj, Viewport);
+								RenderObject (mesh, Viewport, false);
+
 							// ii. Draw all "open" objects' front faces.
 							if (!mesh.IsClosed) {
 								GL.CullFace (CullFaceMode.Back);
-								RenderObject (obj, Viewport);
+								RenderObject (mesh, Viewport, false);
 							}
 						}
 					}
@@ -454,25 +436,51 @@ namespace RhinoMobile.Display
 					// Pass #2: Draw all objects' front faces
 					GL.DepthMask (true);
 					GL.CullFace (CullFaceMode.Back);
-					foreach (DisplayObject obj in objects) {
-						RenderObject (obj, Viewport);
-					}
+					foreach (DisplayMesh mesh in model.TransparentObjects)
+						RenderObject (mesh, Viewport, false);
 
 					// Pass #3: Draw all "open" objects' back faces
 					GL.CullFace (CullFaceMode.Front);
-					foreach (DisplayObject obj in objects) {
-
-						DisplayMesh mesh;
-						if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayMesh")) {
-							mesh = (DisplayMesh)obj;
-						} else if (obj.GetType () == Type.GetType ("RhinoMobile.Display.DisplayInstanceMesh")) {
-							mesh = ((DisplayInstanceMesh)obj).Mesh;
-						} else {
-							mesh = obj.Mesh;
-						}
-
+					foreach (DisplayMesh mesh in model.TransparentObjects) {
 						if ((mesh != null) && (!mesh.IsClosed))
-							RenderObject (obj, Viewport);
+							RenderObject (mesh, Viewport, false);
+					}
+
+					GL.Disable (EnableCap.CullFace);
+				}
+
+				// ...then render all transparent instance meshes...
+				if (model.TransparentInstanceObjects.Count > 0) {
+					//Pass #1
+					GL.DepthMask (false);
+					GL.Enable (EnableCap.CullFace);
+
+					// i. Draw all objects' backfaces
+					GL.CullFace (CullFaceMode.Front);
+					foreach (DisplayInstanceMesh instance in model.TransparentInstanceObjects) {
+
+						if (instance.Mesh != null) {
+							RenderObject (instance, Viewport, true);
+
+							// ii. Draw all "open" objects' front faces.
+							if (!instance.Mesh.IsClosed) {
+								GL.CullFace (CullFaceMode.Back);
+								RenderObject (instance, Viewport, true);
+							}
+						}
+					}
+
+					// Pass #2: Draw all objects' front faces
+					GL.DepthMask (true);
+					GL.CullFace (CullFaceMode.Back);
+					foreach (DisplayInstanceMesh instance in model.TransparentInstanceObjects)
+						RenderObject (instance, Viewport, true);
+
+					// Pass #3: Draw all "open" objects' back faces
+					GL.CullFace (CullFaceMode.Front);
+					foreach (DisplayInstanceMesh instance in model.TransparentInstanceObjects) {
+						if ((instance.Mesh != null) && (!instance.Mesh.IsClosed))
+							RenderObject (instance, Viewport, true);
 					}
 
 					GL.Disable (EnableCap.CullFace);
