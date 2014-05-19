@@ -47,6 +47,10 @@ namespace RhinoMobile.Model
 		public new void ExplodeIntoArray(RMModel model, List<DisplayObject> array, Transform xform)
 		{
 			bool isIdentityXform = xform.Equals (Transform.Identity);
+
+			if (DisplayMeshes == null)
+				return;
+
 			foreach (DisplayMesh mesh in DisplayMeshes) {
 				if (isIdentityXform) {
 					mesh.IsVisible = Visible;

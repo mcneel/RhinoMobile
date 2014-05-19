@@ -259,8 +259,10 @@ namespace RhinoMobile.Display
 			// The size of the mesh partitions here are determined by the limitations of OpenGL ES.
 			mesh.CreatePartitions(int.MaxValue, int.MaxValue);
 
-			if (mesh.PartitionCount == 0)
+			if (mesh.PartitionCount == 0) {
+				System.Diagnostics.Debug.WriteLine ("Invalid Mesh Found");
 				return null; //invalid mesh, ignore
+			}
 
 			List<DisplayMesh> displayMeshes = new List<DisplayMesh> ();
 			displayMeshes.Capacity = mesh.PartitionCount;

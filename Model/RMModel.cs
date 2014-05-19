@@ -752,11 +752,15 @@ namespace RhinoMobile.Model
 					List<DisplayObject> explodedObjects = new List<DisplayObject>();
 
 					// Sort by object type: ModelMesh, ModelInstanceRef
-					foreach (ModelMesh modelObject in ModelObjects.OfType<ModelMesh>())
-						modelObject.ExplodeIntoArray (this, explodedObjects, identity);
+					foreach (ModelMesh modelObject in ModelObjects.OfType<ModelMesh>()) {
+						if (modelObject != null)
+							modelObject.ExplodeIntoArray (this, explodedObjects, identity);
+					}
 
-					foreach (ModelInstanceRef modelObject in ModelObjects.OfType<ModelInstanceRef>())
-						(modelObject as ModelInstanceRef).ExplodeIntoArray (this, explodedObjects, identity);
+					foreach (ModelInstanceRef modelObject in ModelObjects.OfType<ModelInstanceRef>()) {
+						if (modelObject != null)
+							(modelObject as ModelInstanceRef).ExplodeIntoArray (this, explodedObjects, identity);
+					}
 
 					// split explodedObjects into displayObjects and transparentObjects
 					foreach (DisplayObject obj in explodedObjects) {
@@ -986,7 +990,7 @@ namespace RhinoMobile.Model
 			//Add this to the list of all the meshes
 			if (AllMeshes == null)
 				AllMeshes = new RhinoList<Mesh> ();
-
+				
 			AllMeshes.Add (mesh);
 
 			Material material = new Material ();
@@ -1015,12 +1019,13 @@ namespace RhinoMobile.Model
 			} else {
 				material = ModelFile.Materials [materialIndex];
 			}
-
+				
 			object[] displayMeshes = DisplayMesh.CreateWithMesh (mesh, attr, material);
 
-			ModelMesh modelMesh = new ModelMesh (displayMeshes, attr.ObjectId);
-
-			AddModelObject (modelMesh, attr);
+			if (displayMeshes != null) {
+				var modelMesh = new ModelMesh (displayMeshes, attr.ObjectId);
+				AddModelObject (modelMesh, attr);
+			}
 		}
 
 		/// <summary>
