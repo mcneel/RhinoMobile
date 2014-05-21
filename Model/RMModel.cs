@@ -802,7 +802,7 @@ namespace RhinoMobile.Model
 					ModelObjectsDictionary.Clear ();
 
 					// look for models that cannot be displayed
-					if ((DisplayMeshes.Count == 0) && (TransparentObjects.Count == 0)) {
+					if ((DisplayMeshes.Count == 0) && (TransparentObjects.Count == 0) && (DisplayInstanceMeshes.Count == 0) && (TransparentInstanceObjects.Count == 0)) {
 						if ((BRepCount > 0) && (BRepWithMeshCount == 0)) {
 							prepareMeshesException = MeshException ("This model is only wireframes and cannot be displayed.  Save the model in shaded mode and download again.");
 						} else if ((GeometryCount > 0) && (BRepWithMeshCount == 0)) {
