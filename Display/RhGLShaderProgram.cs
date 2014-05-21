@@ -89,7 +89,7 @@ namespace RhinoMobile.Display
 	public class RhGLShaderProgram
 	{
 		#region members
-		readonly int m_hProgram;
+		public readonly int m_hProgram;
 		// ReSharper disable once FieldCanBeMadeReadOnly.Local
 		RhGLPredefinedAttributes m_Attributes;
 		RhGLPredefinedUniforms m_Uniforms;
@@ -313,51 +313,36 @@ namespace RhinoMobile.Display
 		}
 
 		/// <summary>
-		/// Sets up an ES2.0 material with a Rhino material
+		/// Sets up an ES2.0 material with a DisplayMaterial
 		/// </summary>
-		public void SetupMaterial (Material material)
+		public void SetupMaterial (DisplayMaterial material)
 		{
-			float alpha = (float)(1.0 - material.Transparency);
-			float shine = (float)(128.0 * (material.Shine / Material.MaxShine));
 			float[] black = { 0.0f, 0.0f, 0.0f, 1.0f };
-			float[] spec = { material.SpecularColor.R / 255.0f, 
-											 material.SpecularColor.G / 255.0f, 
-											 material.SpecularColor.B / 255.0f, 
-											 material.SpecularColor.A / 255.0f };
-			float[] pspec = Convert.ToBoolean (shine) ? spec : black;
+			float[] pspec = Convert.ToBoolean (material.Shine) ? material.SpecularColor : black;
 
 			if (m_Uniforms.rglLightAmbient >= 0) {
-				if (material.AmbientColor.A > 0) {
-					float[] ambi = {
-						material.AmbientColor.R / 255.0f,
-						material.AmbientColor.G / 255.0f,
-						material.AmbientColor.B / 255.0f,
-						material.AmbientColor.A / 255.0f
-					};
-					GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, ambi);
+				if (material.AmbientColor[3] > 0) {
+					GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, material.AmbientColor);
 				} else
 					GL.Uniform4 (m_Uniforms.rglLightAmbient, 1, black);
 			}
 
-			if (m_Uniforms.rglDiffuse >= 0) {
-				float[] diff = { material.DiffuseColor.R / 255.0f, 
-												 material.DiffuseColor.G / 255.0f, 
-												 material.DiffuseColor.B / 255.0f, 
-												 alpha };
-				GL.Uniform4 (m_Uniforms.rglDiffuse, 1, diff);
-			}
+			if (m_Uniforms.rglDiffuse >= 0)
+				GL.Uniform4 (m_Uniforms.rglDiffuse, 1, material.DiffuseColor);
+
 			if (m_Uniforms.rglSpecular >= 0)
 				GL.Uniform4 (m_Uniforms.rglSpecular, 1, pspec);
+
 			if (m_Uniforms.rglEmission >= 0) {
-				float[] emmi = { material.EmissionColor.R / 255.0f, material.EmissionColor.G / 255.0f, material.EmissionColor.B / 255.0f, 1.0f };
-				GL.Uniform4 (m_Uniforms.rglEmission, 1, emmi);
+				GL.Uniform4 (m_Uniforms.rglEmission, 1, material.EmissionColor);
 			}
 			if (m_Uniforms.rglShininess >= 0)
-				GL.Uniform1 (m_Uniforms.rglShininess, shine);
+				GL.Uniform1 (m_Uniforms.rglShininess,  material.Shine);
+
 			if (m_Uniforms.rglUsesColors >= 0)
 				GL.Uniform1 (m_Uniforms.rglUsesColors, 0);
 
-			if (alpha < 1.0)
+			if (material.Alpha < 1.0)
 				GL.Enable (EnableCap.Blend);
 			else
 				GL.Disable (EnableCap.Blend); 
@@ -383,7 +368,6 @@ namespace RhinoMobile.Display
 				Transform mvp = m_MVPXform;
 
 				mvp = mvp * xform;
-				mvp.Transpose ();
 
 				float[] modelViewProjection = mvp.ToFloatArray (false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
@@ -391,7 +375,6 @@ namespace RhinoMobile.Display
 
 			if (m_Uniforms.rglModelViewMatrix >= 0) {
 				mv = m_MVXform * xform;
-				mv.Transpose();
 
 				float[] modelView = mv.ToFloatArray(false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix,
@@ -404,7 +387,6 @@ namespace RhinoMobile.Display
 				float[] normalMatrix = new float[9];
 
 				mv = m_MVXform * xform;
-				mv.Transpose();
 
 				Matrix4Dto3F (mv, ref normalMatrix);
 				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
@@ -420,8 +402,6 @@ namespace RhinoMobile.Display
 		
 			if (m_Uniforms.rglModelViewProjectionMatrix >= 0) {
 				Transform mvp = m_MVPXform;
-			
-				mvp.Transpose ();
 
 				float[] modelViewProjection = mvp.ToFloatArray (false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
@@ -429,8 +409,6 @@ namespace RhinoMobile.Display
 
 			if (m_Uniforms.rglModelViewMatrix >= 0) {
 				mv = m_MVXform;
-
-				mv.Transpose();
 
 				float[] modelView = mv.ToFloatArray(false);
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix,
@@ -442,8 +420,6 @@ namespace RhinoMobile.Display
 			if (m_Uniforms.rglNormalMatrix >= 0) {
 				float[] normalMatrix = new float[9];
 				mv = m_MVXform;
-			
-				mv.Transpose();
 
 				Matrix4Dto3F(mv, ref normalMatrix);
 				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);

@@ -60,6 +60,10 @@ namespace RhinoMobile.Display
 {
 	public class ES2Renderer : IRenderer
 	{
+		#region members
+		private RhGLShaderProgram m_activeShader;
+		#endregion
+
 		public enum AGMColors : int
 		{
 			AgmRedCyan,
@@ -78,10 +82,23 @@ namespace RhinoMobile.Display
 		public ViewportInfo Viewport { get; set; }
 
 		/// <value> The current material being rendered. </value>
-		public Material CurrentMaterial { get; private set; }
+		public DisplayMaterial CurrentMaterial { get; private set; }
 
 		/// <value> Active shader reference used to "track" the current shader object. </value>
-		public RhGLShaderProgram ActiveShader { get; private set; }
+		public RhGLShaderProgram ActiveShader { 
+			get {
+				return m_activeShader;
+			}
+
+			set {
+				if (m_activeShader == null) {
+					m_activeShader = value;
+				} else if (m_activeShader.m_hProgram != value.m_hProgram) {
+					CurrentMaterial = new DisplayMaterial (); //reset the default material if we change shaders
+					m_activeShader = value;
+				}
+			}
+		}
 
 		/// <value> Shaders are created on demand and stored in a list. </value>
 		public List<RhGLShaderProgram> Shaders { get; private set; }
@@ -99,6 +116,7 @@ namespace RhinoMobile.Display
 		public ES2Renderer ()
 		{
 			Shaders = new List<RhGLShaderProgram> ();
+			CurrentMaterial = new DisplayMaterial ();
 		}
 
 		/// <summary>
@@ -141,16 +159,13 @@ namespace RhinoMobile.Display
 					Viewport.Dispose ();
 					Viewport = null;
 				}
-
-				if (CurrentMaterial != null) {
-					CurrentMaterial.Dispose ();
-					CurrentMaterial = null;
-				}
+					
+				CurrentMaterial = null;
 
 				if (ActiveShader != null) {
 					GL.DeleteProgram (ActiveShader.Handle);
 					ActiveShader.Disable ();
-					ActiveShader = null;
+					m_activeShader = null;
 				}
 
 				if (Shaders != null) {
@@ -230,7 +245,7 @@ namespace RhinoMobile.Display
 				// Now setup and initialize frustum and lighting...
 				int near, far;
 				viewport.GetScreenPort (out near, out far);
-				viewport.SetScreenPort ((int)Frame.Left, (int)Frame.Right, (int)Frame.Bottom, (int)Frame.Top, near, far); 
+				viewport.SetScreenPort ((int)Frame.Left, (int)Frame.Right, (int)Frame.Bottom, (int)Frame.Top, near, far);
 				shader.SetupViewport (viewport);
 				Rhino.Geometry.Light light = CreateDefaultLight ();
 				shader.SetupLight (light);
@@ -301,10 +316,12 @@ namespace RhinoMobile.Display
 			DisplayMesh displayMesh = isInstance ? ((DisplayInstanceMesh)obj).Mesh : (DisplayMesh)obj;
 				
 			if (displayMesh != null) {
-
-				//We want to ignore the ambient color...
-				displayMesh.Material.AmbientColor = System.Drawing.Color.Black;
-				ActiveShader.SetupMaterial (displayMesh.Material);
+			
+				// Material setup, if necessary...
+				displayMesh.Material.AmbientColor = new [] { 0.0f, 0.0f, 0.0f, 1.0f }; //We want to ignore the ambient color
+				if (CurrentMaterial.RuntimeId != displayMesh.Material.RuntimeId)
+					ActiveShader.SetupMaterial (displayMesh.Material);
+				CurrentMaterial = displayMesh.Material;
 
 				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
 					// Generate the VertexBuffer
