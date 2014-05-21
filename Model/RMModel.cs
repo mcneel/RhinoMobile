@@ -1035,7 +1035,7 @@ namespace RhinoMobile.Model
 				material = ModelFile.Materials [materialIndex];
 			}
 				
-			object[] displayMeshes = DisplayMesh.CreateWithMesh (mesh, attr, material);
+			object[] displayMeshes = DisplayMesh.CreateWithMesh (mesh, attr, material, materialIndex);
 
 			if (displayMeshes != null) {
 				var modelMesh = new ModelMesh (displayMeshes, attr.ObjectId);
@@ -1050,7 +1050,7 @@ namespace RhinoMobile.Model
 		/// We save the raw VBO data of a mesh in an archive after a mesh has been partitioned
 		/// and use that archive to create the VBOs next time we display the model.
 		/// </summary>
-		protected virtual bool LoadMeshCaches(Mesh mesh, ObjectAttributes attr, Material material)
+		protected virtual bool LoadMeshCaches(Mesh mesh, ObjectAttributes attr, DisplayMaterial material)
 		{
 			string meshGUIDString = attr.ObjectId.ToString ();
 			string meshCachePath = SupportPathForName (meshGUIDString + ".meshes");
@@ -1072,7 +1072,7 @@ namespace RhinoMobile.Model
 			foreach (DisplayMesh me in displayMeshes)
 				me.RestoreUsingMesh (mesh, material);
 
-			if (material.Transparency == 0)
+			if (Math.Abs (material.Transparency) < double.Epsilon)
 				DisplayObjects.AddRange (displayMeshes);
 			else
 				TransparentObjects.AddRange ((IEnumerable<DisplayMesh>)displayMeshes);

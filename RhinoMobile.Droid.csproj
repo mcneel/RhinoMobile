@@ -742,6 +742,7 @@
     <Compile Include="..\rhinocommon\dotnet\rhino\rhinosdkviewport.cs">
       <Link>rhinocommon\dotnet\rhino\rhinosdkviewport.cs</Link>
     </Compile>
+    <Compile Include="Display\DisplayMaterial.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />

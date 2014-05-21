@@ -164,9 +164,9 @@ namespace RhinoMobile.Display
 
 		/// <value> The bounding box associated with this mesh. </value>
 		public BoundingBox BoundingBox { get; private set; }
-
-		/// <value> The material associated with this mesh. </value>
-		public Material Material { get; set; }
+	
+		/// <value> The runtime material associated with this mesh. </value>
+		public DisplayMaterial Material { get; set; }
 
 		/// <value> True if this is a closed mesh. </value>
 		public bool IsClosed { get; set; }
@@ -184,24 +184,14 @@ namespace RhinoMobile.Display
 		public override uint TriangleCount { get; protected set; }
 
 		/// <value> True if the material associated with this display mesh is not transparent. </value>
-		public override bool IsOpaque 
-		{ 
-			get { 
-				if (Material.Transparency > 0.0) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-
-		}
+		public override bool IsOpaque { get { return Material.Transparency <= 0.0; } }
 		#endregion
 
 		#region constructors
 		/// <summary>
 		/// Initializes a DisplayMesh from a Rhino.Geometry.Mesh.
 		/// </summary>
-		public DisplayMesh (Mesh mesh, int partitionIndex, Material material, bool shouldCaptureVBOData)
+		public DisplayMesh (Mesh mesh, int partitionIndex, DisplayMaterial material, bool shouldCaptureVBOData)
 		{
 			Material = material;
 			m_partitionIndex = partitionIndex;
@@ -240,7 +230,7 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// Return an array of DisplayMesh objects created from the parameters
 		/// </summary>
-		public static Object[] CreateWithMesh(Mesh mesh, ObjectAttributes attr, Material material)
+		public static Object[] CreateWithMesh(Mesh mesh, ObjectAttributes attr, Material material, int materialIndex)
 		{
 			// If our render material is the default material, modify our material to match the Rhino default material
 			if (material.IsDefaultMaterial)
@@ -270,7 +260,8 @@ namespace RhinoMobile.Display
 			//System.Diagnostics.Debug.WriteLine("Mesh {0} VertexCount: {1},  FaceCount: {2}, Partition has {3} parts.", attr.ObjectId.ToString(), mesh.Vertices.Count, mesh.Faces.Count, mesh.PartitionCount);
 
 			for (int i = 0; i < mesh.PartitionCount; i++) {
-				var newMesh = new DisplayMesh (mesh, i, material, mesh.PartitionCount > 1);
+				var displayMaterial = new DisplayMaterial (material, materialIndex);
+				var newMesh = new DisplayMesh (mesh, i, displayMaterial, mesh.PartitionCount > 1);
 				if (newMesh != null) {
 					newMesh.GUID = attr.ObjectId;
 					newMesh.IsVisible = attr.Visible;
@@ -295,7 +286,7 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// These variables are difficult to archive so we restore them when reloading the model
 		/// </summary>
-		public void RestoreUsingMesh (Mesh mesh, Material newMaterial)
+		public void RestoreUsingMesh (Mesh mesh, DisplayMaterial newMaterial)
 		{
 			Material = newMaterial;
 			BoundingBox = mesh.GetBoundingBox (true);

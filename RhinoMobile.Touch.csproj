@@ -746,6 +746,7 @@
     <Compile Include="..\rhinocommon\dotnet\RDK\sun.cs">
       <Link>rhinocommon\dotnet\RDK\sun.cs</Link>
     </Compile>
+    <Compile Include="Display\DisplayMaterial.cs" />
   </ItemGroup>
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
