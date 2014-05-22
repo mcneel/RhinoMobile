@@ -514,25 +514,25 @@ namespace RhinoMobile.Display
 		private static void Matrix4Dto3F (Transform d, ref float [] f, bool rowDominant)
 		{
 			if (rowDominant) {
-				f [0] = (float)d [0, 0];
-				f [1] = (float)d [0, 1];
-				f [2] = (float)d [0, 2]; 
-				f [3] = (float)d [1, 0];
-				f [4] = (float)d [1, 1];
-				f [5] = (float)d [1, 2]; 
-				f [6] = (float)d [2, 0];
-				f [7] = (float)d [2, 1];
-				f [8] = (float)d [2, 2]; 
+				f [0] = (float)d.M00; 
+				f [1] = (float)d.M01;
+				f [2] = (float)d.M02;
+				f [3] = (float)d.M10;
+				f [4] = (float)d.M11;
+				f [5] = (float)d.M12;
+				f [6] = (float)d.M20;
+				f [7] = (float)d.M21;
+				f [8] = (float)d.M22;
 			} else {
-				f [0] = (float)d [0, 0]; 
-				f [1] = (float)d [1, 0]; 
-				f [2] = (float)d [2, 0]; 
-				f [3] = (float)d [0, 1]; 
-				f [4] = (float)d [1, 1]; 
-				f [5] = (float)d [2, 1]; 
-				f [6] = (float)d [0, 2]; 
-				f [7] = (float)d [1, 2]; 
-				f [8] = (float)d [2, 2]; 
+				f [0] = (float)d.M00;
+				f [1] = (float)d.M10;
+				f [2] = (float)d.M20;
+				f [3] = (float)d.M01;
+				f [4] = (float)d.M11;
+				f [5] = (float)d.M21;
+				f [6] = (float)d.M02;
+				f [7] = (float)d.M12;
+				f [8] = (float)d.M22;
 			}
 		}
 		#endregion
