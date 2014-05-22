@@ -289,8 +289,11 @@ namespace RhinoMobile.Display
 					if (obj != null)
 						RenderObject (obj, viewport, true);
 				}
-					
-				// Third, render all transparent meshes
+
+				// Third, we're done drawing our instances, so set the ModelViewMatrix's XForm back to the identity matrix.
+				ActiveShader.SetModelViewMatrix (Rhino.Geometry.Transform.Identity);
+
+				// Fourth, render all transparent meshes...
 				RenderTransparentObjects (model);
 			}
 
@@ -374,10 +377,9 @@ namespace RhinoMobile.Display
 					GL.EnableVertexAttribArray (rglColor);
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
 				}
-
-				// Push transforms from instances onto the uniform stack
+					
 				if (isInstance)
-					ActiveShader.PushModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
+					ActiveShader.SetModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
 
 				// Bind Indices
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
@@ -390,10 +392,6 @@ namespace RhinoMobile.Display
 				#if __IOS__
 				GL.DrawElements (BeginMode.Triangles, displayMesh.IndexBufferLength, DrawElementsType.UnsignedInt, IntPtr.Zero);
 				#endif
-			
-				// Pop transforms from instances off of the uniform stack
-				if (isInstance)
-					ActiveShader.PopModelViewMatrix ();
 					
 				// Disable any and all arrays and buffers we might have used...
 				GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);

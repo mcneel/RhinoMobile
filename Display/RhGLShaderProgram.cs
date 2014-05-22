@@ -237,52 +237,6 @@ namespace RhinoMobile.Display
 		}
 
 		/// <summary>
-		/// Sets up and initializes the viewport by setting the Uniforms
-		/// </summary>
-		public void SetupViewport (ViewportInfo viewport) 
-		{
-			Transform mv = new Transform ();
-
-			if (m_Uniforms.rglModelViewProjectionMatrix >= 0) {
-	  		Transform mvp = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Clip);
-
-				m_MVPXform = mvp;
-
-				float[] modelViewProjection = mvp.ToFloatArray(false);
-				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
-			}
-
-			if (m_Uniforms.rglModelViewMatrix >= 0) {
-				mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
-
-				m_MVXform = mv;
-
-				float[] modelView = mv.ToFloatArray(false);
-				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix, 1, false, modelView);
-			}
-
-			if (m_Uniforms.rglProjectionMatrix >= 0) {
-				Transform pr = viewport.GetXform (CoordinateSystem.Camera, CoordinateSystem.Clip);
-				float[] projection = pr.ToFloatArray(false);
-				GL.UniformMatrix4 (m_Uniforms.rglProjectionMatrix, 1, false, projection);
-			}
-
-			if (m_Uniforms.rglNormalMatrix >= 0) {
-
-				float[] normalMatrix = new float[9];
-
-				mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
-
-				m_MVXform = mv;
-				mv = mv.Transpose ();
-
-				Matrix4Dto3F (mv, ref normalMatrix);
-				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
-			}
-
-		}
-
-		/// <summary>
 		/// Given a Rhino light, modifies the uniforms accordingly...
 		/// </summary>
 		public void SetupLight (Light light)
@@ -358,9 +312,58 @@ namespace RhinoMobile.Display
 		}
 
 		/// <summary>
-		/// Pushes a Rhino.Geometry.Transform onto the uniform stack.
+		/// Sets up and initializes the viewport by setting the Uniforms
 		/// </summary>
-		public void PushModelViewMatrix (Transform xform)
+		public void SetupViewport (ViewportInfo viewport) 
+		{
+			Transform mv = new Transform();
+			bool haveModelView = false;
+
+			if (m_Uniforms.rglModelViewProjectionMatrix >= 0) {
+				Transform mvp = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Clip);
+
+				m_MVPXform = mvp;
+
+				float[] modelViewProjection = mvp.ToFloatArray(false);
+				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
+			}
+
+			if (m_Uniforms.rglModelViewMatrix >= 0) {
+				mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
+
+				m_MVXform = mv;
+				haveModelView = true;
+
+				float[] modelView = mv.ToFloatArray(false);
+				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix, 1, false, modelView);
+			}
+
+			if (m_Uniforms.rglProjectionMatrix >= 0) {
+				Transform pr = viewport.GetXform (CoordinateSystem.Camera, CoordinateSystem.Clip);
+
+				float[] projection = pr.ToFloatArray(false);
+				GL.UniformMatrix4 (m_Uniforms.rglProjectionMatrix, 1, false, projection);
+			}
+
+			if (m_Uniforms.rglNormalMatrix >= 0) {
+
+				float[] normalMatrix = new float[9];
+
+				if (!haveModelView) {
+					mv = viewport.GetXform (CoordinateSystem.World, CoordinateSystem.Camera);
+					m_MVXform = mv;
+				}
+					
+				Matrix4Dto3F (mv, ref normalMatrix, false);
+				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
+			}
+
+		}
+
+		/// <summary>
+		/// Used to sets the ModelViewMatrix transforms for instance transforms
+		/// </summary>
+		public void SetModelViewMatrix (Transform xform)
 		{
 			Transform mv;
 
@@ -377,10 +380,11 @@ namespace RhinoMobile.Display
 				mv = m_MVXform * xform;
 
 				float[] modelView = mv.ToFloatArray(false);
+
 				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix,
 				                   1,	
 				                   false,
-				                   modelView);
+													 modelView);
 			}
 
 			if (m_Uniforms.rglNormalMatrix >= 0) {
@@ -388,40 +392,7 @@ namespace RhinoMobile.Display
 
 				mv = m_MVXform * xform;
 
-				Matrix4Dto3F (mv, ref normalMatrix);
-				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
-			}
-		}
-
-		/// <summary>
-		/// Pops the current modelViewMatrix off the uniform stack
-		/// </summary>
-		public void PopModelViewMatrix ()
-		{
-			Transform mv;
-		
-			if (m_Uniforms.rglModelViewProjectionMatrix >= 0) {
-				Transform mvp = m_MVPXform;
-
-				float[] modelViewProjection = mvp.ToFloatArray (false);
-				GL.UniformMatrix4 (m_Uniforms.rglModelViewProjectionMatrix, 1, false, modelViewProjection);
-			}
-
-			if (m_Uniforms.rglModelViewMatrix >= 0) {
-				mv = m_MVXform;
-
-				float[] modelView = mv.ToFloatArray(false);
-				GL.UniformMatrix4 (m_Uniforms.rglModelViewMatrix,
-				                   1,	
-				                   false,
-				                   modelView);
-			}
-
-			if (m_Uniforms.rglNormalMatrix >= 0) {
-				float[] normalMatrix = new float[9];
-				mv = m_MVXform;
-
-				Matrix4Dto3F(mv, ref normalMatrix);
+				Matrix4Dto3F (mv, ref normalMatrix, false);
 				GL.UniformMatrix3 (m_Uniforms.rglNormalMatrix, 1, false, normalMatrix);
 			}
 		}
@@ -539,14 +510,30 @@ namespace RhinoMobile.Display
 		#region Utility Methods
 		/// <summary>
 		/// Converts a double-precision 4x4 Matrix into a floating point array.
-		/// <para>Note: This presumes a row-major format to the matrix...you may need 
-		/// to call Transpose() before this conversion to get the correct ordering.</para>
 		/// </summary>
-		private static void Matrix4Dto3F (Transform d, ref float [] f)
+		private static void Matrix4Dto3F (Transform d, ref float [] f, bool rowDominant)
 		{
-			f[0] =  (float)d[0,0]; f[1]  = (float)d[0,1]; f[2]  = (float)d[0,2]; 
-			f[3] =  (float)d[1,0]; f[4]  = (float)d[1,1]; f[5]  = (float)d[1,2]; 
-			f[6] =  (float)d[2,0]; f[7]  = (float)d[2,1]; f[8] = (float)d[2,2]; 
+			if (rowDominant) {
+				f [0] = (float)d [0, 0];
+				f [1] = (float)d [0, 1];
+				f [2] = (float)d [0, 2]; 
+				f [3] = (float)d [1, 0];
+				f [4] = (float)d [1, 1];
+				f [5] = (float)d [1, 2]; 
+				f [6] = (float)d [2, 0];
+				f [7] = (float)d [2, 1];
+				f [8] = (float)d [2, 2]; 
+			} else {
+				f [0] = (float)d [0, 0]; 
+				f [1] = (float)d [1, 0]; 
+				f [2] = (float)d [2, 0]; 
+				f [3] = (float)d [0, 1]; 
+				f [4] = (float)d [1, 1]; 
+				f [5] = (float)d [2, 1]; 
+				f [6] = (float)d [0, 2]; 
+				f [7] = (float)d [1, 2]; 
+				f [8] = (float)d [2, 2]; 
+			}
 		}
 		#endregion
 
