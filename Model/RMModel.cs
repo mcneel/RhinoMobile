@@ -207,10 +207,36 @@ namespace RhinoMobile.Model
 			get {
 				uint triangles = 0;
 			
-				foreach (DisplayObject me in DisplayObjects)
-					triangles += me.TriangleCount;
-				foreach (DisplayObject me in TransparentObjects)
-					triangles += me.TriangleCount;
+				foreach (DisplayObject me in DisplayObjects) {
+					var displayMesh = me as DisplayMesh;
+					if (displayMesh != null) {
+						triangles += displayMesh.TriangleCount;
+					}
+				}
+				foreach (DisplayObject me in DisplayMeshes) {
+					var displayMesh = me as DisplayMesh;
+					if (displayMesh != null) {
+						triangles += displayMesh.TriangleCount;
+					}
+				}
+				foreach (DisplayObject me in DisplayInstanceMeshes) {
+					var displayMesh = me as DisplayInstanceMesh;
+					if (displayMesh != null) {
+						triangles += displayMesh.Mesh.TriangleCount;
+					}
+				}
+				foreach (DisplayObject me in TransparentObjects) {
+					var displayMesh = me as DisplayMesh;
+					if (displayMesh != null) {
+						triangles += displayMesh.TriangleCount;
+					}
+				}
+				foreach (DisplayObject me in TransparentInstanceObjects) {
+					var displayMesh = me as DisplayInstanceMesh;
+					if (displayMesh != null) {
+						triangles += displayMesh.Mesh.TriangleCount;
+					}
+				}
 
 				return triangles;
 			}
