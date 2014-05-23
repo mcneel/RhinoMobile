@@ -233,8 +233,10 @@ namespace RhinoMobile.Display
 		public static Object[] CreateWithMesh(Mesh mesh, ObjectAttributes attr, Material material, int materialIndex)
 		{
 			// If our render material is the default material, modify our material to match the Rhino default material
-			if (material.IsDefaultMaterial)
-				material.DiffuseColor = System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.White);
+			if (materialIndex == -1) {
+				material.DiffuseColor = System.Drawing.Color.FromKnownColor (System.Drawing.KnownColor.White);
+				materialIndex = 1;
+			}
 
 			Rhino.Geometry.Mesh vertexMesh = new Rhino.Geometry.Mesh();
 			// create vertex normals if missing
