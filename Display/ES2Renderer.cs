@@ -427,6 +427,8 @@ namespace RhinoMobile.Display
 			// Provided we actually have a model to render...
 			if (model != null) {
 
+				CurrentMaterial = new DisplayMaterial (); //reset to the default (unset) material
+
 				// ... render all transparent meshes...
 				if (model.TransparentObjects.Count > 0) {
 					//Pass #1
