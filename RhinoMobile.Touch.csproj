@@ -23,8 +23,8 @@
     <NoWarn>0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../../Repositories/rhinocommon/c/build_native.py -p ios -v" workingdir="../../Repositories/rhinocommon/c/" />
-        <Command type="Custom" name="Build libopennurbs.a" command="../../Repositories/rhinocommon/c/build_native.py -p ios -v -o" workingdir="../../Repositories/rhinocommon/c/" />
+        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command type="Custom" name="Build libopennurbs.a" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__IOS__;MOBILE_BUILD</DefineConstants>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../../Repositories/rhinocommon/c/build_native.py -p ios -v" workingdir="../../Repositories/rhinocommon/c/" />
+        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>

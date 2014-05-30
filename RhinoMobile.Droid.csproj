@@ -27,8 +27,8 @@
     <NoWarn>0618;0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../rhinocommon/c/build_native.py -p android -v" workingdir="../rhinocommon/c/" />
-        <Command type="Custom" name="Build libopennurbs.so" command="../rhinocommon/c/build_native.py -p android -v -o" workingdir="../rhinocommon/c/" />
+        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command type="Custom" name="Build libopennurbs.so" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v -o" workingdir="${ProjectDir}/../rhinocommon/c/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -44,7 +44,7 @@
     <NoWarn>0618;0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../rhinocommon/c/build_native.py -p android -v" workingdir="../rhinocommon/c/" />
+        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
