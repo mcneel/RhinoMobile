@@ -36,7 +36,7 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public DisplayMaterial ()
 		{
-			RuntimeId = -1;
+			RuntimeId = Int32.MinValue; //UNSET
 		}
 
 		public DisplayMaterial (Material material, int materialIndex)
