@@ -663,12 +663,13 @@ namespace RhinoMobile.Model
 
 				if (view_count > 0) {
 					// find first perspective viewport projection in file
-					for (int i = 0; i < view_count; i++) {
-						if (ModelFile.Views [i].Viewport.IsPerspectiveProjection) {
+					foreach (var view in ModelFile.Views) {
+						if (view.Viewport.IsPerspectiveProjection) {
 							initialized = true;
-							DefaultView = ModelFile.Views [i];
-							DefaultView.Viewport.TargetPoint = ModelFile.Views [i].Viewport.TargetPoint;
-							DefaultView.Name = ModelFile.Views [i].Name;
+							DefaultView = view;
+							DefaultView.Viewport.TargetPoint = view.Viewport.TargetPoint;
+							DefaultView.Name = view.Name;
+							break;
 						}
 					}
 				}
