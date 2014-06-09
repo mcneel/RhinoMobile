@@ -441,8 +441,11 @@ namespace RhinoMobile.Model
 
 					// Check to make sure the 3dm was read correctly and there were no errors...
 					bool didOpenFile = false;
-					if ((ModelFile != null) && (errorLog == String.Empty))
+					if ((ModelFile != null) && (errorLog == String.Empty)) {
 						didOpenFile = true;
+					} else if (errorLog.StartsWith ("WARNING:")) {
+						didOpenFile = true;
+					}
 
 					// Preparation Dispatch...
 					if (didOpenFile) {
