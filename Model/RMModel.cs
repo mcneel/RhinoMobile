@@ -679,11 +679,15 @@ namespace RhinoMobile.Model
 
 				// If there were no perspective views, make one...
 				if (!initialized) {
-					if (ModelFile.Views [0] != null) {
-						DefaultView = ModelFile.Views [0];
-						GetDefaultView (BBox, ref m_defaultView);
-					} else {
-						GetDefaultView (BBox, ref m_defaultView);
+					try{
+						if (ModelFile.Views.ElementAtOrDefault(0) != null) {
+							DefaultView = ModelFile.Views [0];
+							GetDefaultView (BBox, ref m_defaultView);
+						} else {
+							GetDefaultView (BBox, ref m_defaultView);
+						}
+					} catch (Exception ex) {
+						Rhino.Runtime.HostUtils.ExceptionReport (ex);
 					}
 				}
 
