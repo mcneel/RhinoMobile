@@ -51,8 +51,10 @@ namespace RhinoMobile.Display
 	/// </summary>
 	public static class Globals
 	{
-		// ReSharper disable once InconsistentNaming
+		// Analysis disable InconsistentNaming
 		public const uint UNSET_HANDLE = 4294967295;
+		public const double ON_ZERO_TOLERANCE = 2.3283064365386962890625e-10;
+		// Analysis restore InconsistentNaming
 	}
 
 	[Serializable()]

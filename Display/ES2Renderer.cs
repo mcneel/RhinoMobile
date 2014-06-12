@@ -299,7 +299,7 @@ namespace RhinoMobile.Display
 
 			// Disable the shader
 			ActiveShader.Disable ();
-		
+
 			return true;
 		}
 
@@ -378,8 +378,23 @@ namespace RhinoMobile.Display
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
 				}
 					
-				if (isInstance)
+				if (isInstance) {
+					if (!FastDrawing) {
+						// Check for inversions on transforms, but only if we are drawing the final "high-quality" frame
+						// (because our PerPixel shader does not flip normals based on modelView matrices).
+						if ((obj as DisplayInstanceMesh).XForm.Determinant < -Globals.ON_ZERO_TOLERANCE) {
+							// an inversion (happens in mirrored instances, etc.)
+							// this means the transformation will turn the mesh
+							// inside out, so we have to reverse our front face
+							// convention.
+							GL.FrontFace (FrontFaceDirection.Cw);
+						} else {
+							GL.FrontFace (FrontFaceDirection.Ccw);
+						}
+					}
+
 					ActiveShader.SetModelViewMatrix ((obj as DisplayInstanceMesh).XForm);
+				}
 
 				// Bind Indices
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
