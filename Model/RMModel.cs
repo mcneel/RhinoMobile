@@ -845,6 +845,13 @@ namespace RhinoMobile.Model
 							(modelObject as ModelInstanceRef).ExplodeIntoArray (this, explodedObjects, identity);
 					}
 
+					// we are done with the model objects
+					foreach (var modelObject in ModelObjects)
+						modelObject.Dispose ();
+
+					ModelObjects.Clear ();
+					ModelObjectsDictionary.Clear ();
+
 					// split explodedObjects into displayObjects and transparentObjects
 					foreach (DisplayObject obj in explodedObjects) {
 
@@ -864,10 +871,6 @@ namespace RhinoMobile.Model
 							}
 						}
 					}
-
-					// we are done with the model objects
-					ModelObjects.Clear ();
-					ModelObjectsDictionary.Clear ();
 
 					// look for models that cannot be displayed
 					if ((DisplayMeshes.Count == 0) && (TransparentObjects.Count == 0) && (DisplayInstanceMeshes.Count == 0) && (TransparentInstanceObjects.Count == 0)) {

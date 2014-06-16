@@ -29,7 +29,7 @@ namespace RhinoMobile.Model
 		public Object[] DisplayMeshes { get; protected set; }
 		#endregion
 
-		#region constructors
+		#region constructors and disposal
 		/// <summary>
 		/// Creates a new instance of ModelMesh from an array of meshes
 		/// </summary>
@@ -37,6 +37,42 @@ namespace RhinoMobile.Model
 		{
 			DisplayMeshes = meshArray;
 			ObjectId = guid;
+		}
+			
+		/// <summary>
+		/// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+		/// </summary>
+		~ ModelMesh () { Dispose (false); }
+
+		/// <summary>
+		/// Actively reclaims unmanaged resources that this instance uses.
+		/// </summary>
+		public new void Dispose()
+		{
+			try {
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			finally {
+				base.Dispose ();
+			}
+		}
+
+		/// <summary>
+		/// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+		/// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+		/// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+		/// </summary>
+		/// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+		private new void Dispose (bool disposing)
+		{
+			// Free unmanaged resources...
+
+			// Free managed resources...but only if called from Dispose
+			// (If called from Finalize then the objects might not exist anymore)
+			if (disposing) {
+				DisplayMeshes = null;
+			}	
 		}
 		#endregion
 
