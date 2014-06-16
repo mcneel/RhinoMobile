@@ -11,6 +11,7 @@
 // ALL IMPLIED WARRANTIES OF FITNESS FOR ANY PARTICULAR PURPOSE AND OF
 // MERCHANTABILITY ARE HEREBY DISCLAIMED.
 //
+using System;
 using Rhino.Geometry;
 
 namespace RhinoMobile.Display
@@ -35,7 +36,7 @@ namespace RhinoMobile.Display
 		public override Transform XForm { get { return m_xform; } }
 		#endregion
 
-		#region constructors
+		#region constructors and disposal
 		/// <summary>
 		/// Creates an instance of a DisplayMesh with a new transform.
 		/// </summary>
@@ -50,6 +51,46 @@ namespace RhinoMobile.Display
 
 			if (m_xform.Equals(zeroXForm))
 				m_xform = Transform.Identity;
+		}
+
+
+		/// <summary>
+		/// Passively reclaims unmanaged resources when the class user did not explicitly call Dispose().
+		/// </summary>
+		~ DisplayInstanceMesh () { Dispose (false); }
+
+		/// <summary>
+		/// Actively reclaims unmanaged resources that this instance uses.
+		/// </summary>
+		public new void Dispose()
+		{
+			try {
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			finally {
+				base.Dispose ();
+			}
+		}
+
+		/// <summary>
+		/// <para>This method is called with argument true when class user calls Dispose(), while with argument false when
+		/// the Garbage Collector invokes the finalizer, or Finalize() method.</para>
+		/// <para>You must reclaim all used unmanaged resources in both cases, and can use this chance to call Dispose on disposable fields if the argument is true.</para>
+		/// </summary>
+		/// <param name="disposing">true if the call comes from the Dispose() method; false if it comes from the Garbage Collector finalizer.</param>
+		private new void Dispose (bool disposing)
+		{
+			// Free unmanaged resources...
+
+			// Free managed resources...but only if called from Dispose
+			// (If called from Finalize then the objects might not exist anymore)
+			if (disposing) {
+				if (Mesh != null) {
+					Mesh.Dispose ();
+					Mesh = null;
+				}
+			}	
 		}
 		#endregion
 

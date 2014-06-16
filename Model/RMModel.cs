@@ -339,26 +339,41 @@ namespace RhinoMobile.Model
 			}
 
 			if (DisplayObjects != null) {
+				foreach (var displayObject in DisplayObjects)
+					displayObject.Dispose ();
+
 				DisplayObjects.Clear ();
 				DisplayObjects = null;
 			}
 
 			if (DisplayMeshes != null) {
+				foreach (var displayMesh in DisplayMeshes)
+					displayMesh.Dispose ();
+
 				DisplayMeshes.Clear ();
 				DisplayMeshes = null;
 			}
 
 			if (DisplayInstanceMeshes != null) {
+				foreach (var displayInstanceMesh in DisplayInstanceMeshes)
+					displayInstanceMesh.Dispose ();
+
 				DisplayInstanceMeshes.Clear ();
 				DisplayInstanceMeshes = null;
 			}
 
 			if (TransparentObjects != null) {
+				foreach (var displayMesh in TransparentObjects)
+					displayMesh.Dispose ();
+
 				TransparentObjects.Clear ();
 				TransparentObjects = null;
 			}
 
 			if (TransparentInstanceObjects != null) {
+				foreach (var displayInstanceMesh in TransparentInstanceObjects)
+					displayInstanceMesh.Dispose ();
+
 				TransparentInstanceObjects.Clear ();
 				TransparentInstanceObjects = null;
 			}
@@ -515,6 +530,21 @@ namespace RhinoMobile.Model
 			PreparationCancelled = true;
 			if (m_cancellation_token_source != null)
 				m_cancellation_token_source.Cancel ();
+
+			if (DisplayObjects != null)
+				DisplayObjects.Clear ();
+
+			if (DisplayInstanceMeshes != null)
+				DisplayInstanceMeshes.Clear ();
+
+			if (DisplayMeshes != null)
+				DisplayMeshes.Clear ();
+
+			if (TransparentObjects != null)
+				TransparentObjects.Clear ();
+
+			if (ModelFile != null)
+				ModelFile.Dispose ();
 		}
 		#endregion
 
