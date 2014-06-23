@@ -318,8 +318,12 @@ namespace RhinoMobile.Display
 				
 			DisplayMesh displayMesh = isInstance ? ((DisplayInstanceMesh)obj).Mesh : (DisplayMesh)obj;
 				
+			if (displayMesh.WillFitOnGPU == false)
+				return;
+
+			uint vertex_buffer = 0;
+
 			if (displayMesh != null) {
-			
 				// Material setup, if necessary...
 				displayMesh.Material.AmbientColor = new [] { 0.0f, 0.0f, 0.0f, 1.0f }; //We want to ignore the ambient color
 				if (CurrentMaterial.RuntimeId != displayMesh.Material.RuntimeId)
@@ -331,7 +335,6 @@ namespace RhinoMobile.Display
 					displayMesh.LoadDataForVBOs (displayMesh.Mesh);
 
 					// Generate the VertexBuffer
-					uint vertex_buffer;
 					GL.GenBuffers (1, out vertex_buffer);
 					GL.BindBuffer (BufferTarget.ArrayBuffer, vertex_buffer);
 					displayMesh.VertexBufferHandle = vertex_buffer;
@@ -347,15 +350,30 @@ namespace RhinoMobile.Display
 						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.VerticesNormalsColors.Length * displayMesh.Stride), displayMesh.VerticesNormalsColors, BufferUsage.StaticDraw);
 					}
 
-					//Dispose of VBO data after sending to the GPU 
+					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
+					// we need to delete the buffers associated with that displayMesh and mark it as too big.
+					bool causesGLError = CheckGLError ();
+					if (causesGLError) {
+						GL.DeleteBuffers (1, ref vertex_buffer);
+						displayMesh.WillFitOnGPU = false;
+						displayMesh.DeleteIndexBufferObject ();
+						GC.Collect ();
+					} else {
+						displayMesh.WillFitOnGPU = true;
+					}
+
+					// Dispose of VBO data after sending to the GPU 
 					displayMesh.DeleteVBOData ();
 
-					//HACK: We need a better way of disposing of these if they are on a partitioned mesh.
-					if (displayMesh.Mesh.PartitionCount < 2)
+					// If we have drawn all the partitions associated with the underlying openNURBS mesh in the ModelFile, we can delete it...
+					if (displayMesh.Mesh.PartitionCount == displayMesh.PartitionIndex + 1)
 						Model.ModelFile.Objects.Delete (displayMesh.FileObjectId);
 
 					displayMesh.Mesh = null;
 				}
+
+				if (displayMesh.WillFitOnGPU == false)
+					return;
 
 				if (displayMesh.IndexBufferHandle == Globals.UNSET_HANDLE) {
 					// Index VBO
@@ -365,9 +383,24 @@ namespace RhinoMobile.Display
 					GL.BufferData (BufferTarget.ElementArrayBuffer, (IntPtr)(displayMesh.Indices.Length*sizeof(ushort)), displayMesh.Indices, BufferUsage.StaticDraw);
 					displayMesh.IndexBufferHandle = index_buffer;
 
+					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
+					// we need to delete the buffers associated with that displayMesh and mark it as too big.
+					bool causesGLError = CheckGLError ();
+					if (causesGLError) {
+						GL.DeleteBuffers (1, ref vertex_buffer);
+						GL.DeleteBuffers (1, ref index_buffer);
+						GC.Collect ();
+						displayMesh.WillFitOnGPU = false;
+					} else {
+						displayMesh.WillFitOnGPU = true;
+					}
+
 					//Dispose of the index data after sending to the GPU 
 					displayMesh.DeleteIndexBufferObject ();
 				}
+
+				if (displayMesh.WillFitOnGPU == false)
+					return;
 
 				// Vertices
 				// ORDER MATTERS...if you don't do things in this order, you will get very frusterated.
@@ -379,11 +412,15 @@ namespace RhinoMobile.Display
 				// Third, tell GL where to look for the data...
 				GL.VertexAttribPointer (rglVertex, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, IntPtr.Zero);
 
+				CheckGLError ();
+
 				// Normals
 				if (displayMesh.HasVertexNormals) {
 					int rglNormal = ActiveShader.RglNormalIndex;
 					GL.EnableVertexAttribArray (rglNormal);
 					GL.VertexAttribPointer (rglNormal, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Geometry.Point3f))));
+
+					CheckGLError ();
 				}
 
 				// Colors
@@ -391,6 +428,8 @@ namespace RhinoMobile.Display
 					int rglColor = ActiveShader.RglColorIndex;
 					GL.EnableVertexAttribArray (rglColor);
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
+
+					CheckGLError ();
 				}
 					
 				if (isInstance) {
@@ -414,12 +453,15 @@ namespace RhinoMobile.Display
 				// Bind Indices
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
 
+				CheckGLError ();
+
 				// Draw...
 				#if __ANDROID__
 				GL.DrawElements (All.Triangles, displayMesh.IndexBufferLength, All.UnsignedInt, IntPtr.Zero);
 				#endif
 
 				#if __IOS__
+				CheckGLError();
 				GL.DrawElements (BeginMode.Triangles, displayMesh.IndexBufferLength, DrawElementsType.UnsignedShort, IntPtr.Zero);
 				#endif
 					
@@ -587,20 +629,23 @@ namespace RhinoMobile.Display
 
 		#region Utilities
 		/// <summary>
-		/// DEBUG only.
 		/// <para>Checks for outstanding GL Errors and logs them to console.</para>
 		/// </summary>
-		public static void CheckGLError () 
+		public static bool CheckGLError () 
 		{
-			#if DEBUG 
 			#if __IOS__
 			var err = GL.GetError ();
+			bool hasError = false;
 			do {
-				if (err != ErrorCode.NoError)
+				if (err != ErrorCode.NoError) {
+					#if DEBUG
 					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
+					#endif
+					hasError = true;
+				} 
 				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
-			#endif
+			return hasError;
 			#endif
 		}
 

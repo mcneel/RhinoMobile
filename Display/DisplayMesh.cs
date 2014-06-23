@@ -58,6 +58,11 @@ namespace RhinoMobile.Display
 	}
 
 	[Serializable()]
+	public struct VData {
+		public Point3f Vertex;
+	}
+
+	[Serializable()]
 	public struct VNData  {
 		public Point3f Vertex;
 		public Vector3f Normal;
@@ -129,7 +134,7 @@ namespace RhinoMobile.Display
 		public int IndexBufferLength { get; set; }
 
 		/// <value> The vertex values that make up the position data on this mesh. </value>
-		public float[] Vertices { get; private set; }
+		public VData[] Vertices { get; private set; }
 
 		/// <value> An array of interleaved vertices and normals. </value>
 		public VNData[] VerticesNormals { get; private set; }
@@ -143,10 +148,11 @@ namespace RhinoMobile.Display
 		/// <value> The index values that make up the index data on this mesh. </value>
 		public ushort[] Indices { get; private set; }
 
-		/// <value> Set to true if you want VBO data dumped to a byte[] for serialization. </value>
+		/// <value> NOT YET IMPLEMENTED.  Set to true if you want VBO data dumped to a byte[] for serialization.</value>
 		public bool CaptureVBOData { get; set; }
 
 		/// <summary>
+		/// <para>NOT YET IMPLEMENTED.</para>
 		/// VertexBufferData for Serialization purposes.  Only set if CaptureVBOData is true.
 		/// <para>Rhino.FileIO has methods for reading and writing ByteArrays</para>
 		/// </summary>
@@ -159,12 +165,14 @@ namespace RhinoMobile.Display
 		public byte[] NormalBufferData { get; private set; }
 
 		/// <summary>
+		/// <para>NOT YET IMPLEMENTED.</para>
 		/// VertexAndNormalBufferData for Serialization purposes.  Only set if CaptureVBOData is true.
 		/// <para>Rhino.FileIO has methods for reading and writing ByteArrays</para>
 		/// </summary>
 		public byte[] VertexAndNormalBufferData { get; private set; }
 
 		/// <summary>
+		/// <para>NOT YET IMPLEMENTED.</para>
 		/// IndexBufferData for Serialization purposes.  Only set if CaptureVBOData is true.
 		/// <para>Rhino.FileIO has methods for reading and writing ByteArrays</para>
 		/// </summary>
@@ -193,6 +201,12 @@ namespace RhinoMobile.Display
 
 		/// <value> True if the material associated with this display mesh is not transparent. </value>
 		public override bool IsOpaque { get { return Material.Transparency <= 0.0; } }
+
+		/// <value> During the load phase, if this object will not fit on the GPU, it should be marked false. </value>
+		public bool? WillFitOnGPU { get; set; }
+
+		/// <value> The partition index of this part of the displayMesh. </value>
+		public int PartitionIndex { get { return m_partitionIndex; } }
 		#endregion
 
 		#region constructors and disposal
@@ -388,7 +402,19 @@ namespace RhinoMobile.Display
 		{
 			Stride = sizeof(float) * 3; // 12 bytes
 
-			Vertices = mesh.Vertices.ToFloatArray ();
+			MeshPart meshPartition = mesh.GetPartition (partitionIndex);
+			int vertexCount = meshPartition.VertexCount;
+			int startIndex = meshPartition.StartVertexIndex;
+			int endIndex = meshPartition.EndVertexIndex;
+
+			int count = endIndex - startIndex;
+
+			var vertices = new VData[count];
+
+			for (int i = startIndex; i < endIndex; i++)
+				vertices [i - startIndex].Vertex = mesh.Vertices [i];
+
+			Vertices = vertices;
 
 			TriangleCount += (uint)mesh.Faces.Count;
 
@@ -405,36 +431,25 @@ namespace RhinoMobile.Display
 		{
 			Stride = (Marshal.SizeOf (typeof(VNData))); // 24 bytes
 
-			int count = mesh.Vertices.Count;
-			VNData[] verticesNormals = new VNData[count * 3];
+			MeshPart meshPartition = mesh.GetPartition (partitionIndex);
+			int vertexCount = meshPartition.VertexCount;
+			int startIndex = meshPartition.StartVertexIndex;
+			int endIndex = meshPartition.EndVertexIndex;
 
-			if (mesh.PartitionCount >= 1) {
-				MeshPart meshPartition = mesh.GetPartition (partitionIndex);
-				int vertexCount = meshPartition.VertexCount;
-				int startIndex = meshPartition.StartVertexIndex;
-				int endIndex = meshPartition.EndVertexIndex;
+			int count = (endIndex - startIndex) * 2;
 
-				for (int i = startIndex; i < endIndex; i++) {
-					verticesNormals [i-startIndex].Vertex = mesh.Vertices [i];
-					verticesNormals [i-startIndex].Normal = mesh.Normals [i];
-				}
+			var verticesNormals = new VNData[count];
 
-				VerticesNormals = verticesNormals;
-			} else {
-				for (int i = 0; i < count; i++) {
-					verticesNormals [i].Vertex = mesh.Vertices [i];
-					verticesNormals [i].Normal = mesh.Normals [i];
-				}
-
-				VerticesNormals = verticesNormals;
+			for (int i = startIndex; i < endIndex; i++) {
+				verticesNormals [i-startIndex].Vertex = mesh.Vertices [i];
+				verticesNormals [i-startIndex].Normal = mesh.Normals [i];
 			}
+
+			VerticesNormals = verticesNormals;
 
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			if (VerticesNormals.Length > 0)
-				return true;
-			else 
-				return false;
+			return VerticesNormals.Length > 0;
 		}
 
 		/// <summary>
@@ -444,22 +459,25 @@ namespace RhinoMobile.Display
 		{
 			Stride = (Marshal.SizeOf (typeof(VCData))); // 28 bytes
 
-			int count = mesh.Vertices.Count;
-			VCData[] verticesColors = new VCData[count * 3];
+			MeshPart meshPartition = mesh.GetPartition (partitionIndex);
+			int vertexCount = meshPartition.VertexCount;
+			int startIndex = meshPartition.StartVertexIndex;
+			int endIndex = meshPartition.EndVertexIndex;
 
-			for (int i = 0; i < count; i++) {
-				verticesColors [i].Vertex = mesh.Vertices [i];
-				verticesColors [i].Color  = new Color4f (mesh.VertexColors [i]);
+			int count = (endIndex - startIndex) * 2;
+
+			var verticesColors = new VCData[count];
+
+			for (int i = startIndex; i < endIndex; i++) {
+				verticesColors [i-startIndex].Vertex = mesh.Vertices [i];
+				verticesColors [i-startIndex].Color  = new Color4f (mesh.VertexColors [i]);
 			}
 
 			VerticesColors = verticesColors;
 
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			if (VerticesColors.Length > 0)
-				return true;
-			else
-				return false;
+			return VerticesColors.Length > 0;
 		}
 
 		/// <summary>
@@ -469,23 +487,26 @@ namespace RhinoMobile.Display
 		{
 			Stride = (Marshal.SizeOf (typeof(VNCData))); // This should be 40 bytes
 
-			int count = mesh.Vertices.Count;
-			VNCData[] verticesNormalsColors = new VNCData[count * 3];
+			MeshPart meshPartition = mesh.GetPartition (partitionIndex);
+			int vertexCount = meshPartition.VertexCount;
+			int startIndex = meshPartition.StartVertexIndex;
+			int endIndex = meshPartition.EndVertexIndex;
 
-			for (int i = 0; i < count; i++) {
-				verticesNormalsColors [i].Vertex = mesh.Vertices [i];
-				verticesNormalsColors [i].Normal = mesh.Normals [i];
-				verticesNormalsColors [i].Color  = new Color4f (mesh.VertexColors [i]);
+			int count = (endIndex - startIndex) * 3;
+
+			VNCData[] verticesNormalsColors = new VNCData[count];
+
+			for (int i = startIndex; i < endIndex; i++) {
+				verticesNormalsColors [i-startIndex].Vertex = mesh.Vertices [i];
+				verticesNormalsColors [i-startIndex].Normal = mesh.Normals [i];
+				verticesNormalsColors [i-startIndex].Color  = new Color4f (mesh.VertexColors [i]);
 			}
 
 			VerticesNormalsColors = verticesNormalsColors;
 
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			if (VerticesNormalsColors.Length > 0)
-				return true;
-			else
-				return false;
+			return VerticesNormalsColors.Length > 0;
 		}
 
 		/// <summary>
@@ -516,7 +537,7 @@ namespace RhinoMobile.Display
 			IndexBufferLength = Indices.Length;
 			indexList.Clear ();
 		
-			return true;
+			return Indices.Length > 0;
 		}
 
 
