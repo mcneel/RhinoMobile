@@ -327,6 +327,9 @@ namespace RhinoMobile.Display
 				CurrentMaterial = displayMesh.Material;
 
 				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
+				
+					displayMesh.LoadDataForVBOs (displayMesh.Mesh);
+
 					// Generate the VertexBuffer
 					uint vertex_buffer;
 					GL.GenBuffers (1, out vertex_buffer);
@@ -343,6 +346,15 @@ namespace RhinoMobile.Display
 					} else if (displayMesh.HasVertexNormals && displayMesh.HasVertexColors) { // VerticesNormalsColors
 						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.VerticesNormalsColors.Length * displayMesh.Stride), displayMesh.VerticesNormalsColors, BufferUsage.StaticDraw);
 					}
+
+					//Dispose of VBO data after sending to the GPU 
+					displayMesh.DeleteVBOData ();
+
+					//HACK: We need a better way of disposing of these if they are on a partitioned mesh.
+					if (displayMesh.Mesh.PartitionCount < 2)
+						Model.ModelFile.Objects.Delete (displayMesh.FileObjectId);
+
+					displayMesh.Mesh = null;
 				}
 
 				if (displayMesh.IndexBufferHandle == Globals.UNSET_HANDLE) {
@@ -350,8 +362,11 @@ namespace RhinoMobile.Display
 					uint index_buffer;
 					GL.GenBuffers (1, out index_buffer);
 					GL.BindBuffer (BufferTarget.ElementArrayBuffer, index_buffer);
-					GL.BufferData (BufferTarget.ElementArrayBuffer, (IntPtr)(displayMesh.Indices.Length*sizeof(int)), displayMesh.Indices, BufferUsage.StaticDraw);
+					GL.BufferData (BufferTarget.ElementArrayBuffer, (IntPtr)(displayMesh.Indices.Length*sizeof(ushort)), displayMesh.Indices, BufferUsage.StaticDraw);
 					displayMesh.IndexBufferHandle = index_buffer;
+
+					//Dispose of the index data after sending to the GPU 
+					displayMesh.DeleteIndexBufferObject ();
 				}
 
 				// Vertices
@@ -405,7 +420,7 @@ namespace RhinoMobile.Display
 				#endif
 
 				#if __IOS__
-				GL.DrawElements (BeginMode.Triangles, displayMesh.IndexBufferLength, DrawElementsType.UnsignedInt, IntPtr.Zero);
+				GL.DrawElements (BeginMode.Triangles, displayMesh.IndexBufferLength, DrawElementsType.UnsignedShort, IntPtr.Zero);
 				#endif
 					
 				// Disable any and all arrays and buffers we might have used...

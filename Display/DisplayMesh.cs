@@ -95,6 +95,12 @@ namespace RhinoMobile.Display
 		#endregion
 
 		#region properties
+		/// <value> The underlying openNURBS mesh associated with this runtime DisplayMesh </value>
+		public new Mesh Mesh { get; set; }
+
+		/// <value> The object Id associated with the mesh in the openNURBS archive. </value>
+		public Guid FileObjectId { get; set; }
+
 		/// <value> OpenGL ES 2.0 vertex buffer handle </value>
 		public uint VertexBufferHandle
 		{
@@ -135,7 +141,7 @@ namespace RhinoMobile.Display
 		public VNCData[] VerticesNormalsColors { get; private set; }
 
 		/// <value> The index values that make up the index data on this mesh. </value>
-		public int[] Indices { get; private set; }
+		public ushort[] Indices { get; private set; }
 
 		/// <value> Set to true if you want VBO data dumped to a byte[] for serialization. </value>
 		public bool CaptureVBOData { get; set; }
@@ -193,8 +199,11 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// Initializes a DisplayMesh from a Rhino.Geometry.Mesh.
 		/// </summary>
-		public DisplayMesh (Mesh mesh, int partitionIndex, DisplayMaterial material, bool shouldCaptureVBOData)
+		public DisplayMesh (Mesh mesh, int partitionIndex, DisplayMaterial material, bool shouldCaptureVBOData, Guid fileObjectId)
 		{
+			Mesh = mesh;
+			FileObjectId = fileObjectId;
+
 			Material = material;
 			m_partitionIndex = partitionIndex;
 			BoundingBox = mesh.GetBoundingBox (true);
@@ -217,9 +226,6 @@ namespace RhinoMobile.Display
 			IsClosed = false;
 
 			IsClosed |= mesh.IsClosed;
-
-			// Load the actual data to be fed to the VBOs
-			LoadDataForVBOs (mesh);
 
 			if (m_initializationFailed)
 				return;
@@ -295,12 +301,18 @@ namespace RhinoMobile.Display
 				vertexMesh.Normals.ComputeNormals ();
 				mesh = vertexMesh;
 			}
-
-			// The size of the mesh partitions here are determined by the limitations of OpenGL ES.
-			mesh.CreatePartitions(int.MaxValue, int.MaxValue);
+				
+			try {
+				// The minus 3 here is the Paranoid (TM) Constant...
+				// Since we don't know how well CreatePartition deals with edge cases, 
+				// we give the routine a slightly smaller parameter than the absolutely largest possible
+				mesh.CreatePartitions(ushort.MaxValue-3, int.MaxValue-3);
+			} catch (Exception ex) {
+				Rhino.Runtime.HostUtils.ExceptionReport (ex);
+			}
 
 			if (mesh.PartitionCount == 0) {
-				System.Diagnostics.Debug.WriteLine ("Invalid Mesh Found");
+				System.Diagnostics.Debug.WriteLine ("Unable to create partitions on mesh {0}", attr.ObjectId.ToString());
 				return null; //invalid mesh, ignore
 			}
 
@@ -311,7 +323,7 @@ namespace RhinoMobile.Display
 
 			for (int i = 0; i < mesh.PartitionCount; i++) {
 				var displayMaterial = new DisplayMaterial (material, materialIndex);
-				var newMesh = new DisplayMesh (mesh, i, displayMaterial, mesh.PartitionCount > 1);
+				var newMesh = new DisplayMesh (mesh, i, displayMaterial, mesh.PartitionCount > 1, attr.ObjectId);
 				if (newMesh != null) {
 					newMesh.GUID = attr.ObjectId;
 					newMesh.IsVisible = attr.Visible;
@@ -347,7 +359,7 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// MakeVBOs checks the mesh to see which flavor of VBO should be created and then dispatches creation.
 		/// </summary>
-		protected void LoadDataForVBOs (Mesh mesh)
+		public void LoadDataForVBOs (Mesh mesh)
 		{
 			bool didLoadData = true;
 
@@ -396,15 +408,15 @@ namespace RhinoMobile.Display
 			int count = mesh.Vertices.Count;
 			VNData[] verticesNormals = new VNData[count * 3];
 
-			if (mesh.PartitionCount > 1) {
+			if (mesh.PartitionCount >= 1) {
 				MeshPart meshPartition = mesh.GetPartition (partitionIndex);
 				int vertexCount = meshPartition.VertexCount;
 				int startIndex = meshPartition.StartVertexIndex;
 				int endIndex = meshPartition.EndVertexIndex;
 
 				for (int i = startIndex; i < endIndex; i++) {
-					verticesNormals [i].Vertex = mesh.Vertices [i];
-					verticesNormals [i].Normal = mesh.Normals [i];
+					verticesNormals [i-startIndex].Vertex = mesh.Vertices [i];
+					verticesNormals [i-startIndex].Normal = mesh.Normals [i];
 				}
 
 				VerticesNormals = verticesNormals;
@@ -481,12 +493,33 @@ namespace RhinoMobile.Display
 		/// </summary>
 		protected bool LoadIndexData (Mesh mesh, int partitionIndex)
 		{
-			Indices = mesh.Faces.ToIntArray (true);
+			MeshPart part = mesh.GetPartition (partitionIndex);
+			TriangleCount = (uint)part.TriangleCount;
+			var indexList = new List<ushort> ();
 
+			for (int fi = part.StartFaceIndex; fi < part.EndFaceIndex; fi++) {
+				var f = mesh.Faces [fi];
+			
+				int i0 = f.A; int i1 = f.B; int i2 = f.C; int i3 = f.D;
+
+				indexList.Add ((ushort)(i0 - part.StartVertexIndex));
+				indexList.Add ((ushort)(i1 - part.StartVertexIndex));
+				indexList.Add ((ushort)(i2 - part.StartVertexIndex));
+				if (i2 != i3) {
+					indexList.Add ((ushort)(i2 - part.StartVertexIndex));
+					indexList.Add ((ushort)(i3 - part.StartVertexIndex));
+					indexList.Add ((ushort)(i0 - part.StartVertexIndex));
+				}
+			}
+
+			Indices = indexList.ToArray ();
 			IndexBufferLength = Indices.Length;
-
-			return IndexBufferLength > 0;
+			indexList.Clear ();
+		
+			return true;
 		}
+
+
 		#endregion
 
 		#region VBO Management
@@ -495,11 +528,18 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public void DeleteVBOData ()
 		{
-			//Stubbed for serialization if needed...
-			//m_vertexBufferData = null;
-			//m_normalBufferData = null;
-			//m_vertexAndNormalBufferData = null;
-			//m_indexBufferData = null;
+			Vertices = null;
+			VerticesNormals = null;
+			VerticesColors = null;
+			VerticesNormalsColors = null;
+		}
+
+		/// <summary>
+		/// Sets the Index Buffer Objects to null
+		/// </summary>
+		public void DeleteIndexBufferObject ()
+		{
+			Indices = null;
 		}
 		#endregion
 
