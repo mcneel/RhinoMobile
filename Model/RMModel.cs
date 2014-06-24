@@ -542,9 +542,6 @@ namespace RhinoMobile.Model
 
 			if (TransparentObjects != null)
 				TransparentObjects.Clear ();
-
-			if (ModelFile != null)
-				ModelFile.Dispose ();
 		}
 		#endregion
 
@@ -888,7 +885,8 @@ namespace RhinoMobile.Model
 					if (!successfulPreparation) {
 						DisplayObjects.Clear ();
 						TransparentObjects.Clear ();
-						ModelFile.Dispose ();
+						if (ModelFile != null)
+							ModelFile.Dispose ();
 
 						if (OutOfMemoryWarning) {
 							prepareMeshesException = MeshException ("Model is too large.");
