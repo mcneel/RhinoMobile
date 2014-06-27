@@ -152,10 +152,17 @@ namespace RhinoMobile.Model
 
 					for (int layerIndex = 0; layerIndex < Layers.Count; layerIndex++) {
 						if (LayerIsVisibleAtIndex (layerIndex)) {
-							File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer(LayerAtIndex (layerIndex).Name);
+							var objsByLayer = FindByLayer (layerIndex);
 
-							foreach (File3dmObject obj in objsByLayer)
-								m_visibleLayersBoundingBox.Union (obj.Geometry.GetBoundingBox (false));
+							foreach (var obj in objsByLayer) {
+								var displayMesh = obj as DisplayMesh;
+								if (displayMesh != null) {
+									var bbox = displayMesh.BoundingBox;
+									m_visibleLayersBoundingBox.Union (bbox);
+								}
+							}
+
+							objsByLayer.Clear ();
 						}
 					}
 				} else {
@@ -561,10 +568,9 @@ namespace RhinoMobile.Model
 				// Find the Layers with Geometry and add them to LayersWithGeometry property
 				LayersWithGeometry = new List<Layer> ();
 				for  (int i = 0; i < Layers.Count; i++) {
-					if (LayerHasGeometryAtIndex (i))
+					if (LayerHasGeometryAtIndex (i, true))
 						LayersWithGeometry.Add (Layers [i]);
 				}
-
 			}
 		}
 
@@ -587,7 +593,7 @@ namespace RhinoMobile.Model
 		public virtual Layer LayerWithGeometryAtIndex(int layerIndex) 
 		{
 			for (int i = 0; i < ModelFile.Layers.Count; i++) {
-				if (LayerHasGeometryAtIndex(i)) {
+				if (LayerHasGeometryAtIndex(i, true)) {
 					if (layerIndex == 0)
 						return ModelFile.Layers [i];
 					layerIndex--;
@@ -612,11 +618,14 @@ namespace RhinoMobile.Model
 
 		/// <summary>
 		/// True if layer at the index provided contains geometry.
+		/// <param name="layerIndex">The layer index to search.</param>
+		/// <param name="searchInModelFile">If the ModelFile is still open and valid, search
+		/// this file.  If not, search the runtime displayObjects.</param> 
 		/// </summary>
-		public virtual bool LayerHasGeometryAtIndex(int layerIndex) 
+		public virtual bool LayerHasGeometryAtIndex(int layerIndex, bool searchInModelFile) 
 		{
 			if (layerIndex >= 0 && layerIndex < Layers.Count) {
-				BoundingBox bb = BoundingBoxForLayer (layerIndex);
+				BoundingBox bb = BoundingBoxForLayer (layerIndex, searchInModelFile);
 				return bb.IsValid;
 			}
 			System.Diagnostics.Debug.WriteLine ("Bad Layer Index: {0}", layerIndex);
@@ -625,19 +634,77 @@ namespace RhinoMobile.Model
 
 		/// <summary>
 		/// Returns the bounding box for all geometry on a layer.
+		/// <param name="layerIndex">The layer index to get the bounding box of.</param>
+		/// <param name="searchInModelFile">If the ModelFile is still open and valid, search
+		/// in this file.  If not, search the runtime displayObjects.</param> 
 		/// </summary>
-		protected virtual BoundingBox BoundingBoxForLayer(int layerIndex)
+		protected virtual BoundingBox BoundingBoxForLayer(int layerIndex, bool searchInModelFile)
 		{
 			BoundingBox boundingBoxForLayer = BoundingBox.Empty;
 
-			if (ModelFile != null) {
-				File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer (LayerAtIndex (layerIndex).Name);
+			if (searchInModelFile) {
+				if (ModelFile != null) {
+					File3dmObject[] objsByLayer = ModelFile.Objects.FindByLayer(LayerAtIndex (layerIndex).Name);
 
-				foreach (File3dmObject obj in objsByLayer)
-					boundingBoxForLayer.Union (obj.Geometry.GetBoundingBox (false));
-			} 
+					foreach (File3dmObject obj in objsByLayer)
+						boundingBoxForLayer.Union (obj.Geometry.GetBoundingBox (false));
+				}
+			} else {
+				var objsByLayer = FindByLayer (layerIndex);
 
+				foreach (var obj in objsByLayer) {
+					var displayMesh = obj as DisplayMesh;
+					if (displayMesh != null) {
+						var bbox = displayMesh.BoundingBox;
+						boundingBoxForLayer.Union (bbox);
+					}
+				}
+
+			}
+				
 			return boundingBoxForLayer;
+		}
+
+		protected virtual List<DisplayObject> FindByLayer (int layerIndex)
+		{
+			var objectsOnLayer = new List<DisplayObject> ();
+
+			if (DisplayObjects != null) {
+				foreach (var displayObject in DisplayObjects) {
+					if (displayObject.LayerIndex == layerIndex)
+						objectsOnLayer.Add (displayObject);
+				}
+			}
+
+			if (DisplayMeshes != null) {
+				foreach (var displayMesh in DisplayMeshes) {
+					if (displayMesh.LayerIndex == layerIndex)
+						objectsOnLayer.Add (displayMesh);
+				}
+			}
+
+			if (DisplayInstanceMeshes != null) {
+				foreach (var displayInstanceMesh in DisplayInstanceMeshes) {
+					if (displayInstanceMesh.LayerIndex == layerIndex)
+						objectsOnLayer.Add (displayInstanceMesh);
+				}
+			}
+
+			if (TransparentObjects != null) {
+				foreach (var transparentObject in TransparentObjects) {
+					if (transparentObject.LayerIndex == layerIndex)
+						objectsOnLayer.Add (transparentObject);
+				}
+			}
+
+			if (TransparentInstanceObjects != null) {
+				foreach (var transparentInstanceObject in TransparentInstanceObjects) {
+					if (transparentInstanceObject.LayerIndex == layerIndex)
+						objectsOnLayer.Add (transparentInstanceObject);
+				}
+			}
+
+			return objectsOnLayer;
 		}
 		#endregion
 
