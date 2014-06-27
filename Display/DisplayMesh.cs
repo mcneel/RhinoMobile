@@ -315,18 +315,20 @@ namespace RhinoMobile.Display
 				vertexMesh.Normals.ComputeNormals ();
 				mesh = vertexMesh;
 			}
-				
+
+			bool didCreatePartitions = false;
 			try {
 				// The minus 3 here is the Paranoid (TM) Constant...
 				// Since we don't know how well CreatePartition deals with edge cases, 
 				// we give the routine a slightly smaller parameter than the absolutely largest possible
-				mesh.CreatePartitions(ushort.MaxValue-3, int.MaxValue-3);
+				didCreatePartitions = mesh.CreatePartitions(ushort.MaxValue-3, int.MaxValue-3);
 			} catch (Exception ex) {
 				Rhino.Runtime.HostUtils.ExceptionReport (ex);
 			}
-
-			if (mesh.PartitionCount == 0) {
+				
+			if (!didCreatePartitions) {
 				System.Diagnostics.Debug.WriteLine ("Unable to create partitions on mesh {0}", attr.ObjectId.ToString());
+				Rhino.Runtime.HostUtils.ExceptionReport (new Exception ("Unable to create partitions on mesh"));
 				return null; //invalid mesh, ignore
 			}
 
