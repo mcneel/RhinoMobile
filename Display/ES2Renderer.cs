@@ -53,6 +53,7 @@ using BlendingFactorDest = OpenTK.Graphics.ES20.All;
 using CullFaceMode = OpenTK.Graphics.ES20.All;
 using FramebufferTarget = OpenTK.Graphics.ES20.All;
 using RenderbufferTarget = OpenTK.Graphics.ES20.All;
+using FrontFaceDirection = OpenTK.Graphics.ES20.All;
 #endif
 #endregion
 
@@ -639,12 +640,28 @@ namespace RhinoMobile.Display
 			do {
 				if (err != ErrorCode.NoError) {
 					#if DEBUG
-					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
+					Debug.WriteLine ("GL Error: {0}", err.ToString ());
 					#endif
 					hasError = true;
 				} 
 				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
+			return hasError;
+			#endif
+
+			#if __ANDROID__
+			int error = Android.Opengl.GLES20.GlGetError();
+			bool hasError = false;
+			do {
+				if (error != Android.Opengl.GLES20.GlNoError) {
+					#if DEBUG
+					Debug.WriteLine ("GL Error: " + error.ToString());
+					#endif
+					hasError = true;
+				}
+				error = Android.Opengl.GLES20.GlGetError();
+			} while ((error != Android.Opengl.GLES20.GlNoError));
+			
 			return hasError;
 			#endif
 		}
