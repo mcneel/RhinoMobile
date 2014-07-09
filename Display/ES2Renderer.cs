@@ -458,7 +458,7 @@ namespace RhinoMobile.Display
 
 				// Draw...
 				#if __ANDROID__
-				GL.DrawElements (All.Triangles, displayMesh.IndexBufferLength, All.UnsignedInt, IntPtr.Zero);
+        GL.DrawElements (All.Triangles, displayMesh.IndexBufferLength, All.UnsignedShort, IntPtr.Zero);
 				#endif
 
 				#if __IOS__
