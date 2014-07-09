@@ -24,7 +24,7 @@ namespace RhinoMobile.Display
 		/// <summary>
 		/// LateralPan of a viewport between two points
 		/// </summary>
-		public static void LateralPan (this ViewportInfo viewport, System.Drawing.PointF fromPoint, System.Drawing.PointF toPoint)
+    public static void LateralPan (this ViewportInfo viewport, System.Drawing.PointF fromPoint, System.Drawing.PointF toPoint, bool flipX, bool flipY)
 		{
 			double deltaX, deltaY, s;
 			Rhino.Geometry.Transform s2c = viewport.GetXform (CoordinateSystem.Screen, CoordinateSystem.Clip);
@@ -36,11 +36,11 @@ namespace RhinoMobile.Display
 			deltaY = 0.5 * (clipPoint1.Y - clipPoint0.Y);
 			deltaX *= (viewport.FrustumRight - viewport.FrustumLeft);
 			deltaY *= (viewport.FrustumBottom - viewport.FrustumTop);
-			if (viewport.IsPerspectiveProjection) {
-				s = viewport.TargetPoint.DistanceTo (viewport.CameraLocation) / viewport.FrustumNear;
-				deltaX *= s;
-				deltaY *= s;
-			}
+      if (viewport.IsPerspectiveProjection) {
+        s = viewport.TargetPoint.DistanceTo (viewport.CameraLocation) / viewport.FrustumNear;
+        deltaX *= flipX ? -s : s;
+        deltaY *= flipY ? -s : s;
+      }
 			Rhino.Geometry.Vector3d dollyVector = (deltaX * viewport.CameraX) + (deltaY * viewport.CameraY);
 			viewport.TargetPoint = viewport.TargetPoint - dollyVector;
 			viewport.SetCameraLocation (viewport.CameraLocation - dollyVector);
