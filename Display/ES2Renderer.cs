@@ -264,6 +264,8 @@ namespace RhinoMobile.Display
 		{
 			Model = model;
 
+      CheckGLError (); //HACK: necessary on some Android GPUs (don't delete this check)
+
 			if ((model == null) || !model.IsReadyForRendering)
 				return false;
 
@@ -316,9 +318,9 @@ namespace RhinoMobile.Display
 			// If the layer that the object is on is turned off, return.
 			if (!Model.LayerIsVisibleAtIndex (obj.LayerIndex))
 				return;
-				
+
 			DisplayMesh displayMesh = isInstance ? ((DisplayInstanceMesh)obj).Mesh : (DisplayMesh)obj;
-				
+			
 			if (displayMesh.WillFitOnGPU == false)
 				return;
 
