@@ -264,7 +264,7 @@ namespace RhinoMobile.Display
 		{
 			Model = model;
 
-      CheckGLError (); //HACK: necessary on some Android GPUs (don't delete this check)
+      CheckGLError ("intro call"); //HACK: necessary on some Android GPUs (don't delete this check)
 
 			if ((model == null) || !model.IsReadyForRendering)
 				return false;
@@ -334,7 +334,6 @@ namespace RhinoMobile.Display
 				CurrentMaterial = displayMesh.Material;
 
 				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
-				
 					displayMesh.LoadDataForVBOs (displayMesh.Mesh);
 
 					// Generate the VertexBuffer
@@ -355,7 +354,7 @@ namespace RhinoMobile.Display
 
 					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
 					// we need to delete the buffers associated with that displayMesh and mark it as too big.
-					bool causesGLError = CheckGLError ();
+          bool causesGLError = CheckGLError ("GL.BufferData");
 					if (causesGLError) {
 						GL.DeleteBuffers (1, ref vertex_buffer);
 						displayMesh.WillFitOnGPU = false;
@@ -388,7 +387,7 @@ namespace RhinoMobile.Display
 
 					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
 					// we need to delete the buffers associated with that displayMesh and mark it as too big.
-					bool causesGLError = CheckGLError ();
+					bool causesGLError = CheckGLError ("GL.BufferData");
 					if (causesGLError) {
 						GL.DeleteBuffers (1, ref vertex_buffer);
 						GL.DeleteBuffers (1, ref index_buffer);
@@ -415,7 +414,7 @@ namespace RhinoMobile.Display
 				// Third, tell GL where to look for the data...
 				GL.VertexAttribPointer (rglVertex, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, IntPtr.Zero);
 
-				CheckGLError ();
+        CheckGLError ("GL.VertexAttribPointer");
 
 				// Normals
 				if (displayMesh.HasVertexNormals) {
@@ -423,7 +422,7 @@ namespace RhinoMobile.Display
 					GL.EnableVertexAttribArray (rglNormal);
 					GL.VertexAttribPointer (rglNormal, 3, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Geometry.Point3f))));
 
-					CheckGLError ();
+          CheckGLError ("GL.VertexAttribPointer");
 				}
 
 				// Colors
@@ -432,7 +431,7 @@ namespace RhinoMobile.Display
 					GL.EnableVertexAttribArray (rglColor);
 					GL.VertexAttribPointer (rglColor, 4, VertexAttribPointerType.Float, false, displayMesh.Stride, (IntPtr)(Marshal.SizeOf (typeof(Rhino.Display.Color4f))));
 
-					CheckGLError ();
+          CheckGLError ("GL.VertexAttribPointer");
 				}
 					
 				if (isInstance) {
@@ -456,7 +455,7 @@ namespace RhinoMobile.Display
 				// Bind Indices
 				GL.BindBuffer (BufferTarget.ElementArrayBuffer, displayMesh.IndexBufferHandle);
 
-				CheckGLError ();
+        CheckGLError ("GL.BindBuffer");
 
 				// Draw...
 				#if __ANDROID__
@@ -464,10 +463,9 @@ namespace RhinoMobile.Display
 				#endif
 
 				#if __IOS__
-				CheckGLError();
 				GL.DrawElements (BeginMode.Triangles, displayMesh.IndexBufferLength, DrawElementsType.UnsignedShort, IntPtr.Zero);
 				#endif
-					
+
 				// Disable any and all arrays and buffers we might have used...
 				GL.BindBuffer (BufferTarget.ArrayBuffer, displayMesh.VertexBufferHandle);
 				GL.DisableVertexAttribArray (ActiveShader.RglColorIndex);
@@ -632,9 +630,13 @@ namespace RhinoMobile.Display
 
 		#region Utilities
 		/// <summary>
-		/// <para>Checks for outstanding GL Errors and logs them to console.</para>
+    /// <para>Utility method for debugging OpenGL calls.  </para>
+    /// <para>Provide the name of the call just after making it, for example</para>
+    /// <para>GL.GenBuffers (1, out vertex_buffer);</para>
+    /// <para>CheckGLError("GL.GenBuffers");</para>
+    /// <param name="glOperation">glOperation - Name of the OpenGL call to check.</param>
 		/// </summary>
-		public static bool CheckGLError () 
+    public static bool CheckGLError (string glOperation) 
 		{
 			#if __IOS__
 			var err = GL.GetError ();
@@ -642,7 +644,7 @@ namespace RhinoMobile.Display
 			do {
 				if (err != ErrorCode.NoError) {
 					#if DEBUG
-					Debug.WriteLine ("GL Error: {0}", err.ToString ());
+					Debug.WriteLine ("ES2Renderer " + glOperation + ": GL Error: " + err.ToString ());
 					#endif
 					hasError = true;
 				} 
@@ -657,7 +659,7 @@ namespace RhinoMobile.Display
 			do {
 				if (error != Android.Opengl.GLES20.GlNoError) {
 					#if DEBUG
-					Debug.WriteLine ("GL Error: " + error.ToString());
+          Debug.WriteLine ("ES2Renderer " + glOperation + ": GL Error: " + error.ToString ());
 					#endif
 					hasError = true;
 				}

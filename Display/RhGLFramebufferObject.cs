@@ -185,29 +185,7 @@ namespace RhinoMobile.Display
     public int Height {
       get { return m_height; }
     }
-
     #endregion
-
-		#region Utilities
-		/// <summary>
-		/// DEBUG only.
-		/// <para>Checks for outstanding GL Errors and logs them to console.</para>
-		/// </summary>
-		public static void CheckGLError () 
-		{
-			#if DEBUG 
-			#if __ANDROID__
-			var err = GL.GetError ();
-			do {
-				if (err != ErrorCode.NoError)
-					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
-				err = GL.GetError ();
-			} while ((err != ErrorCode.NoError));
-			#endif
-			#endif
-		}
-		#endregion
-
   }
 
   /// <summary>
@@ -517,25 +495,5 @@ namespace RhinoMobile.Display
     }
 
     #endregion
-
-		#region Utilities
-		/// <summary>
-		/// DEBUG only.
-		/// <para>Checks for outstanding GL Errors and logs them to console.</para>
-		/// </summary>
-		public static void CheckGLError () 
-		{
-			#if DEBUG 
-			#if __ANDROID__
-			var err = GL.GetError ();
-			do {
-				if (err != ErrorCode.NoError)
-					System.Diagnostics.Debug.WriteLine ("GL Error: {0}", err.ToString ());
-				err = GL.GetError ();
-			} while ((err != ErrorCode.NoError));
-			#endif
-			#endif
-		}
-		#endregion
   }
 }
