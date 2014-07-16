@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -748,12 +748,7 @@
     <AndroidResource Include="Resources\values\Strings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Display\" />
-    <Folder Include="Model\" />
-    <Folder Include="rhinocommon\" />
-    <Folder Include="libs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedNativeLibrary Include="..\rhinocommon\c\build\Release-android\libs\armeabi\libopennurbs.so">
       <Link>libs\armeabi\libopennurbs.so</Link>
@@ -765,4 +760,9 @@
       <Link>libs\x86\libopennurbs.so</Link>
     </EmbeddedNativeLibrary>
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)\..\rhinocommon\c\
+build_native.py -p android -v
+cd $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>
