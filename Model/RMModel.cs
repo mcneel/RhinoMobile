@@ -490,7 +490,10 @@ namespace RhinoMobile.Model
 						catch (OperationCanceledException ex)
 						{
 							MeshPreparationDidFailWithException (MeshException ("Initialization cancelled."));
-							Rhino.Runtime.HostUtils.ExceptionReport (ex);
+
+							if (!String.Equals(ex.Message, "OperationCanceledException: The operation was canceled."))
+								Rhino.Runtime.HostUtils.ExceptionReport (ex);
+
 							Dispose ();
 							return;
 						}
