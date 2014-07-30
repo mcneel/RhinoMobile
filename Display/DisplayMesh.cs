@@ -306,15 +306,9 @@ namespace RhinoMobile.Display
 				material.DiffuseColor = System.Drawing.Color.FromKnownColor (System.Drawing.KnownColor.White);
 			}
 
-			Rhino.Geometry.Mesh vertexMesh = new Rhino.Geometry.Mesh();
 			// create vertex normals if missing
-			if (mesh.Normals.Count == 0) {
-				vertexMesh.Normals.Clear ();
-				vertexMesh.FaceNormals.Clear ();
-				vertexMesh.Compact ();
-				vertexMesh.Normals.ComputeNormals ();
-				mesh = vertexMesh;
-			}
+			if (mesh.Normals.Count == 0)
+				mesh.Normals.ComputeNormals ();
 
 			bool didCreatePartitions = false;
 			try {
@@ -352,9 +346,6 @@ namespace RhinoMobile.Display
 				foreach (DisplayMesh me in displayMeshes)
 					me.DeleteVBOData();
 			}
-
-			if (vertexMesh != null)
-				vertexMesh.Dispose ();
 
 			return displayMeshes.ToArray ();
 		}
