@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+using OpenTK.Graphics.ES20;
+
 using Rhino.Geometry;
 using Rhino.DocObjects;
 using Rhino.Display;
@@ -132,21 +134,6 @@ namespace RhinoMobile.Display
 
 		/// <value> The int length of the buffer for the vertex indices. </value>
 		public int IndexBufferLength { get; set; }
-
-		/// <value> The vertex values that make up the position data on this mesh. </value>
-		public VData[] Vertices { get; private set; }
-
-		/// <value> An array of interleaved vertices and normals. </value>
-		public VNData[] VerticesNormals { get; private set; }
-
-		/// <value> An array of interleaved vertices and colors. </value>
-		public VCData[] VerticesColors { get; private set; }
-
-		/// <value> An array of interleaved vertices, normals, and colors. </value>
-		public VNCData[] VerticesNormalsColors { get; private set; }
-
-		/// <value> The index values that make up the index data on this mesh. </value>
-		public ushort[] Indices { get; private set; }
 
 		/// <value> NOT YET IMPLEMENTED.  Set to true if you want VBO data dumped to a byte[] for serialization.</value>
 		public bool CaptureVBOData { get; set; }
@@ -279,12 +266,6 @@ namespace RhinoMobile.Display
 			// Free managed resources...but only if called from Dispose
 			// (If called from Finalize then the objects might not exist anymore)
 			if (disposing) {
-				Vertices = null;
-				VerticesNormals = null;
-				VerticesColors = null;
-				VerticesNormalsColors = null;
-
-				Indices = null;
 				VertexBufferData = null;
 				NormalBufferData = null;
 				VertexAndNormalBufferData = null;
@@ -342,29 +323,13 @@ namespace RhinoMobile.Display
 				}
 			}
 
-			if (displayMeshes.Count > 1) {
-				foreach (DisplayMesh me in displayMeshes)
-					me.DeleteVBOData();
-			}
-
 			return displayMeshes.ToArray ();
 		}
 		#endregion
 
-		#region Interleaved Vertex Data
+		#region VBO Management
 		/// <summary>
-		/// These variables are difficult to archive so we restore them when reloading the model
-		/// </summary>
-		public void RestoreUsingMesh (Mesh mesh, DisplayMaterial newMaterial)
-		{
-			Material = newMaterial;
-			BoundingBox = mesh.GetBoundingBox (true);
-		}
-		#endregion
-
-		#region Load Data for VBOs
-		/// <summary>
-		/// MakeVBOs checks the mesh to see which flavor of VBO should be created and then dispatches creation.
+		/// LoadDataForVBOs checks the mesh to see which flavor of VBO should be created and then dispatches creation.
 		/// </summary>
 		public void LoadDataForVBOs (Mesh mesh)
 		{
@@ -382,7 +347,7 @@ namespace RhinoMobile.Display
 				didLoadData = didLoadData && LoadVertexData (mesh, m_partitionIndex);
 			}
 
-			// Every mesh gets an index...
+			// Every mesh gets an index buffer object...
 			didLoadData = didLoadData && LoadIndexData (mesh, m_partitionIndex);
 
 			m_initializationFailed = !didLoadData;
@@ -407,14 +372,11 @@ namespace RhinoMobile.Display
 			for (int i = startIndex; i < endIndex; i++)
 				vertices [i - startIndex].Vertex = mesh.Vertices [i];
 
-			Vertices = vertices;
-
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			if (Vertices.Length > 0)
-				return true;
-			else 
-				return false;
+			GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(vertices.Length * Stride), vertices, BufferUsage.StaticDraw);
+
+			return vertices.Length > 0;
 		}
 
 		/// <summary>
@@ -437,12 +399,12 @@ namespace RhinoMobile.Display
 				verticesNormals [i-startIndex].Vertex = mesh.Vertices [i];
 				verticesNormals [i-startIndex].Normal = mesh.Normals [i];
 			}
-
-			VerticesNormals = verticesNormals;
-
+				
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			return VerticesNormals.Length > 0;
+			GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(verticesNormals.Length * Stride), verticesNormals, BufferUsage.StaticDraw);
+
+			return verticesNormals.Length > 0;;
 		}
 
 		/// <summary>
@@ -466,11 +428,11 @@ namespace RhinoMobile.Display
 				verticesColors [i-startIndex].Color  = new Color4f (mesh.VertexColors [i]);
 			}
 
-			VerticesColors = verticesColors;
-
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			return VerticesColors.Length > 0;
+			GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(verticesColors.Length * Stride), verticesColors, BufferUsage.StaticDraw);
+
+			return verticesColors.Length > 0;
 		}
 
 		/// <summary>
@@ -495,15 +457,15 @@ namespace RhinoMobile.Display
 				verticesNormalsColors [i-startIndex].Color  = new Color4f (mesh.VertexColors [i]);
 			}
 
-			VerticesNormalsColors = verticesNormalsColors;
-
 			TriangleCount += (uint)mesh.Faces.Count;
 
-			return VerticesNormalsColors.Length > 0;
+			GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(verticesNormalsColors.Length * Stride), verticesNormalsColors, BufferUsage.StaticDraw);
+
+			return verticesNormalsColors.Length > 0;
 		}
 
 		/// <summary>
-		/// Loads index data from a mesh, given a partitionIndex
+		/// Loads index data from a mesh
 		/// </summary>
 		protected bool LoadIndexData (Mesh mesh, int partitionIndex)
 		{
@@ -526,34 +488,24 @@ namespace RhinoMobile.Display
 				}
 			}
 
-			Indices = indexList.ToArray ();
-			IndexBufferLength = Indices.Length;
+			ushort[] indices = indexList.ToArray ();
+			IndexBufferLength = indices.Length;
 			indexList.Clear ();
-		
-			return Indices.Length > 0;
+
+			GL.BufferData (BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length*sizeof(ushort)), indices, BufferUsage.StaticDraw);
+
+			return indices.Length > 0;
 		}
-
-
 		#endregion
 
-		#region VBO Management
+		#region Interleaved Vertex Data
 		/// <summary>
-		/// Sets all VBO data to null.
+		/// These variables are difficult to archive so we restore them when reloading the model
 		/// </summary>
-		public void DeleteVBOData ()
+		public void RestoreUsingMesh (Mesh mesh, DisplayMaterial newMaterial)
 		{
-			Vertices = null;
-			VerticesNormals = null;
-			VerticesColors = null;
-			VerticesNormalsColors = null;
-		}
-
-		/// <summary>
-		/// Sets the Index Buffer Objects to null
-		/// </summary>
-		public void DeleteIndexBufferObject ()
-		{
-			Indices = null;
+			Material = newMaterial;
+			BoundingBox = mesh.GetBoundingBox (true);
 		}
 		#endregion
 

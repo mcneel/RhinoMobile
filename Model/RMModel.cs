@@ -439,6 +439,8 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual async void Prepare ()
 		{
+			GC.Collect ();
+
 			if (Downloaded) {
 				// Check the revision history of the file and set the modelID
 				ModelID = InspectRevisionHistory (ModelPath);

@@ -325,6 +325,7 @@ namespace RhinoMobile.Display
 				return;
 
 			uint vertex_buffer = 0;
+			uint index_buffer = 0;
 
 			if (displayMesh != null) {
 				// Material setup, if necessary...
@@ -333,39 +334,32 @@ namespace RhinoMobile.Display
 					ActiveShader.SetupMaterial (displayMesh.Material);
 				CurrentMaterial = displayMesh.Material;
 
-				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
-					displayMesh.LoadDataForVBOs (displayMesh.Mesh);
+				if (displayMesh.IndexBufferHandle == Globals.UNSET_HANDLE) {
+					// Generate the Index VBO
+					GL.GenBuffers (1, out index_buffer);
+					GL.BindBuffer (BufferTarget.ElementArrayBuffer, index_buffer);
+					displayMesh.IndexBufferHandle = index_buffer;
+				}
 
+				if (displayMesh.VertexBufferHandle == Globals.UNSET_HANDLE) {
 					// Generate the VertexBuffer
 					GL.GenBuffers (1, out vertex_buffer);
 					GL.BindBuffer (BufferTarget.ArrayBuffer, vertex_buffer);
 					displayMesh.VertexBufferHandle = vertex_buffer;
 
-					// Set the buffer data
-					if (!displayMesh.HasVertexNormals && !displayMesh.HasVertexColors) { // Vertices only
-						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.Vertices.Length * displayMesh.Stride), displayMesh.Vertices, BufferUsage.StaticDraw);
-					} else if (displayMesh.HasVertexNormals && !displayMesh.HasVertexColors) { // VerticesNormals
-						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.VerticesNormals.Length * displayMesh.Stride), displayMesh.VerticesNormals, BufferUsage.StaticDraw);
-					} else if (!displayMesh.HasVertexNormals && displayMesh.HasVertexColors) { // VerticesColors
-						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.VerticesColors.Length * displayMesh.Stride), displayMesh.VerticesColors, BufferUsage.StaticDraw);
-					} else if (displayMesh.HasVertexNormals && displayMesh.HasVertexColors) { // VerticesNormalsColors
-						GL.BufferData (BufferTarget.ArrayBuffer, (IntPtr)(displayMesh.VerticesNormalsColors.Length * displayMesh.Stride), displayMesh.VerticesNormalsColors, BufferUsage.StaticDraw);
-					}
+					displayMesh.LoadDataForVBOs (displayMesh.Mesh);
 
 					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
 					// we need to delete the buffers associated with that displayMesh and mark it as too big.
           bool causesGLError = CheckGLError ("GL.BufferData");
 					if (causesGLError) {
 						GL.DeleteBuffers (1, ref vertex_buffer);
+						GL.DeleteBuffers (1, ref index_buffer);
 						displayMesh.WillFitOnGPU = false;
-						displayMesh.DeleteIndexBufferObject ();
 						GC.Collect ();
 					} else {
 						displayMesh.WillFitOnGPU = true;
 					}
-
-					// Dispose of VBO data after sending to the GPU 
-					displayMesh.DeleteVBOData ();
 
 					// If we have drawn all the partitions associated with the underlying openNURBS mesh in the ModelFile, we can delete it...
 					if (displayMesh.Mesh.PartitionCount == displayMesh.PartitionIndex + 1)
@@ -376,34 +370,7 @@ namespace RhinoMobile.Display
 
 				if (displayMesh.WillFitOnGPU == false)
 					return;
-
-				if (displayMesh.IndexBufferHandle == Globals.UNSET_HANDLE) {
-					// Index VBO
-					uint index_buffer;
-					GL.GenBuffers (1, out index_buffer);
-					GL.BindBuffer (BufferTarget.ElementArrayBuffer, index_buffer);
-					GL.BufferData (BufferTarget.ElementArrayBuffer, (IntPtr)(displayMesh.Indices.Length*sizeof(ushort)), displayMesh.Indices, BufferUsage.StaticDraw);
-					displayMesh.IndexBufferHandle = index_buffer;
-
-					// If CheckGLError turns up an error (likely an OutOfMemory warning because the mesh won't fit on the GPU)
-					// we need to delete the buffers associated with that displayMesh and mark it as too big.
-					bool causesGLError = CheckGLError ("GL.BufferData");
-					if (causesGLError) {
-						GL.DeleteBuffers (1, ref vertex_buffer);
-						GL.DeleteBuffers (1, ref index_buffer);
-						GC.Collect ();
-						displayMesh.WillFitOnGPU = false;
-					} else {
-						displayMesh.WillFitOnGPU = true;
-					}
-
-					//Dispose of the index data after sending to the GPU 
-					displayMesh.DeleteIndexBufferObject ();
-				}
-
-				if (displayMesh.WillFitOnGPU == false)
-					return;
-
+					
 				// Vertices
 				// ORDER MATTERS...if you don't do things in this order, you will get very frusterated.
 				// First, enable the VertexAttribArray for positions
