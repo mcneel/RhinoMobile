@@ -262,12 +262,12 @@ namespace RhinoMobile.Display
 		/// </summary>
 		public bool RenderModel (RMModel model, Rhino.DocObjects.ViewportInfo viewport)
 		{
+			if (null == model || null == viewport || !model.IsReadyForRendering)
+				return false;
+
 			Model = model;
 
       CheckGLError ("intro call"); //HACK: necessary on some Android GPUs (don't delete this check)
-
-			if ((model == null) || !model.IsReadyForRendering)
-				return false;
 
 			viewport.SetFrustumNearFar (model.BBox);
 
