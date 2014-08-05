@@ -724,6 +724,9 @@ namespace RhinoMobile.Model
 				// Get the entire model's bounding box
 				BBox = ModelFile.Objects.GetBoundingBox ();
 
+				if (!BBox.IsValid)
+					BBox.MakeValid ();
+
 				// Calculate the layerBBoxes
 				LayerBBoxes = new RhinoList<Rhino.Geometry.BoundingBox> ();
 				for (int layerIndex = 0; layerIndex < Layers.Count; layerIndex++) {
@@ -783,6 +786,7 @@ namespace RhinoMobile.Model
 							DefaultView = ModelFile.Views [0];
 							GetDefaultView (BBox, ref m_defaultView);
 						} else {
+							DefaultView = new ViewInfo(ModelFile, new Guid(), IntPtr.Zero, false);
 							GetDefaultView (BBox, ref m_defaultView);
 						}
 					} catch (Exception ex) {
@@ -1092,7 +1096,7 @@ namespace RhinoMobile.Model
 
 					AddModelObject (iRef, attr);
 				}
-			} 
+			}
 
 		}
 
