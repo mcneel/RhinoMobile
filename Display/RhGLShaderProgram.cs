@@ -14,35 +14,10 @@
 using System;
 using System.Drawing;
 using System.Text;
-
 using OpenTK.Graphics.ES20;
-
 using Rhino.Geometry;
 using Rhino.DocObjects;
 
-#region OpenTK-1.0 API diffs
-// This region handles differences between OpenTK-1.0  on MonoDroid and MonoTouch.  
-// MonoDroid is behind the times and has not yet caught up with MonoTouch
-// on the OpenTK-1.0 front.  Once things stabilize, this can be removed. 
-// See this thread for details:
-// http://forums.xamarin.com/discussion/1939/renderbuffertarget-in-opentk
-#if __ANDROID__
-using RenderBufferTarget = OpenTK.Graphics.ES20.All;
-using BufferTarget = OpenTK.Graphics.ES20.All;
-using BufferUsage = OpenTK.Graphics.ES20.All;
-using VertexAttribPointerType = OpenTK.Graphics.ES20.All;
-using ShaderType = OpenTK.Graphics.ES20.All;
-using EnableCap = OpenTK.Graphics.ES20.All;
-using ProgramParameter = OpenTK.Graphics.ES20.All;
-using ShaderParameter = OpenTK.Graphics.ES20.All;
-using GetError = OpenTK.Graphics.ES20.All;
-using Color4 = OpenTK.Graphics.ES20.All;
-using DepthFunction = OpenTK.Graphics.ES20.All;
-using BlendingFactorSrc = OpenTK.Graphics.ES20.All;
-using BlendingFactorDest = OpenTK.Graphics.ES20.All;
-using CullFaceMode = OpenTK.Graphics.ES20.All;
-#endif
-#endregion
 
 namespace RhinoMobile.Display
 {

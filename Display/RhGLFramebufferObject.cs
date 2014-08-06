@@ -11,41 +11,9 @@
 // ALL IMPLIED WARRANTIES OF FITNESS FOR ANY PARTICULAR PURPOSE AND OF
 // MERCHANTABILITY ARE HEREBY DISCLAIMED.
 //
+using System;
 using OpenTK.Graphics.ES20;
 
-using System;
-
-#region OpenTK-1.0 API diffs
-// This region handles differences between OpenTK-1.0  on MonoDroid and MonoTouch.  
-// MonoDroid is behind the times and has not yet caught up with MonoTouch
-// on the OpenTK-1.0 front.  Once things stabilize, this can be removed. 
-// See this thread for details:
-// http://forums.xamarin.com/discussion/1939/renderbuffertarget-in-opentk
-#if __ANDROID__
-using RenderbufferTarget = OpenTK.Graphics.ES20.All;
-using RenderbufferInternalFormat = OpenTK.Graphics.ES20.All;
-using RenderbufferParameterName = OpenTK.Graphics.ES20.All;
-using FramebufferSlot = OpenTK.Graphics.ES20.All;
-using FramebufferTarget = OpenTK.Graphics.ES20.All;
-using FramebufferParameterName = OpenTK.Graphics.ES20.All;
-using FramebufferErrorCode = OpenTK.Graphics.ES20.All;
-using BufferTarget = OpenTK.Graphics.ES20.All;
-using BufferUsage = OpenTK.Graphics.ES20.All;
-using VertexAttribPointerType = OpenTK.Graphics.ES20.All;
-using ShaderType = OpenTK.Graphics.ES20.All;
-using EnableCap = OpenTK.Graphics.ES20.All;
-using ProgramParameter = OpenTK.Graphics.ES20.All;
-using ShaderParameter = OpenTK.Graphics.ES20.All;
-using GetError = OpenTK.Graphics.ES20.All;
-using Color4 = OpenTK.Graphics.ES20.All;
-using DepthFunction = OpenTK.Graphics.ES20.All;
-using BlendingFactorSrc = OpenTK.Graphics.ES20.All;
-using BlendingFactorDest = OpenTK.Graphics.ES20.All;
-using CullFaceMode = OpenTK.Graphics.ES20.All;
-using GetPName = OpenTK.Graphics.ES20.All;
-using ErrorCode = OpenTK.Graphics.ES20.All;
-#endif
-#endregion
 
 namespace RhinoMobile.Display
 {

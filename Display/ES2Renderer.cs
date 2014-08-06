@@ -14,48 +14,20 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
-using OpenTK.Graphics;
-using OpenTK.Graphics.ES20;
-
-using Rhino.DocObjects;
-using RhinoMobile.Model;
-using RhinoMobile.Display;
 using System.IO;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using OpenTK.Graphics;
+using OpenTK.Graphics.ES20;
+using Rhino.DocObjects;
+using RhinoMobile.Model;
+using RhinoMobile.Display;
 
 #if __IOS__
 using MonoTouch.Foundation;
 using MonoTouch.OpenGLES;
 #endif
 
-#region OpenTK-1.0 API diffs
-// This region handles differences between OpenTK-1.0  on MonoDroid and MonoTouch.  
-// MonoDroid is behind the times and has not yet caught up with MonoTouch
-// on the OpenTK-1.0 front.  Once things stabilize, this can be removed. 
-// See this thread for details:
-// http://forums.xamarin.com/discussion/1939/renderbuffertarget-in-opentk
-// TODO: Possible fix in http://docs.xamarin.com/releases/android/xamarin.android_4/xamarin.android_4.12/#Xamarin.Android_4.12.3
-#if __ANDROID__
-using BufferTarget = OpenTK.Graphics.ES20.All;
-using BufferUsage = OpenTK.Graphics.ES20.All;
-using VertexAttribPointerType = OpenTK.Graphics.ES20.All;
-using ShaderType = OpenTK.Graphics.ES20.All;
-using EnableCap = OpenTK.Graphics.ES20.All;
-using ProgramParameter = OpenTK.Graphics.ES20.All;
-using ShaderParameter = OpenTK.Graphics.ES20.All;
-using GetError = OpenTK.Graphics.ES20.All;
-using Color4 = OpenTK.Graphics.ES20.All;
-using DepthFunction = OpenTK.Graphics.ES20.All;
-using BlendingFactorSrc = OpenTK.Graphics.ES20.All;
-using BlendingFactorDest = OpenTK.Graphics.ES20.All;
-using CullFaceMode = OpenTK.Graphics.ES20.All;
-using FramebufferTarget = OpenTK.Graphics.ES20.All;
-using RenderbufferTarget = OpenTK.Graphics.ES20.All;
-using FrontFaceDirection = OpenTK.Graphics.ES20.All;
-#endif
-#endregion
 
 namespace RhinoMobile.Display
 {
