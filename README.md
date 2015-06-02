@@ -9,6 +9,11 @@ Getting Started
 Please see the following McNeel Wiki Article for instructions:
 [http://wiki.mcneel.com/developer/rhinomobile](http://wiki.mcneel.com/developer/rhinomobile)
 
+Issues
+-------
+Issues tracking is disabled for this repository.  Please report issues using [McNeel's YouTrack tracker](http://mcneel.myjetbrains.com/youtrack/) in the Rhino Viewer (RV) project.
+
+
 Authors
 -------
 The entire McNeel programming staff (http://www.mcneel.com)
