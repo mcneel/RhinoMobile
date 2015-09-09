@@ -23,11 +23,15 @@ using Rhino.DocObjects;
 using RhinoMobile.Model;
 using RhinoMobile.Display;
 
-#if __IOS__
+#if __MONOTOUCH__
 using MonoTouch.Foundation;
 using MonoTouch.OpenGLES;
 #endif
 
+#if __IOS__
+using Foundation;
+using OpenGLES;
+#endif
 
 namespace RhinoMobile.Display
 {
@@ -577,9 +581,9 @@ namespace RhinoMobile.Display
 		/// </summary>
     public static bool CheckGLError (string glOperation) 
 		{
-			#if __IOS__
-			var err = GL.GetError ();
-			bool hasError = false;
+			#if __IOS__ || __MONOTOUCH__
+      var err = GL.GetErrorCode();
+      bool hasError = false;
 			do {
 				if (err != ErrorCode.NoError) {
 					#if DEBUG
@@ -587,7 +591,6 @@ namespace RhinoMobile.Display
 					#endif
 					hasError = true;
 				} 
-				err = GL.GetError ();
 			} while ((err != ErrorCode.NoError));
 			return hasError;
 			#endif

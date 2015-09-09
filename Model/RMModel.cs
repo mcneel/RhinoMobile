@@ -25,8 +25,12 @@ using RhinoMobile.Display;
 using System.Threading.Tasks;
 using System.Threading;
 
-#if __IOS__
+#if __MONOTOUCH__
 using MonoTouch.Foundation;
+#endif
+
+#if __IOS__
+using Foundation;
 #endif
 
 #if __ANDROID__
