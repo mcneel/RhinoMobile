@@ -752,4 +752,9 @@
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ObjcBindingNativeLibrary Include="..\rhinocommon\c\build\Release-ios\libopennurbs.a">
+      <Link>libopennurbs.a</Link>
+    </ObjcBindingNativeLibrary>
+  </ItemGroup>
 </Project>
