@@ -20,7 +20,7 @@ namespace RhinoMobile.Display
 {
 	public static class ViewportInfoExtensions
 	{
-
+    #if __MONOTOUCH__
 		/// <summary>
 		/// LateralPan of a viewport between two points
 		/// </summary>
@@ -45,7 +45,36 @@ namespace RhinoMobile.Display
 			viewport.TargetPoint = viewport.TargetPoint - dollyVector;
 			viewport.SetCameraLocation (viewport.CameraLocation - dollyVector);
 		}
+    #endif
 
+    #if __IOS__
+    /// <summary>
+    /// LateralPan of a viewport between two points
+    /// </summary>
+    public static void LateralPan (this ViewportInfo viewport, CoreGraphics.CGPoint fromPoint, CoreGraphics.CGPoint toPoint, bool flipX, bool flipY)
+    {
+      double deltaX, deltaY, s;
+      Rhino.Geometry.Transform s2c = viewport.GetXform (CoordinateSystem.Screen, CoordinateSystem.Clip);
+      Rhino.Geometry.Point3d screenPoint0 = new Rhino.Geometry.Point3d (fromPoint.X, fromPoint.Y, 0.0);
+      Rhino.Geometry.Point3d screenPoint1 = new Rhino.Geometry.Point3d (toPoint.X, toPoint.Y, 0.0);
+      Rhino.Geometry.Point3d clipPoint0 = s2c * screenPoint0;
+      Rhino.Geometry.Point3d clipPoint1 = s2c * screenPoint1;
+      deltaX = 0.5 * (clipPoint1.X - clipPoint0.X);
+      deltaY = 0.5 * (clipPoint1.Y - clipPoint0.Y);
+      deltaX *= (viewport.FrustumRight - viewport.FrustumLeft);
+      deltaY *= (viewport.FrustumBottom - viewport.FrustumTop);
+      if (viewport.IsPerspectiveProjection) {
+        s = viewport.TargetPoint.DistanceTo (viewport.CameraLocation) / viewport.FrustumNear;
+        deltaX *= flipX ? -s : s;
+        deltaY *= flipY ? -s : s;
+      }
+      Rhino.Geometry.Vector3d dollyVector = (deltaX * viewport.CameraX) + (deltaY * viewport.CameraY);
+      viewport.TargetPoint = viewport.TargetPoint - dollyVector;
+      viewport.SetCameraLocation (viewport.CameraLocation - dollyVector);
+    }
+    #endif
+
+    #if __MONOTOUCH__
 		/// <summary>
 		/// <para>Magnify/Zoom the Camera in a viewport</para>
 		/// <para>method =</para>
@@ -137,7 +166,103 @@ namespace RhinoMobile.Display
 			}
 			return true;
 		}
+    #endif
 
+    #if __IOS__
+    /// <summary>
+    /// <para>Magnify/Zoom the Camera in a viewport</para>
+    /// <para>method =</para>
+    /// <para>0 performs a "dolly" magnification by moving the 
+    ///   camera along the camera direction vector so that
+    ///   the amount of the screen subtended by an object
+    ///   changes.</para>
+    /// <para>1 performs a "zoom" magnification by adjusting the
+    ///   "lens" angle</para>
+    /// </summary>
+    public static bool Magnify (this ViewportInfo viewport, Size viewSize, double magnifcationFactor, int method, CoreGraphics.CGPoint fixedScreenPoint)
+    {
+      if (viewport.IsCameraLocationLocked)
+        return false;
+
+      int screenWidth = viewSize.Width;
+      int screenHeight = viewSize.Height;
+
+      if (1 > screenWidth || 1 > screenHeight)
+        return false;
+
+      // move camera toward target to magnify
+      if (magnifcationFactor > 0) {
+        // if the screen point is not in the viewport, then ignore it.
+        if (!fixedScreenPoint.IsEmpty) {
+          if (fixedScreenPoint.X <= 0 || fixedScreenPoint.X >= screenWidth - 1 || fixedScreenPoint.Y <= 0 || fixedScreenPoint.Y >= screenHeight - 1) {
+            fixedScreenPoint.X = 0;
+            fixedScreenPoint.Y = 0;
+          }
+        }
+        double frustumLeft = viewport.FrustumLeft;
+        double frustumRight = viewport.FrustumRight;
+        double frustumBottom = viewport.FrustumBottom;
+        double frustumTop = viewport.FrustumTop;
+        double frustumNear = viewport.FrustumNear;
+        double frustumFar = viewport.FrustumFar;
+        double frustumWidth = viewport.FrustumWidth;
+        double frustumHeight = viewport.FrustumHeight;
+        double d = 0.0;
+
+        // dolly camera towards target point...
+        if (viewport.IsPerspectiveProjection && method == 0) {
+          const double miniumumTargetDistance = 0.000001;
+          var cameraZ = viewport.CameraZ;
+          var cameraLocation = viewport.CameraLocation;
+          var target = viewport.TargetPoint;
+          double targetDistance = (cameraLocation - target) * cameraZ;
+          if (targetDistance >= 0.0) {
+            double delta = (1.0 - (1.0/magnifcationFactor)) * targetDistance;
+            if (targetDistance - delta > miniumumTargetDistance) {
+              cameraLocation = cameraLocation - (delta * cameraZ);
+              viewport.SetCameraLocation (cameraLocation);
+              if (!fixedScreenPoint.IsEmpty) {
+                d = targetDistance / viewport.FrustumNear;
+                frustumWidth *= d;
+                frustumHeight *= d;
+                d = (targetDistance - delta) / targetDistance;
+              }
+            }
+          }
+        }
+        if (method == 1) {
+          // parallel proj or "true" zoom
+          // apply magnification to frustum
+          d = 1.0 / magnifcationFactor;
+          frustumLeft *= d;
+          frustumRight *= d;
+          frustumBottom *= d;
+          frustumTop *= d;
+          viewport.SetFrustum (frustumLeft, frustumRight, frustumBottom, frustumTop, frustumNear, frustumFar);
+        }
+
+        if (!fixedScreenPoint.IsEmpty && Math.Abs(d) > Double.Epsilon) {
+          // lateral dolly to keep fixed_screen_point in same location on screen
+          Rhino.Geometry.Vector3d scale = new Rhino.Geometry.Vector3d (1.0, 1.0, 1.0);
+          scale.X = viewport.ViewScale.Width;
+          scale.Y = viewport.ViewScale.Height;
+          double fx = ((double)fixedScreenPoint.X / (double)screenWidth);
+          double fy = ((double)fixedScreenPoint.Y / (double)screenHeight);
+          double dx = ((0.5 - fx) * (1.0 - d) * frustumWidth) / scale.X;
+          double dy = ((fy - 0.5) * (1.0 - d) * frustumHeight) / scale.Y;
+          Rhino.Geometry.Vector3d dollyVector = dx * viewport.CameraX + dy * viewport.CameraY;
+          var cameraLocation = viewport.CameraLocation;
+          var target = viewport.TargetPoint;
+          viewport.TargetPoint = target - dollyVector;
+          viewport.SetCameraLocation (cameraLocation - dollyVector);
+        }
+
+      }
+      return true;
+    }
+    #endif
+
+    #if __MONOTOUCH__
 		/// <summary>
 		/// <para>Moves the Camera in a viewport toward a fixed point</para>
 		/// </summary>
@@ -218,8 +343,92 @@ namespace RhinoMobile.Display
 			}
 			return true;
 		}
+    #endif
 
+    #if __IOS__
+    /// <summary>
+    /// <para>Moves the Camera in a viewport toward a fixed point</para>
+    /// </summary>
+    public static bool Move (this ViewportInfo viewport, Size viewSize, double magnifcationFactor, CoreGraphics.CGPoint fixedScreenPoint)
+    {
+      if (viewport.IsCameraLocationLocked)
+        return false;
 
+      int screenWidth = viewSize.Width;
+      int screenHeight = viewSize.Height;
+
+      if (1 > screenWidth || 1 > screenHeight)
+        return false;
+
+      // move camera toward target to magnify
+      if (magnifcationFactor > 0) {
+        // if the screen point is not in the viewport, then ignore it.
+        if (!fixedScreenPoint.IsEmpty) {
+          if (fixedScreenPoint.X <= 0 || fixedScreenPoint.X >= screenWidth - 1 || fixedScreenPoint.Y <= 0 || fixedScreenPoint.Y >= screenHeight - 1) {
+            fixedScreenPoint.X = 0;
+            fixedScreenPoint.Y = 0;
+          }
+        }
+
+        double frustumNear = viewport.FrustumNear;
+        double frustumWidth = viewport.FrustumWidth;
+        double frustumHeight = viewport.FrustumHeight;
+        double d = 0.0;
+
+        // dolly camera location and the target location...
+        if (viewport.IsPerspectiveProjection) {
+          const double miniumumTargetDistance = 0.000001;
+
+          var cameraZ = viewport.CameraZ;
+          var cameraLocation = viewport.CameraLocation;
+          var target = viewport.TargetPoint;
+          var v0 = target - cameraLocation;
+
+          double targetDistance = (cameraLocation - target) * cameraZ;
+          if (targetDistance >= 0.0) {
+            double delta = (1.0 - (1.0/magnifcationFactor)) * targetDistance;
+
+            if (targetDistance - delta > miniumumTargetDistance) {
+              v0.Unitize ();
+
+              var l = delta * v0;
+              var newLocation = cameraLocation + l;
+              var newTarget = target + l;
+
+              viewport.SetTarget (newTarget, newLocation, Rhino.Geometry.Vector3d.ZAxis);
+
+              if (!fixedScreenPoint.IsEmpty) {
+                d = (targetDistance / 2) / frustumNear;
+                frustumWidth *= d;
+                frustumHeight *= d;
+                d = ((targetDistance / 2) - delta) / (targetDistance / 2);
+              }
+            }
+          }
+        }
+
+        if (!fixedScreenPoint.IsEmpty && Math.Abs(d) > Double.Epsilon) {
+          // lateral dolly to keep fixed_screen_point in same location on screen
+          Rhino.Geometry.Vector3d scale = new Rhino.Geometry.Vector3d (1.0, 1.0, 1.0);
+          scale.X = viewport.ViewScale.Width;
+          scale.Y = viewport.ViewScale.Height;
+          double fx = ((double)fixedScreenPoint.X / (double)screenWidth);
+          double fy = ((double)fixedScreenPoint.Y / (double)screenHeight);
+          double dx = ((0.5 - fx) * (1.0 - d) * frustumWidth) / scale.X;
+          double dy = ((fy - 0.5) * (1.0 - d) * frustumHeight) / scale.Y;
+          Rhino.Geometry.Vector3d dollyVector = dx * viewport.CameraX + dy * viewport.CameraY;
+          var cameraLocation = viewport.CameraLocation;
+          var target = viewport.TargetPoint;
+          viewport.TargetPoint = target - dollyVector;
+          viewport.SetCameraLocation (cameraLocation - dollyVector);
+        }
+
+      }
+      return true;
+    }
+    #endif
+
+    #if __MONOTOUCH__
 		/// <summary>
 		/// GestoreOrbit performs a gesture-based orbit about an anchorLocation to a location.
 		/// </summary>
@@ -232,6 +441,22 @@ namespace RhinoMobile.Display
 			float verticalDiff = anchorLocation.Y - location.Y;
 			RotateUpDown (viewport, (verticalDiff * f));
 		}
+    #endif
+
+    #if __IOS__
+    /// <summary>
+    /// GestoreOrbit performs a gesture-based orbit about an anchorLocation to a location.
+    /// </summary>
+    public static void GestureOrbit (this ViewportInfo viewport, Size viewSize, CoreGraphics.CGPoint anchorLocation, CoreGraphics.CGPoint location)
+    {
+      int screenWidth = viewSize.Width;
+      nfloat f = (float)(Math.PI / screenWidth);
+      nfloat horizontalDiff = anchorLocation.X - location.X;
+      RotateLeftRight (viewport, (horizontalDiff * f));
+      nfloat verticalDiff = anchorLocation.Y - location.Y;
+      RotateUpDown (viewport, (verticalDiff * f));
+    }
+    #endif
 
 		/// <summary>
 		/// Rotates the viewport around an axis by an angle

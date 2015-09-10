@@ -3,19 +3,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{022F5A8C-7A17-46D0-BCAD-EBB83305B20C}</ProjectGuid>
-    <ProjectTypeGuids>{F5B4F3BC-B597-4E2B-B552-EF5D8A32436F};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{8FFB629D-F513-41CE-95D2-7ECE97B6EEEC};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{48AD165B-872A-4F55-85BA-A467466E7EDE}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>RhinoMobile</RootNamespace>
+    <RootNamespace>RhinoMobile.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>RhinoMobile.Touch</AssemblyName>
+    <AssemblyName>RhinoMobile.iOS</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;OPENNURBS_SDK;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>DEBUG;OPENNURBS_SDK;MONO_BUILD;__IOS__;MOBILE_BUILD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -29,6 +29,7 @@
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -36,7 +37,7 @@
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>0219;0414</NoWarn>
-    <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__IOS__;MOBILE_BUILD</DefineConstants>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
@@ -45,7 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="monotouch" />
+    <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Xml" />
     <Reference Include="OpenTK-1.0" />
   </ItemGroup>
@@ -56,7 +57,7 @@
     <Folder Include="Model\" />
     <Folder Include="rhinocommon\dotnet\RDK\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Xamarin.ObjcBinding.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Display\ClippingPlanes.cs" />
     <Compile Include="Display\ColorExtensions.cs" />
