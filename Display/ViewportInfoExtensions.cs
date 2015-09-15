@@ -16,6 +16,10 @@ using System.Drawing;
 
 using Rhino.DocObjects;
 
+#if __IOS__
+using CoreGraphics;
+#endif
+
 namespace RhinoMobile.Display
 {
 	public static class ViewportInfoExtensions
@@ -51,7 +55,7 @@ namespace RhinoMobile.Display
     /// <summary>
     /// LateralPan of a viewport between two points
     /// </summary>
-    public static void LateralPan (this ViewportInfo viewport, CoreGraphics.CGPoint fromPoint, CoreGraphics.CGPoint toPoint, bool flipX, bool flipY)
+    public static void LateralPan (this ViewportInfo viewport, CGPoint fromPoint, CGPoint toPoint, bool flipX, bool flipY)
     {
       double deltaX, deltaY, s;
       Rhino.Geometry.Transform s2c = viewport.GetXform (CoordinateSystem.Screen, CoordinateSystem.Clip);
@@ -179,13 +183,13 @@ namespace RhinoMobile.Display
     /// <para>1 performs a "zoom" magnification by adjusting the
     ///   "lens" angle</para>
     /// </summary>
-    public static bool Magnify (this ViewportInfo viewport, Size viewSize, double magnifcationFactor, int method, CoreGraphics.CGPoint fixedScreenPoint)
+    public static bool Magnify (this ViewportInfo viewport, CGSize viewSize, double magnifcationFactor, int method, CoreGraphics.CGPoint fixedScreenPoint)
     {
       if (viewport.IsCameraLocationLocked)
         return false;
 
-      int screenWidth = viewSize.Width;
-      int screenHeight = viewSize.Height;
+      var screenWidth = viewSize.Width;
+      var screenHeight = viewSize.Height;
 
       if (1 > screenWidth || 1 > screenHeight)
         return false;
@@ -349,13 +353,13 @@ namespace RhinoMobile.Display
     /// <summary>
     /// <para>Moves the Camera in a viewport toward a fixed point</para>
     /// </summary>
-    public static bool Move (this ViewportInfo viewport, Size viewSize, double magnifcationFactor, CoreGraphics.CGPoint fixedScreenPoint)
+    public static bool Move (this ViewportInfo viewport, CGSize viewSize, double magnifcationFactor, CGPoint fixedScreenPoint)
     {
       if (viewport.IsCameraLocationLocked)
         return false;
 
-      int screenWidth = viewSize.Width;
-      int screenHeight = viewSize.Height;
+      var screenWidth = viewSize.Width;
+      var screenHeight = viewSize.Height;
 
       if (1 > screenWidth || 1 > screenHeight)
         return false;
@@ -447,9 +451,9 @@ namespace RhinoMobile.Display
     /// <summary>
     /// GestoreOrbit performs a gesture-based orbit about an anchorLocation to a location.
     /// </summary>
-    public static void GestureOrbit (this ViewportInfo viewport, Size viewSize, CoreGraphics.CGPoint anchorLocation, CoreGraphics.CGPoint location)
+    public static void GestureOrbit (this ViewportInfo viewport, CGSize viewSize, CoreGraphics.CGPoint anchorLocation, CoreGraphics.CGPoint location)
     {
-      int screenWidth = viewSize.Width;
+      var screenWidth = viewSize.Width;
       nfloat f = (float)(Math.PI / screenWidth);
       nfloat horizontalDiff = anchorLocation.X - location.X;
       RotateLeftRight (viewport, (horizontalDiff * f));
