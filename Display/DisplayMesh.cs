@@ -279,7 +279,7 @@ namespace RhinoMobile.Display
 				
 			if (!didCreatePartitions) {
 				System.Diagnostics.Debug.WriteLine ("Unable to create partitions on mesh {0}", attr.ObjectId.ToString());
-				Rhino.Runtime.HostUtils.ExceptionReport (new Exception ("Unable to create partitions on mesh"));
+				//Rhino.Runtime.HostUtils.ExceptionReport (new Exception ("Unable to create partitions on mesh"));
 				return null; //invalid mesh, ignore
 			}
 
