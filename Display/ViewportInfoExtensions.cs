@@ -24,7 +24,7 @@ namespace RhinoMobile.Display
 {
 	public static class ViewportInfoExtensions
 	{
-    #if __MONOTOUCH__
+    #if __MONOTOUCH__ || __ANDROID__
 		/// <summary>
 		/// LateralPan of a viewport between two points
 		/// </summary>
@@ -78,7 +78,7 @@ namespace RhinoMobile.Display
     }
     #endif
 
-    #if __MONOTOUCH__
+    #if __MONOTOUCH__ || __ANDROID__
 		/// <summary>
 		/// <para>Magnify/Zoom the Camera in a viewport</para>
 		/// <para>method =</para>
@@ -266,7 +266,7 @@ namespace RhinoMobile.Display
     }
     #endif
 
-    #if __MONOTOUCH__
+    #if __MONOTOUCH__ || __ANDROID__
 		/// <summary>
 		/// <para>Moves the Camera in a viewport toward a fixed point</para>
 		/// </summary>
@@ -432,7 +432,7 @@ namespace RhinoMobile.Display
     }
     #endif
 
-    #if __MONOTOUCH__
+    #if __MONOTOUCH__ || __ANDROID__
 		/// <summary>
 		/// GestoreOrbit performs a gesture-based orbit about an anchorLocation to a location.
 		/// </summary>
