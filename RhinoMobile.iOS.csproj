@@ -24,7 +24,7 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
-        <Command type="Custom" name="Build libopennurbs.a" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command type="Custom" name="Build libopennurbs.a" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v -o" workingdir="${ProjectDir}/../rhinocommon/c/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
