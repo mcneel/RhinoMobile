@@ -57,7 +57,6 @@ namespace RhinoMobile.Display
 
     public static System.Drawing.Color FromNative(this UIColor color)
     {
-
       System.nfloat r,g,b,a;
       color.GetRGBA(out r, out g, out b, out a);
       return System.Drawing.Color.FromArgb((int)(a * 255.0f), (int)(r * 255.0f), (int)(g * 255.0f), (int)(b * 255.0f));
