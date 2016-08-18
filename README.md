@@ -6,8 +6,8 @@ to call into the [openNURBS](http://www.rhino3d.com/opennurbs) library.
 
 Getting Started
 --------------------
-Please see the following McNeel Wiki Article for instructions:
-[http://wiki.mcneel.com/developer/rhinomobile](http://wiki.mcneel.com/developer/rhinomobile)
+Please see the following for instructions:
+[http://developer.rhino3d.com/guides/#rhinomobile](http://developer.rhino3d.com/guides/#rhinomobile)
 
 Issues
 -------
