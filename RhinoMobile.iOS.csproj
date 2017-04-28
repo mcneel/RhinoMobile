@@ -9,6 +9,8 @@
     <RootNamespace>RhinoMobile.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>RhinoMobile.iOS</AssemblyName>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,8 +25,17 @@
     <NoWarn>0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
-        <Command type="Custom" name="Build libopennurbs.a" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v -o" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
+        <Command>
+          <type>Custom</type>
+          <name>Build libopennurbs.a</name>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v -o</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -40,7 +51,11 @@
     <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__IOS__;MOBILE_BUILD</DefineConstants>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p ios -v</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -49,6 +64,7 @@
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Xml" />
     <Reference Include="OpenTK-1.0" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
