@@ -7,6 +7,6 @@ using MonoTouch.ObjCRuntime;
 
 #if __IOS__
 using ObjCRuntime;
-[assembly: LinkWith ("libopennurbs.a", LinkTarget.Simulator | LinkTarget.Arm64, ForceLoad = true, IsCxx = true)]
+[assembly: LinkWith ("libopennurbs.a", LinkTarget.Simulator | LinkTarget.x86_64 | LinkTarget.Arm64, ForceLoad = true, IsCxx = true)]
 #endif
  
