@@ -1,0 +1,20 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhinoMobile.Droid", "RhinoMobile.Droid.csproj", "{FAC9FBF7-BEEE-40B5-A3E3-9D88DB56D32A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FAC9FBF7-BEEE-40B5-A3E3-9D88DB56D32A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC9FBF7-BEEE-40B5-A3E3-9D88DB56D32A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC9FBF7-BEEE-40B5-A3E3-9D88DB56D32A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC9FBF7-BEEE-40B5-A3E3-9D88DB56D32A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 1.0
+	EndGlobalSection
+EndGlobal

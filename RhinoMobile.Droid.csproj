@@ -12,6 +12,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AssemblyName>RhinoMobile.Droid</AssemblyName>
+    <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,8 +28,17 @@
     <NoWarn>0618;0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
-        <Command type="Custom" name="Build libopennurbs.so" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v -o" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p android -v</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
+        <Command>
+          <type>Custom</type>
+          <name>Build libopennurbs.so</name>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p android -v -o</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -44,7 +54,11 @@
     <NoWarn>0618;0219;0414</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="${ProjectDir}/../rhinocommon/c/build_native.py -p android -v" workingdir="${ProjectDir}/../rhinocommon/c/" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>${ProjectDir}/../rhinocommon/c/build_native.py -p android -v</command>
+          <workingdir>${ProjectDir}/../rhinocommon/c/</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
