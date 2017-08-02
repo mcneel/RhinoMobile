@@ -571,7 +571,7 @@ namespace RhinoMobile.Model
 			
 				// Set the Layers property on this model
 				Layers = new List<Layer> ();
-				foreach (Layer layer in ModelFile.Layers)
+				foreach (Layer layer in ModelFile.AllLayers)
 					Layers.Add (layer);
 	
 				// Find the Layers with Geometry and add them to LayersWithGeometry property
@@ -588,9 +588,9 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual Layer LayerAtIndex(int layerIndex) 
 		{
-			if (layerIndex >= 0 && layerIndex < ModelFile.Layers.Count) {
+			if (layerIndex >= 0 && layerIndex < ModelFile.AllLayers.Count) {
 				if (ModelFile != null)
-					return ModelFile.Layers [layerIndex];
+					return ModelFile.AllLayers.ElementAt(layerIndex);
 			}
 			System.Diagnostics.Debug.WriteLine ("Bad layer index: %", layerIndex);
 			return null; 
@@ -601,10 +601,10 @@ namespace RhinoMobile.Model
 		/// </summary>
 		public virtual Layer LayerWithGeometryAtIndex(int layerIndex) 
 		{
-			for (int i = 0; i < ModelFile.Layers.Count; i++) {
+			for (int i = 0; i < ModelFile.AllLayers.Count; i++) {
 				if (LayerHasGeometryAtIndex(i, true)) {
 					if (layerIndex == 0)
-						return ModelFile.Layers [i];
+						return ModelFile.AllLayers.ElementAt(i);
 					layerIndex--;
 				}
 			}
@@ -790,7 +790,8 @@ namespace RhinoMobile.Model
 							DefaultView = ModelFile.Views [0];
 							GetDefaultView (BBox, ref m_defaultView);
 						} else {
-							DefaultView = new ViewInfo(ModelFile, new Guid(), IntPtr.Zero, false);
+							//TODO:
+							//DefaultView = new ViewInfo(ModelFile, new Guid(), IntPtr.Zero, false);
 							GetDefaultView (BBox, ref m_defaultView);
 						}
 					} catch (Exception ex) {
@@ -890,8 +891,8 @@ namespace RhinoMobile.Model
 				if (successfulPreparation) {
 					// Prepare each object in the 3dm file...
 					for (Int64 i = 0; i < ModelFile.Objects.Count; i++) {
-						PrepareObject (ModelFile.Objects [(int)i].Geometry, ModelFile.Objects [(int)i].Attributes);
-
+						PrepareObject(ModelFile.Objects.ElementAt((int)i).Geometry, ModelFile.Objects.ElementAt((int)i).Attributes);
+						 
 						tally++;
 						if (progress != null)
 							MeshPreparationProgressEvent ((float)i / (float)ModelFile.Objects.Count);
@@ -902,7 +903,7 @@ namespace RhinoMobile.Model
 					int count = ModelObjects.Count;
 
 					// add instance definitions to our object dictionary
-					foreach (InstanceDefinitionGeometry instanceDef in ModelFile.InstanceDefinitions) {
+					foreach (InstanceDefinitionGeometry instanceDef in ModelFile.AllInstanceDefinitions) {
 						ModelInstanceDef iDef = new ModelInstanceDef (instanceDef);
 						ModelObjectsDictionary.Add (iDef.ObjectId, iDef);
 					}
@@ -1001,7 +1002,7 @@ namespace RhinoMobile.Model
 		/// </summary>
 		protected virtual void PrepareObject (GeometryBase pObject, ObjectAttributes attr)
 		{		
-			while (LayerBBoxes.Count < ModelFile.Layers.Count) {
+			while (LayerBBoxes.Count < ModelFile.AllLayers.Count) {
 				BoundingBox invalidBBox = BoundingBox.Empty;
 				LayerBBoxes.Add (invalidBBox);
 			}
@@ -1116,8 +1117,8 @@ namespace RhinoMobile.Model
 
 				switch (attr.MaterialSource) {
 				case (ObjectMaterialSource.MaterialFromLayer):
-					if (attr.LayerIndex >= 0 && attr.LayerIndex < ModelFile.Layers.Count)
-						materialIndex = ModelFile.Layers [attr.LayerIndex].RenderMaterialIndex;
+						if (attr.LayerIndex >= 0 && attr.LayerIndex < ModelFile.AllLayers.Count)
+							materialIndex = ModelFile.AllLayers.ElementAt(attr.LayerIndex).RenderMaterialIndex;
 					break;
 				case (ObjectMaterialSource.MaterialFromObject):
 					materialIndex = attr.MaterialIndex;
@@ -1127,11 +1128,11 @@ namespace RhinoMobile.Model
 					break;
 				}
 
-				if (materialIndex < 0 || materialIndex >= ModelFile.Materials.Count) {
+				if (materialIndex < 0 || materialIndex >= ModelFile.AllMaterials.Count) {
 					materialIndex = -1;
 					material.Default ();
 				} else {
-					material = ModelFile.Materials [materialIndex];
+					material = ModelFile.AllMaterials.ElementAt(materialIndex);
 				}
 
 				obj.Material = material;
@@ -1164,8 +1165,8 @@ namespace RhinoMobile.Model
 			switch (attr.MaterialSource) {
 		
 			case (ObjectMaterialSource.MaterialFromLayer):
-				if (attr.LayerIndex >= 0 && attr.LayerIndex < ModelFile.Layers.Count)
-					materialIndex = ModelFile.Layers [attr.LayerIndex].RenderMaterialIndex;
+				if (attr.LayerIndex >= 0 && attr.LayerIndex < ModelFile.AllLayers.Count)
+						materialIndex = ModelFile.AllLayers.ElementAt(attr.LayerIndex).RenderMaterialIndex;
 				break;
 			
 			case (ObjectMaterialSource.MaterialFromObject):
@@ -1177,11 +1178,11 @@ namespace RhinoMobile.Model
 				break;
 			}
 
-			if (materialIndex < 0 || materialIndex >= ModelFile.Materials.Count) {
+			if (materialIndex < 0 || materialIndex >= ModelFile.AllMaterials.Count) {
 				materialIndex = -1;
 				material.Default ();
 			} else {
-				material = ModelFile.Materials [materialIndex];
+				material = ModelFile.AllMaterials.ElementAt(materialIndex);
 			}
 				
 			object[] displayMeshes = DisplayMesh.CreateWithMesh (mesh, attr, material, materialIndex);
