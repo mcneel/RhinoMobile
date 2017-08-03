@@ -890,14 +890,16 @@ namespace RhinoMobile.Model
 				bool successfulPreparation = true;
 				if (successfulPreparation) {
 					// Prepare each object in the 3dm file...
-					for (Int64 i = 0; i < ModelFile.Objects.Count; i++) {
-						PrepareObject(ModelFile.Objects.ElementAt((int)i).Geometry, ModelFile.Objects.ElementAt((int)i).Attributes);
-						 
+					float i = 0;
+					foreach (var modelObject in ModelFile.Objects) {
+						PrepareObject(modelObject.Geometry, modelObject.Attributes);
+
 						tally++;
-						if (progress != null)
-							MeshPreparationProgressEvent ((float)i / (float)ModelFile.Objects.Count);
-						if (cancellationToken.IsCancellationRequested)
-							throw new OperationCanceledException();
+            if (progress != null)
+              MeshPreparationProgressEvent((float)i / (float)ModelFile.Objects.Count);
+            if (cancellationToken.IsCancellationRequested)
+              throw new OperationCanceledException();
+						i = i + 1;
 					}
 
 					int count = ModelObjects.Count;
