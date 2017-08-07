@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;OPENNURBS_SDK;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>DEBUG;RHINO3DMIO_BUILD;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -45,7 +45,7 @@
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>0219;0414</NoWarn>
-    <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>RHINO3DMIO_BUILD;MONO_BUILD;__MONOTOUCH__;MOBILE_BUILD</DefineConstants>
     <CustomCommands>
       <CustomCommands>
         <Command>

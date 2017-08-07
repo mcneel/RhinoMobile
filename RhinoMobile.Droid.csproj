@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;OPENNURBS_SDK;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>DEBUG;RHINO3DMIO_BUILD;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>OPENNURBS_SDK;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
+    <DefineConstants>RHINO3DMIO_BUILD;MONO_BUILD;__ANDROID__;MOBILE_BUILD</DefineConstants>
     <additionalargs>-unsafe</additionalargs>
     <NoWarn>0618;0219;0414</NoWarn>
     <CustomCommands>
