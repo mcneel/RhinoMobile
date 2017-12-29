@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
-[assembly: AssemblyTitle ("RhinoMobile.Core")]
+[assembly: AssemblyTitle ("RhinoMobile")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Robert McNeel and Associates")]

@@ -565,7 +565,7 @@ namespace RhinoMobile.Display
 			light.SpotExponent = 0.0;
 			light.HotSpot = 1.0;
 			light.AttenuationVector = new Rhino.Geometry.Vector3d(1.0, 0.0, 0.0);
-			light.SpotLightShadowIntensity = 1.0;
+			light.ShadowIntensity = 1.0;
 
 			return light;
 		}
