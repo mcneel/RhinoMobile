@@ -464,14 +464,16 @@ namespace RhinoMobile.Model
 					int fileSize = Convert.ToInt32 (GetFileSize ());
 				
 					// Read the 3dm file with an ObjectTypeFilter...
-					string errorLog;
+          string errorLog;
 					ModelFile = File3dm.ReadWithLog (ModelPath, out errorLog);
 
 					// Check to make sure the 3dm was read correctly and there were no errors...
 					bool didOpenFile = false;
 					if ((ModelFile != null) && (errorLog == String.Empty)) {
 						didOpenFile = true;
-					} else if (errorLog.StartsWith ("WARNING:")) {
+          } else if ((ModelFile != null) && (errorLog == null)) {
+            didOpenFile = true;
+          } else if (errorLog.StartsWith("WARNING:", StringComparison.Ordinal)) {
 						didOpenFile = true;
 					}
 
@@ -503,6 +505,7 @@ namespace RhinoMobile.Model
 							Dispose ();
 							return;
 						}
+
 					}
 				}
 			}
